@@ -1,4 +1,4 @@
-
+import em.fonctions.ViperLogger;
 
 /**
  * Programme main
@@ -9,7 +9,8 @@
  */
 public class VizualizeMaitreMain {
 	public static void main(String[] args) {
-		System.out.println("Lancement du programme maitre");
+		ViperLogger.initialisation(VizualizeMaitreMain.class.getName());
+		ViperLogger.viperLogger.info("Lancement de l'application");
 	}
 
 }
