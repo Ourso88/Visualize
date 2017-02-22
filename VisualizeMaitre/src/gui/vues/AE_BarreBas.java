@@ -16,6 +16,8 @@ import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 
 import em.fonctions.AE_Fonctions;
+import em.general.AE_Constantes;
+import em.general.EFS_Maitre_Variable;
 
 /**
  * Affiche une barre d'état en bas des écrans
@@ -94,7 +96,7 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 		gbc.gridx = 4; gbc.gridy = 0;
 		gbc.weightx = 5; gbc.weighty = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[2] =new JLabel("----");
+		lblInformation[2] = new JLabel("----");
 		lblInformation[2].setPreferredSize(new Dimension(200, 25));
 		lblInformation[2].setMinimumSize(new Dimension(200, 25));
 		lblInformation[2].setMaximumSize(new Dimension(200, 25));
@@ -109,9 +111,49 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 		lblInformation[3].setOpaque(true);
 		lblInformation[3].setBorder(BorderFactory.createRaisedBevelBorder());
 		this.add(lblInformation[3], gbc);
-		
+
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 6; gbc.gridy = 0;
+		gbc.weightx = 5; gbc.weighty = 0;
+		gbc.anchor = GridBagConstraints.WEST;
+		lblInformation[4] = new JLabel("000");
+		lblInformation[4].setPreferredSize(new Dimension(200, 25));
+		lblInformation[4].setMinimumSize(new Dimension(200, 25));
+		lblInformation[4].setMaximumSize(new Dimension(200, 25));
+		this.add(lblInformation[4], gbc);
+		
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.gridx = 7; gbc.gridy = 0;
+		gbc.weightx = 0; gbc.weighty = 0;
+		gbc.anchor = GridBagConstraints.WEST;
+		lblInformation[5] =new JLabel("");
+		lblInformation[5].setPreferredSize(new Dimension(2, 25));
+		lblInformation[5].setOpaque(true);
+		lblInformation[5].setBorder(BorderFactory.createRaisedBevelBorder());
+		this.add(lblInformation[5], gbc);
+		
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.gridx = 8; gbc.gridy = 0;
+		gbc.weightx = 5; gbc.weighty = 0;
+		gbc.anchor = GridBagConstraints.WEST;
+		lblInformation[6] = new JLabel("000");
+		lblInformation[6].setPreferredSize(new Dimension(200, 25));
+		lblInformation[6].setMinimumSize(new Dimension(200, 25));
+		lblInformation[6].setMaximumSize(new Dimension(200, 25));
+		this.add(lblInformation[6], gbc);
+		
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.gridx = 9; gbc.gridy = 0;
+		gbc.weightx = 0; gbc.weighty = 0;
+		gbc.anchor = GridBagConstraints.WEST;
+		lblInformation[7] =new JLabel("");
+		lblInformation[7].setPreferredSize(new Dimension(2, 25));
+		lblInformation[7].setOpaque(true);
+		lblInformation[7].setBorder(BorderFactory.createRaisedBevelBorder());
+		this.add(lblInformation[7], gbc);
+		
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.gridx = 10; gbc.gridy = 0;
 		gbc.weightx = 50; gbc.weighty = 0;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		gbc.anchor = GridBagConstraints.FIRST_LINE_END;
@@ -152,6 +194,18 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e){
 		if (e.getSource() == tmrHeure) {
 			lblHeure.setText(AE_Fonctions.formatDate("HH:mm:ss"));
+			lblInformation[4].setText("API : " + EFS_Maitre_Variable.compteurErreurAPI);
+			if(EFS_Maitre_Variable.compteurErreurAPI > 0) {
+				lblInformation[4].setBackground(AE_Constantes.AE_ROUGE);
+				lblInformation[4].setOpaque(true);
+				lblInformation[4].setForeground(AE_Constantes.AE_BLANC);
+			}
+			lblInformation[6].setText("SGBD : " + EFS_Maitre_Variable.compteurErreurSGBD);
+			if(EFS_Maitre_Variable.compteurErreurSGBD > 0) {
+				lblInformation[6].setBackground(AE_Constantes.AE_ROUGE);
+				lblInformation[6].setOpaque(true);
+				lblInformation[6].setForeground(AE_Constantes.AE_BLANC);
+			}
 		} 
 	} 	
 		

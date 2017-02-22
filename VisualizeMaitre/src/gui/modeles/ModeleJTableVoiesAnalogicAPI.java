@@ -10,13 +10,14 @@ import javax.swing.table.AbstractTableModel;
 import em.general.EFS_General;
 import em.general.JTableConstantes;
 import kernel.AnalogicInput;
+import kernel.VoiesAPI;
 
 /**
  * Modele pour les JTable visualisant le Voies API
  * @author Eric Mariani
  * @since 16/02/2017
  */
-public class ModeleJTableVoiesAnalogicAPI extends AbstractTableModel implements JTableConstantes {
+public class ModeleJTableVoiesAnalogicAPI extends AbstractTableModel implements JTableConstantes, VoiesAPI {
 	private static final long serialVersionUID = 1L;
 	private final List<AnalogicInput> lstAnalogicInput = new ArrayList<AnalogicInput>();
     private final String[] entetes = {"Nom", "Valeur API", "Seuil atteint", "Alarme enclenchée", "Date apparition alarme", "Tempo ecoulee", "Type Alarme", "Tempo (mn)", "Pre Tempo"};

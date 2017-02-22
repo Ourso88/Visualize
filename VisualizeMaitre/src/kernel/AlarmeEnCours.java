@@ -25,8 +25,15 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	private boolean prisEnCompte;
 	private boolean historiser;
 	private int idPriseEnCompte;
+	private int typeAlarme;
 	private String commentairePriseEnCompte;
+	private boolean appelAlert;
 	
+	/**
+	 * Constructeur
+	 * @param typeCapteur
+	 * @param indexCapteur
+	 */
 	public AlarmeEnCours(int typeCapteur, int indexCapteur) {
 		this.setTypeCapteur(typeCapteur);
 		this.setIndexCapteur(indexCapteur);
@@ -38,6 +45,9 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 			this.setDateApparition(tbAnaAPI.get(indexCapteur).getDateAlarmeApparition());
 			this.setValeurAPI(tbAnaAPI.get(indexCapteur).getValeurAPI());
 			this.setAlarmeEnclenchee(tbAnaAPI.get(indexCapteur).isAlarmeEnclenchee());
+			this.setAppelAlert(tbAnaAPI.get(indexCapteur).isAppelAlert());
+			this.setTypeAlarme(tbAnaAPI.get(indexCapteur).getAlarme());
+			this.setInventaire(tbAnaAPI.get(indexCapteur).getInventaire());
 		} else if(typeCapteur == CAPTEUR_DIGITAL_ENTREE) {
 			this.setIdCapteur(tbDigiAPI.get(indexCapteur).getIdCapteur());
 			this.setNomCapteur(tbDigiAPI.get(indexCapteur).getNom());
@@ -46,6 +56,9 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 			this.setDateApparition(tbDigiAPI.get(indexCapteur).getDateAlarmeApparition());
 			this.setValeurAPI(tbDigiAPI.get(indexCapteur).getValeurAPI());
 			this.setAlarmeEnclenchee(tbDigiAPI.get(indexCapteur).isAlarmeEnclenchee());
+			this.setAppelAlert(tbDigiAPI.get(indexCapteur).isAppelAlert());
+			this.setTypeAlarme(tbDigiAPI.get(indexCapteur).getAlarme());
+			this.setInventaire(tbDigiAPI.get(indexCapteur).getInventaire());
 		}
 		this.setPrisEnCompte(false);
 		this.setHistoriser(false);
@@ -273,5 +286,32 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 		this.commentairePriseEnCompte = commentairePriseEnCompte;
 	}
 
+	/**
+	 * @return the typeAlarme
+	 */
+	public int getTypeAlarme() {
+		return typeAlarme;
+	}
+
+	/**
+	 * @param typeAlarme the typeAlarme to set
+	 */
+	public void setTypeAlarme(int typeAlarme) {
+		this.typeAlarme = typeAlarme;
+	}
+
+	/**
+	 * @return the appelAlert
+	 */
+	public boolean isAppelAlert() {
+		return appelAlert;
+	}
+
+	/**
+	 * @param appelAlert the appelAlert to set
+	 */
+	public void setAppelAlert(boolean appelAlert) {
+		this.appelAlert = appelAlert;
+	}
 	
 }

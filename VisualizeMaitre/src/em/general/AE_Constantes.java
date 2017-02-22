@@ -44,37 +44,4 @@ public interface AE_Constantes {
 	Color AE_VERT_002 = new Color(143, 214, 189);
 	Color AE_ROUGE = new Color(255, 0, 0); 
 	Color AE_NOIR = new Color(0, 0, 0); 
-	
-	
-/*
-	// Lien SGBD Oracle GE
-	public static final int AE_SGBD_TYPE = AE_SGBD_ORACLE;
-	public static final String AE_SGBD_SERVEUR = new String("@borop048:1830");
-	public static final String AE_SGBD_BASE = new String("borop048");
-	public static final String AE_SGBD_USER = new String("alize");
-	public static final String AE_SGBD_MDP = new String("Alize#2016V");	
-*/
-	
-	// Lien SGBD Axiome Oracle
-	public static final int AE_SGBD_TYPE = AE_SGBD_ORACLE;
-	public static String AE_SGBD_SERVEUR = new String("@localhost:1521");
-	public static final String AE_SGBD_BASE = new String("xe");
-	public static final String AE_SGBD_USER = new String("Alize");
-	public static final String AE_SGBD_MDP = new String("Alize");
-	
-/*	
-	// Lien SGBD
-	public static final int AE_SGBD_TYPE = AE_SGBD_SQLITE;
-	public static final String AE_SGBD_SERVEUR = new String("");
-	public static final String AE_SGBD_BASE = new String("AE.db");
-	public static final String AE_SGBD_USER = new String("");
-	public static final String AE_SGBD_MDP = new String("");
-*/
-/*	
-	public static final int AE_SGBD_TYPE = AE_SGBD_MYSQL;
-	public static final String AE_SGBD_SERVEUR = new String("localhost");
-	public static final String AE_SGBD_BASE = new String("AE");
-	public static final String AE_SGBD_USER = new String("root");
-	public static final String AE_SGBD_MDP = new String("");
-*/
 }

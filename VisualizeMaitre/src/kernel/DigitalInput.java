@@ -2,6 +2,7 @@ package kernel;
 
 import java.time.LocalDateTime;
 
+import em.fonctions.GestionLogger;
 import em.general.EFS_General;
 
 /**
@@ -19,7 +20,7 @@ public class DigitalInput extends Capteur implements EFS_General {
 	
 	private LocalDateTime dateAlarmeApparition;
 	private boolean alarmeTempoEcoulee;
-	
+	private boolean appelAlert;
 	
 	/**
 	 * Constructeur vide
@@ -48,7 +49,7 @@ public class DigitalInput extends Capteur implements EFS_General {
 	 * @param nOnF
 	 */
 	public DigitalInput(long idCapteur, String nom, String description, long idEquipement, long idPosteTechnique, long idTypeMateriel,	long idZoneSubstitution, 
-			 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, long idEntreeDigitale, int tempo, int nOnF) {
+			 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, String inventaire, long idEntreeDigitale, int tempo, int nOnF) {
 		this.setIdCapteur(idCapteur);
 		this.setNom(nom);
 		this.setDescription(description);
@@ -63,6 +64,7 @@ public class DigitalInput extends Capteur implements EFS_General {
 		this.setInhibition(inhibition);
 		this.setIdUnite(idUnite);
 		this.setContact(contact);
+		this.setInventaire(inventaire);
 		this.setIdEntreeDigitale(idEntreeDigitale);
 		this.setTempo(tempo);
 		this.setnOnF(nOnF);
@@ -181,7 +183,32 @@ public class DigitalInput extends Capteur implements EFS_General {
 	 * @param alarmeTempoEcoulee the alarmeTempoEcoulee to set
 	 */
 	public void setAlarmeTempoEcoulee(boolean alarmeTempoEcoulee) {
+		if(this.getAlarme() == ALARME_ALERT) {
+			if(!this.isAlarmeTempoEcoulee() && alarmeTempoEcoulee) {
+				// Appel Alert
+				GestionSGBD.gestionAlert(true); 
+				GestionAPI.gestionKlaxon(true);
+				GestionLogger.gestionLogger.info("<== APPEL ALERT ==> Capteur :" + this.getNom());
+				this.setAppelAlert(true);
+			}
+		} else {
+			this.setAppelAlert(false);
+		}
 		this.alarmeTempoEcoulee = alarmeTempoEcoulee;
 	}
+	/**
+	 * @return the appelAlert
+	 */
+	public boolean isAppelAlert() {
+		return appelAlert;
+	}
+
+	/**
+	 * @param appelAlert the appelAlert to set
+	 */
+	public void setAppelAlert(boolean appelAlert) {
+		this.appelAlert = appelAlert;
+	}
+
 	
 }

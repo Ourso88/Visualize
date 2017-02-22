@@ -2,22 +2,20 @@ package gui.modeles;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import em.general.EFS_General;
 import em.general.JTableConstantes;
 import kernel.AlarmeEnCours;
 import kernel.VoiesAPI;
 
-/**
- * Modele pour les JTable visualisant les alrmes en cours
- * @author Eric Mariani
- * @since 18/02/2017
- */
-public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JTableConstantes, VoiesAPI {
+public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EFS_General, JTableConstantes, VoiesAPI {
 	private static final long serialVersionUID = 1L;
-//	private final List<AlarmeEnCours> lstAlarmeEncours = new ArrayList<AlarmeEnCours>();
-    private final String[] entetes = {"Nom", "Description", "Date apparition", "Date disparition", "Date prise en compte", "Valeur"};
+	private final List<AlarmeEnCours> lstAlarmeEnCours = new ArrayList<AlarmeEnCours>();
+    private final String[] entetes = {"Voie", "Description", "Inventaire", "Apparition", "Disparition", "Prise en compte", "Alarme description", "Type", "Valeur", "A", "Rappel"};
     
     /**
      * Constructeur
@@ -32,7 +30,7 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
      * @return
      */
     public long getIdCapteur(int rowIndex) {
-    	return tbAlarme.get(rowIndex).getIdCapteur();
+    	return lstAlarmeEnCours.get(rowIndex).getIdCapteur();
     }
     
     /**
@@ -41,7 +39,7 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
      * 		Le nombre de lignes
      */
     public int getRowCount() {
-        return tbAlarme.size();
+        return lstAlarmeEnCours.size();
     }
  
     /**
@@ -76,32 +74,57 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
     public Object getValueAt(int rowIndex, int columnIndex) {
     	switch(columnIndex) {
 	    	case JT_ALARME_EN_COURS_NOM: 
-	    		return tbAlarme.get(rowIndex).getNomCapteur(); 
+	    		return lstAlarmeEnCours.get(rowIndex).getNomCapteur(); 
 	    	case JT_ALARME_EN_COURS_DESCRIPTION: 
-	    		return tbAlarme.get(rowIndex).getDescriptionCapteur(); 
+	    		return lstAlarmeEnCours.get(rowIndex).getDescriptionCapteur(); 
+	    	case JT_ALARME_EN_COURS_INVENTAIRE: 
+	    		return lstAlarmeEnCours.get(rowIndex).getInventaire(); 
 	    	case JT_ALARME_EN_COURS_DATE_APPARITION: 
-	    		if(tbAlarme.get(rowIndex).getDateApparition() != null) {
+	    		if(lstAlarmeEnCours.get(rowIndex).getDateApparition() != null) {
 		    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-		    		return tbAlarme.get(rowIndex).getDateApparition().format(formatter);
+		    		return lstAlarmeEnCours.get(rowIndex).getDateApparition().format(formatter);
 	    		} else {
 	    			return "---";
 	    		}
 	    	case JT_ALARME_EN_COURS_DATE_DISPARITION: 
-	    		if(tbAlarme.get(rowIndex).getDateDisparition() != null) {
+	    		if(lstAlarmeEnCours.get(rowIndex).getDateDisparition() != null) {
 		    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-		    		return tbAlarme.get(rowIndex).getDateDisparition().format(formatter);
+		    		return lstAlarmeEnCours.get(rowIndex).getDateDisparition().format(formatter);
 	    		} else {
 	    			return "---";
 	    		}
 	    	case JT_ALARME_EN_COURS_DATE_PRISE_EN_COMPTE: 
-	    		if(tbAlarme.get(rowIndex).getDatePriseEnCompte() != null) {
+	    		if(lstAlarmeEnCours.get(rowIndex).getDatePriseEnCompte() != null) {
 		    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-		    		return tbAlarme.get(rowIndex).getDatePriseEnCompte().format(formatter);
+		    		return lstAlarmeEnCours.get(rowIndex).getDatePriseEnCompte().format(formatter);
 	    		} else {
 	    			return "---";
 	    		}
+	    	case JT_ALARME_EN_COURS_ALARME_DESCRIPTION:
+	    		return "???";
+	    	case JT_ALARME_EN_COURS_TYPE: 
+	    		switch(lstAlarmeEnCours.get(rowIndex).getTypeAlarme()) {
+	    		case ALARME_RIEN:
+	    			return "Rien";
+	    		case ALARME_ALERT:
+	    			return "Alarme";
+	    		case ALARME_DEFAUT:
+	    			return "Défaut";
+	    		case ALARME_ETAT:
+	    			return "Etat";
+	    		default:
+	    			return "???";
+	    		}
 	    	case JT_ALARME_EN_COURS_VALEUR: 
-	    		return tbAlarme.get(rowIndex).getValeurAPI() / 10; 
+	    		return lstAlarmeEnCours.get(rowIndex).getValeurAPI() / 10; 
+	    	case JT_ALARME_EN_COURS_APPEL_ALERT: 
+	    		if(lstAlarmeEnCours.get(rowIndex).isAppelAlert()) {
+	    			return "A";
+	    		} else {
+	    			return "";
+	    		}
+	    	case JT_ALARME_EN_COURS_RAPPEL: 
+	    		return 0; 
 	    	default:
 	    		return null;
     	}
@@ -111,9 +134,9 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
      * Rajoute une ligne au tableau
      */
     public void addAlarmeEnCours(AlarmeEnCours alarmeEnCours) {
-    	tbAlarme.add(alarmeEnCours);
+    	lstAlarmeEnCours.add(alarmeEnCours);
  
-        fireTableRowsInserted(tbAlarme.size() -1, tbAlarme.size() -1);
+        fireTableRowsInserted(lstAlarmeEnCours.size() -1, lstAlarmeEnCours.size() -1);
     }    
  
     /**
@@ -122,7 +145,7 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
      * 		Index de la ligne
      */
     public void removeAlarmeEnCours(int rowIndex) {
-    	tbAlarme.remove(rowIndex);
+    	lstAlarmeEnCours.remove(rowIndex);
  
         fireTableRowsDeleted(rowIndex, rowIndex);
     }    
@@ -132,7 +155,12 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
      */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
- 		return false; 
+    	if (columnIndex == JT_ALARME_EN_COURS_RAPPEL) {
+    		return true; 
+    	}
+    	else {
+    		return false; 
+    	}
     }    
     
     /**
@@ -141,7 +169,7 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if(aValue != null){
-        	AlarmeEnCours alarmeEnCours = tbAlarme.get(rowIndex);
+        	AlarmeEnCours alarmeEnCours = lstAlarmeEnCours.get(rowIndex);
 
         	switch(columnIndex){
             	case JT_ALARME_EN_COURS_NOM:
@@ -164,8 +192,8 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements JT
             		alarmeEnCours.setDatePriseEnCompte((LocalDateTime) aValue);
             		fireTableCellUpdated(rowIndex, columnIndex);
             		break;
-    	    	case JT_ALARME_EN_COURS_VALEUR: 
-            		alarmeEnCours.setValeurAPI((Double) aValue);
+    	    	case JT_ALARME_EN_COURS_RAPPEL: 
+            		alarmeEnCours.setValeurAPI((Integer) aValue);
             		fireTableCellUpdated(rowIndex, columnIndex);
             		break;
                 default :

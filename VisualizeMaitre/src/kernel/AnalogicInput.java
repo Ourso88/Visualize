@@ -3,6 +3,7 @@ package kernel;
 
 import java.time.LocalDateTime;
 
+import em.fonctions.GestionLogger;
 import em.general.EFS_General;
 
 /**
@@ -34,7 +35,11 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	private boolean preAlarmeEnclenchee;
 	
 	private LocalDateTime dateAlarmeApparition;
+	private LocalDateTime DatePreAlarmeApparition;
 	private boolean alarmeTempoEcoulee;
+	private boolean preAlarmeTempoEcoulee;
+	
+	private boolean appelAlert;
 	
 	/**
 	 * Constructeur vide
@@ -71,7 +76,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 * @param valeurConsigne
 	 */
 	public AnalogicInput(long idCapteur, String nom, String description, long idEquipement, long idPosteTechnique, long idTypeMateriel,	long idZoneSubstitution, 
-						 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, long idEntreeAnalogique,
+						 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, String inventaire, long idEntreeAnalogique,
 						 int seuilHaut, int preSeuilHaut, int seuilBas,	int preSeuilBas, int calibration, long seuilTempo, long preSeuilTempo, String unite, int valeurConsigne) {
 		this.setIdCapteur(idCapteur);
 		this.setNom(nom);
@@ -87,6 +92,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 		this.setInhibition(inhibition);
 		this.setIdUnite(idUnite);
 		this.setContact(contact);
+		this.setInventaire(inventaire);
 		this.setIdEntreeAnalogique(idEntreeAnalogique);
 		this.setSeuilHaut(seuilHaut);
 		this.setPreSeuilHaut(preSeuilHaut);
@@ -111,7 +117,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 * @param valeur to set
 	 */
 	public void setValeurAPI(double valeurAPI) {
-		this.valeurAPI = valeurAPI;
+		this.valeurAPI = valeurAPI + this.getCalibration();
 		
 		if(valeurAPI < seuilBas) {
 			setSeuilBasAtteint(true);
@@ -125,6 +131,8 @@ public class AnalogicInput extends Capteur implements EFS_General {
 			setSeuilHautAtteint(false);
 			setPreSeuilHautAtteint(false);
 			setSeuilAtteint("PRE - BAS");
+			// Remise à zéro
+			setAppelAlert(false);
 		} else if(valeurAPI > seuilHaut) {
 			setSeuilBasAtteint(false);
 			setPreSeuilBasAtteint(false);
@@ -137,12 +145,16 @@ public class AnalogicInput extends Capteur implements EFS_General {
 			setSeuilHautAtteint(false);
 			setPreSeuilHautAtteint(true);
 			setSeuilAtteint("PRE - HAUT");
+			// Remise à zéro
+			setAppelAlert(false);
 		} else {
 			setSeuilBasAtteint(false);
 			setPreSeuilBasAtteint(false);
 			setSeuilHautAtteint(false);
 			setPreSeuilHautAtteint(false);
 			setSeuilAtteint("AUCUN");
+			// Remise à zéro
+			setAppelAlert(false);
 		}
 	}
 	
@@ -313,7 +325,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	public void setSeuilHautAtteint(boolean seuilHautAtteint) {
 		this.seuilHautAtteint = seuilHautAtteint;
 		if(seuilHautAtteint) {
-			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT)) && (this.getInhibition() == 0)) {
+			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT) || (this.getAlarme() == ALARME_ETAT)) && (this.getInhibition() == 0)) {
 				this.setAlarmeEnclenchee(true);
 			}
 		} else if(!this.seuilBasAtteint) {
@@ -355,7 +367,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	public void setSeuilBasAtteint(boolean seuilBasAtteint) {
 		this.seuilBasAtteint = seuilBasAtteint;
 		if(seuilBasAtteint) {
-			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT)) && (this.getInhibition() == 0)) {
+			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT) || (this.getAlarme() == ALARME_ETAT)) && (this.getInhibition() == 0)) {
 				this.setAlarmeEnclenchee(true);
 			}
 		} else if(!this.seuilHautAtteint) {
@@ -434,6 +446,17 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 * @param preAlarmeEnclenchee the preAlarmeEnclenchee to set
 	 */
 	public void setPreAlarmeEnclenchee(boolean preAlarmeEnclenchee) {
+		if(!this.preAlarmeEnclenchee && preAlarmeEnclenchee) {
+			this.setDatePreAlarmeApparition(LocalDateTime.now());
+		}
+		// Calcul si tempo est passé
+		if(preAlarmeEnclenchee) {
+			if(this.getDatePreAlarmeApparition().plusMinutes(this.getPreSeuilTempo()).isBefore(LocalDateTime.now())) {
+				this.setPreAlarmeTempoEcoulee(true);
+			} else {
+				this.setPreAlarmeTempoEcoulee(false);
+			}
+		}
 		this.preAlarmeEnclenchee = preAlarmeEnclenchee;
 	}
 
@@ -462,7 +485,66 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 * @param alarmeTempoEcoulee the alarmeTempoEcoulee to set
 	 */
 	public void setAlarmeTempoEcoulee(boolean alarmeTempoEcoulee) {
+		if(this.getAlarme() == ALARME_ALERT) {
+			if(!this.isAlarmeTempoEcoulee() && alarmeTempoEcoulee) {
+				// Appel Alert
+				GestionSGBD.gestionAlert(true); 
+				GestionAPI.gestionKlaxon(true);
+				GestionLogger.gestionLogger.info("<== APPEL ALERT ==> Capteur :" + this.getNom());
+				this.setAppelAlert(true);
+			}
+		} else {
+			this.setAppelAlert(false);
+		}
 		this.alarmeTempoEcoulee = alarmeTempoEcoulee;
 	}
-	
+
+	/**
+	 * @return the appelAlert
+	 */
+	public boolean isAppelAlert() {
+		return appelAlert;
+	}
+
+	/**
+	 * @param appelAlert the appelAlert to set
+	 */
+	public void setAppelAlert(boolean appelAlert) {
+		this.appelAlert = appelAlert;
+	}
+
+	/**
+	 * @return the preAlarmeTempoEcoulee
+	 */
+	public boolean isPreAlarmeTempoEcoulee() {
+		return preAlarmeTempoEcoulee;
+	}
+
+	/**
+	 * @param preAlarmeTempoEcoulee the preAlarmeTempoEcoulee to set
+	 */
+	public void setPreAlarmeTempoEcoulee(boolean preAlarmeTempoEcoulee) {
+		if(this.getAlarme() == ALARME_ALERT) {
+			this.setAppelAlert(true);
+		} else {
+			this.setAppelAlert(false);
+		}
+		this.preAlarmeTempoEcoulee = preAlarmeTempoEcoulee;
+	}
+
+	/**
+	 * @return the datePreAlarmeApparition
+	 */
+	public LocalDateTime getDatePreAlarmeApparition() {
+		return DatePreAlarmeApparition;
+	}
+
+	/**
+	 * @param datePreAlarmeApparition the datePreAlarmeApparition to set
+	 */
+	public void setDatePreAlarmeApparition(LocalDateTime datePreAlarmeApparition) {
+		DatePreAlarmeApparition = datePreAlarmeApparition;
+	}
+
+
 }

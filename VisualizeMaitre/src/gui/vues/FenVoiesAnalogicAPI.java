@@ -21,7 +21,6 @@ import em.general.EFS_General;
 import em.general.EFS_Maitre_Variable;
 import em.general.JTableConstantes;
 import gui.modeles.ModeleJTableVoiesAnalogicAPI;
-import kernel.AnalogicInput;
 import kernel.VoiesAPI;
 
 /**
@@ -107,14 +106,7 @@ public class FenVoiesAnalogicAPI extends JFrame implements AE_Constantes, VoiesA
 	 * Raffraichissement des valeurs du tableau
 	 */
 	private void raffraichissementValeur() {
-		for(int i = 0; i < tbAnaAPI.size(); i++) {
-			mdlAnalogicInput.setValueAt(tbAnaAPI.get(i).getValeurAPI(), i, JT_VOIES_API_VALEUR);
-			mdlAnalogicInput.setValueAt(tbAnaAPI.get(i).getSeuilAtteint(), i, JT_VOIES_API_SEUIL_ATTEINT);
-			mdlAnalogicInput.setValueAt(tbAnaAPI.get(i).isAlarmeEnclenchee(), i, JT_VOIES_API_ALARME_ENCLENCHEE);
-			mdlAnalogicInput.setValueAt(tbAnaAPI.get(i).getDateAlarmeApparition(), i, JT_VOIES_API_DATE_APPARITION_ALARME);
-			mdlAnalogicInput.setValueAt(tbAnaAPI.get(i).isAlarmeTempoEcoulee(), i, JT_VOIES_API_TEMPO_ALARME_ECOULEE);
-		}
-		
+		mdlAnalogicInput.fireTableDataChanged();
 		pnlInfo.setLblInformation(2, "Cpt : " + EFS_Maitre_Variable.nombreLectureAPI);
 	}
 	
@@ -123,32 +115,7 @@ public class FenVoiesAnalogicAPI extends JFrame implements AE_Constantes, VoiesA
 	 */
 	private void remplirTableauVoiesAnalogiques() {
 		for(int i = 0; i < tbAnaAPI.size(); i++) {
-			mdlAnalogicInput.addVoiesAPI(new AnalogicInput(
-					tbAnaAPI.get(i).getIdCapteur(),
-					tbAnaAPI.get(i).getNom(),
-					tbAnaAPI.get(i).getDescription(),
-					tbAnaAPI.get(i).getIdEquipement(),
-					tbAnaAPI.get(i).getIdPosteTechnique(),
-					tbAnaAPI.get(i).getIdTypeMateriel(),
-					tbAnaAPI.get(i).getIdZoneSubstitution(),
-					tbAnaAPI.get(i).getTypeCapteur(),
-					tbAnaAPI.get(i).getAlarme(),
-					tbAnaAPI.get(i).getIdService(),
-					tbAnaAPI.get(i).getVoieApi(),
-					tbAnaAPI.get(i).getInhibition(),
-					tbAnaAPI.get(i).getIdUnite(),
-					tbAnaAPI.get(i).getContact(),
-					tbAnaAPI.get(i).getIdEntreeAnalogique(),
-					tbAnaAPI.get(i).getSeuilHaut(),
-					tbAnaAPI.get(i).getPreSeuilHaut(),
-					tbAnaAPI.get(i).getSeuilBas(),
-					tbAnaAPI.get(i).getPreSeuilBas(),
-					tbAnaAPI.get(i).getCalibration(),
-					tbAnaAPI.get(i).getSeuilTempo(),
-					tbAnaAPI.get(i).getPreSeuilTempo(),
-					tbAnaAPI.get(i).getUnite(),
-					tbAnaAPI.get(i).getValeurConsigne()					
-					));
+			mdlAnalogicInput.addVoiesAPI(tbAnaAPI.get(i));
 		}
 	}
 

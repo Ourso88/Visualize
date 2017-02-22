@@ -40,17 +40,22 @@ public interface EFS_General {
 	public static final int CAPTEUR_DIGITAL_NO = 1;
 	public static final int CAPTEUR_DIGITAL_NF = 2;
 
+	// Inhibition
+	public static final int CAPTEUR_EN_SERVICE = 0;
+	public static final int CAPTEUR_EN_MAINTENANCE = 1;
+	
 	// Timer general
 	
 	// Timer rafraichissement fenetre
 	public static final int TIMER_FEN_ALARMES_EN_COURS = 1000;
 	public static final int TIMER_FEN_VOIES_ANALOGIC = 1000;
 	public static final int TIMER_FEN_VOIES_DIGITAL = 1000;
+	public static final int TIMER_FEN_PRINCIPALE = 1000;
 	
 	// Timer SGBD
 	public static final int TIMER_MINUTE = 60000;
 	public static final int TIMER_ENREGISTREMENT_TPS_REEL = 10000;
-	public static final int TIMER_ENREGISTREMENT_HISTORIQUE = 1000; // 180000;
+	public static final int TIMER_ENREGISTREMENT_HISTORIQUE = 5000; // 180000;
 	public static final int TIMER_LOGIN = 300000;
 	
 	// Timer API

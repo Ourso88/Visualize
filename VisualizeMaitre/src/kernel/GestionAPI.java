@@ -3,156 +3,67 @@ package kernel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import em.communication.AE_TCP_Connection;
 import em.communication.AE_TCP_Modbus;
 import em.fonctions.GestionLogger;
-import em.general.AE_Constantes;
-import em.general.AE_Variables;
 import em.general.EFS_General;
 import em.general.EFS_Maitre_Variable;
 
-public class GestionAPI extends JFrame implements ActionListener, EFS_General, AE_TCP_Modbus, AE_Constantes  {
-	// Tableaux des voies
-	private int tbIdAI[] = new int [MAX_AI];
-	private double tbAI[] = new double [MAX_AI];
-	private double tbAncAI[] = new double [MAX_AI];
-	private int tbIdDI[] = new int [MAX_DI];
-	private int tbDI[] = new int [MAX_DI];
-	private int tbAncDI[] = new int [MAX_DI];
-	private double tbEchangeMaitreClient[] = new double [MAX_ECHANGE_MAITRE_CLIENT];
+/**
+ * Lecture des valeurs dans l'API et gestion des résultats
+ * @author Eric
+ *
+ */
+public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
+	private Timer tmrTpsReel = new Timer(TIMER_LECTURE_TPS_REEL, this);	
+	private Timer tmrHistoriserValeurAPI = new Timer(TIMER_ENREGISTREMENT_HISTORIQUE, this);	
 	
-	private AnalogicInput tbAnaAPI[] = new AnalogicInput[MAX_AI];
-	private int cptCapteurAna = 0;
-    private Timer tmrTpsReel = new Timer(EFS_General.TIMER_LECTURE_TPS_REEL, this);	
-	
-	private JLabel lblInformation = new JLabel(" --- ");
-    private long cptLecture = 0;
-	
-	public GestionAPI () {
-		super();
-		build();
-//		miseAjourCapteur();
-		lectureAnalogicInput();
+	/**
+	 * Constructeur
+	 */
+	public GestionAPI() {
 		tmrTpsReel.start();
-	}
-    
-	private void build() {
-	    this.setTitle("EFS GTC - Programme maitre");
-	    this.setSize(1000, 800);
-		this.setResizable(true);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	    
-	    this.setLocationRelativeTo(null);
-	    
-	    this.add("North", lblInformation);
-
-	    
-	}
-	
-	private void miseAjourCapteur() {
-		ResultSet rsVueCapteur = AE_Variables.ctnOracle.lectureData("SELECT * FROM Vue_Capteur");
-		try {
-			while(rsVueCapteur.next()) {
-				AE_Variables.ctnOracle.fonctionSql("UPDATE Capteur SET idCapteur = " + rsVueCapteur.getLong("idCapteur") + " WHERE Nom = '" + rsVueCapteur.getString("Nom") + "'");
-			}
-		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("Erreur de mise à jour " + e.getMessage());
-		}
-		
-	}
-	
-	private void lectureAnalogicInput() {
-		// Lecture données
-		try {
-			ResultSet result = AE_Variables.ctnOracle.lectureData("SELECT * FROM (EntreeAnalogique LEFT JOIN Capteur ON EntreeAnalogique.idCapteur = Capteur.idCapteur)"
-					+ " WHERE TypeCapteur = 1");
-			while(result.next()) {
-				tbAnaAPI[cptCapteurAna++] = new AnalogicInput(
-				result.getLong("idCapteur"),
-				result.getString("nom"),
-				result.getString("description"),
-				result.getLong("idEquipement"),
-				result.getLong("idPosteTechnique"),
-				result.getLong("idTypeMateriel"),
-				result.getLong("idZoneSubstitution"),
-				result.getInt("typeCapteur"),
-				result.getInt("alarme"),
-				result.getLong("idService"),
-				result.getInt("voieApi"),
-				result.getInt("inhibition"),
-				result.getLong("idUnite"),
-				result.getString("contact"),
-				result.getLong("idEntreeAnalogique"),
-				result.getInt("seuilHaut"),
-				result.getInt("preSeuilHaut"),
-				result.getInt("seuilBas"),
-				result.getInt("preSeuilBas"),
-				result.getInt("calibration"),
-				result.getLong("seuilTempo"),
-				result.getLong("preSeuilTempo"),
-				result.getString("unite"),
-				result.getInt("valeurConsigne")
-				);
-			}
-			result.close();
-			for(int i = 0; i < cptCapteurAna; i++){
-				System.out.println("Capteur i = " + i + " --> " + tbAnaAPI[i].getNom());
-			}
-			AE_Variables.ctnOracle.closeLectureData();
-		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("Erreur lecture Table Capteur : " + e.getMessage());
-		}
+		tmrHistoriserValeurAPI.start();
 	}
 	
 	
-    
-	public void lectureTpsReel() {
+	/**
+	 * Lecture des valeurs dans l'API (automate)
+	 */
+	public static void lectureTpsReel() {
 		int adresseLecture = 0;
 		int cptLecture = 0;
-		int adresseDI = 0;
-		int bitTest = 0;
-		int valeurTest = 0;
-		String strSql;
-		@SuppressWarnings("unused")
-		boolean blChgtAI = false;
-		@SuppressWarnings("unused")
-		boolean blChgtDI = false;
-		double pctPrg = 0;
-		int cptPrg = 0;
+		double tbAI[] = new double [MAX_AI];
+		int tbDI[] = new int [MAX_DI];
 		
-		lblInformation.setText("Lecture numéro : " + this.cptLecture);
-		this.cptLecture++;
-		
-//		pnlInfo.setLblInformation(0, "Lecture temps réel des AI ...");
-		try{
-			// ===== Ouverture de la connection =====
+		try {
+			// ===== Ouverture de la connection =====================
 			//  Variables TCP
 			InetAddress addr = null; // Adresse IP du serveur	
 			AE_TCP_Connection con = null; //the connection
 			double [] reqReponse;
 			
 			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
-			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con = new AE_TCP_Connection(addr, EFS_General.MODBUS_PORT);
 			con.connect();
 			if (con.isConnected()) {
-				if (MODBUS_DEBUG) System.out.println("API Connecté ... ");
+				EFS_Maitre_Variable.nombreLectureAPI++;
 			}
 			else {
-				if (MODBUS_DEBUG) System.out.println("API Déconnecté ... ");
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+				EFS_Maitre_Variable.compteurErreurAPI++;
 			}
+			// ======================================================
 
-			// ===== Envoi des requetes de lecture pour les AI =====
+			// ===== Envoi des requetes de lecture pour les AI ======
 			cptLecture = 0;
 			do {
 				adresseLecture = ADR_API_AI_TPS_REEL + (cptLecture * NB_MOT_LECTURE_AI);
 				if (adresseLecture < (ADR_API_AI_TPS_REEL + MAX_AI)) {
-					reqReponse = con.setRequest(con.createRequest(READ_MULTIPLE_REGISTERS, adresseLecture, NB_MOT_LECTURE_AI));
+					reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.READ_MULTIPLE_REGISTERS, adresseLecture, NB_MOT_LECTURE_AI));
 					for (int i = 0; i < NB_MOT_LECTURE_AI; i++) {
 						tbAI[(adresseLecture - ADR_API_AI_TPS_REEL) + i] = reqReponse[i]; 
 					} // Fin for i
@@ -160,13 +71,17 @@ public class GestionAPI extends JFrame implements ActionListener, EFS_General, A
 				cptLecture++;
 			} while(adresseLecture < (ADR_API_AI_TPS_REEL + MAX_AI)); // Fin while
 
-			for(int i = 0; i < cptCapteurAna; i++) {
-				tbAnaAPI[i].setValeurAPI(tbAI[tbAnaAPI[i].getVoieApi()]);
+			for(int i = 0; i < tbAnaAPI.size(); i++) {
+				tbAnaAPI.get(i).setValeurAPI(tbAI[tbAnaAPI.get(i).getVoieApi()]);
 			}
+			// ======================================================
 			
-
-			// ===== Envoi des requetes de lecture pour les DI =====
-			reqReponse = con.setRequest(con.createRequest(READ_MULTIPLE_REGISTERS, ADR_API_DI_TPS_REEL, NB_MOT_LECTURE_DI));
+			// ===== Envoi des requetes de lecture pour les DI ======
+			int adresseDI = 0;
+			int bitTest = 0;
+			int valeurTest = 0;
+			
+			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.READ_MULTIPLE_REGISTERS, ADR_API_DI_TPS_REEL, NB_MOT_LECTURE_DI));
 			for (int i = 0; i < NB_MOT_LECTURE_DI; i++) {
 				for (int j = 0; j < 16; j++) {
 					adresseDI = (i * 16) + j;
@@ -180,86 +95,242 @@ public class GestionAPI extends JFrame implements ActionListener, EFS_General, A
 					}
 				} // Fin for j
 			} // Fin for i
-
-			// ===== Envoi des requetes de lecture pour les échanges Maitre - Client =====
-			adresseLecture = ADR_API_ECHANGE_MAITRE_CLIENT;
-			reqReponse = con.setRequest(con.createRequest(READ_MULTIPLE_REGISTERS, adresseLecture, NB_MOT_LECTURE_MAITRE_CLIENT));
-			for (int i = 0; i < NB_MOT_LECTURE_MAITRE_CLIENT; i++) {
-				tbEchangeMaitreClient[i] = reqReponse[i]; 
-			} // Fin for i
 			
-            con.close();
-            if (MODBUS_DEBUG) System.out.println("API Close ... ");
-            
+			for(int i = 0; i < tbDigiAPI.size(); i++) {
+				tbDigiAPI.get(i).setValeurAPI(tbDI[tbDigiAPI.get(i).getVoieApi()]);
+			}
+			// ======================================================
+			
+			
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Erreur lecture MODBUS : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch	
+	}	
+	
+	/**
+	 * Gere la liste des alarmes en cours
+	 */
+	private void gestionAlarmesEnCours() {
+		boolean trouve = false;
+		// Parcourir tous les AI
+		for(int i = 0; i < tbAnaAPI.size(); i++) {
+			// Regarder si en alarme
+			if(tbAnaAPI.get(i).isAlarmeEnclenchee()) {
+				// Regarder si tempo dépassée
+				if(tbAnaAPI.get(i).isAlarmeTempoEcoulee()) {
+					// Regarder si déjà dans le tableau
+					trouve = false;
+					for(int j = 0; j < tbAlarme.size(); j++) {
+						if(tbAnaAPI.get(i).getIdCapteur() == tbAlarme.get(j).getIdCapteur()) {
+							trouve = true;
+						}
+					}
+					if(!trouve) {
+						tbAlarme.add(new AlarmeEnCours(CAPTEUR_ANALOGIQUE_ENTREE, i));
+					}
+				} // fin if Tempo
+			} // fin if Alarme
+		} // fin for(i)	
+
+		// Parcourir tous les DI
+		for(int i = 0; i < tbDigiAPI.size(); i++) {
+			// Regarder si en alarme
+			if(tbDigiAPI.get(i).isAlarmeEnclenchee()) {
+				// Regarder si tempo dépassée
+				if(tbDigiAPI.get(i).isAlarmeTempoEcoulee()) {
+					// Regarder si déjà dans le tableau
+					trouve = false;
+					for(int j = 0; j < tbAlarme.size(); j++) {
+						if(tbDigiAPI.get(i).getIdCapteur() == tbAlarme.get(j).getIdCapteur()) {
+							trouve = true;
+						}
+					}
+					if(!trouve) {
+						tbAlarme.add(new AlarmeEnCours(CAPTEUR_DIGITAL_ENTREE, i));
+					}
+				} // fin if Tempo
+			} // fin if Alarme
+		} // fin for(i)	
+		
+		
+		for(int i = 0; i < tbAlarme.size(); i++) {
+			// Nouvelle Valeur AI
+			if(tbAlarme.get(i).getTypeCapteur() == CAPTEUR_ANALOGIQUE_ENTREE) {
+				tbAlarme.get(i).setValeurAPI(tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getValeurAPI());
+				// Modification date Apparition
+				if(tbAlarme.get(i).getDateApparition() != tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition()) {
+					tbAlarme.get(i).setDateApparition(tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition());
+				}
+				// Disparition
+				if(!tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
+					tbAlarme.get(i).setAlarmeEnclenchee(false);
+				}
+			}
+			// Nouvelle Valeur DI
+			if(tbAlarme.get(i).getTypeCapteur() == CAPTEUR_DIGITAL_ENTREE) {
+				tbAlarme.get(i).setValeurAPI(tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getValeurAPI());
+				// Modification Date Apparition
+				if(tbAlarme.get(i).getDateApparition() != tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition()) {
+					tbAlarme.get(i).setDateApparition(tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition());
+				}
+				// Disparition
+				if(!tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
+					tbAlarme.get(i).setAlarmeEnclenchee(false);
+				}
+			}
+			// Historiser
+			if(tbAlarme.get(i).isHistoriser()) {
+				GestionSGBD.historiserAlarme(i);
+				tbAlarme.remove(i);
+			}
+		}
+	}
+	/**
+	 * Gere les pre seuil
+	 */
+	private void gestionAlarmesPreSeuil() {
+		boolean trouve = false;
+		// Parcourir tous les tempos non enclenchées
+		for(int i = 0; i < tbAnaAPI.size(); i++) {
+			// Regarder si en alarme
+			if(tbAnaAPI.get(i).isAlarmeEnclenchee()) {
+				// Regarder si tempo dépassée
+				if(!tbAnaAPI.get(i).isAlarmeTempoEcoulee()) {
+					// Regarder si déjà dans le tableau
+					trouve = false;
+					for(int j = 0; j < tbAlarmeSeuil.size(); j++) {
+						if(tbAnaAPI.get(i).getIdCapteur() == tbAlarmeSeuil.get(j).getIdCapteur()) {
+							trouve = true;
+						}
+					}
+					if(!trouve) {
+						tbAlarmeSeuil.add(new AlarmeSeuil(i));
+					}
+				} // fin if Tempo
+			} // fin if Alarme
+		} // fin for(i)	
+		
+		// Parcourir tous les pre seuil enclenchées
+		for(int i = 0; i < tbAnaAPI.size(); i++) {
+			// Regarder si en alarme
+			if(tbAnaAPI.get(i).isPreAlarmeEnclenchee()) {
+				// Regarder si tempo dépassée
+				if(tbAnaAPI.get(i).isPreAlarmeTempoEcoulee()) {
+					// Regarder si déjà dans le tableau
+					trouve = false;
+					for(int j = 0; j < tbAlarmeSeuil.size(); j++) {
+						if(tbAnaAPI.get(i).getIdCapteur() == tbAlarmeSeuil.get(j).getIdCapteur()) {
+							trouve = true;
+						}
+					}
+					if(!trouve) {
+						tbAlarmeSeuil.add(new AlarmeSeuil(i));
+					}
+				} // fin if Tempo
+			} // fin if Alarme
+		} // fin for(i)
+		
+		// Retirer ceux qui ont changé de statut
+		for(int i = 0; i < tbAlarmeSeuil.size(); i++) {
+			// Nouvelle Valeur AI
+			tbAlarmeSeuil.get(i).setValeurAPI(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).getValeurAPI());
+			tbAlarmeSeuil.get(i).setSeuilAtteint(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).getSeuilAtteint());
+			// Disparition
+			if(!tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isPreAlarmeEnclenchee()) {
+				if(!tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
+					tbAlarmeSeuil.remove(i);
+				}
+			}
+			if(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeEnclenchee() && tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeTempoEcoulee()) {
+				tbAlarmeSeuil.remove(i);
+			}
+		}
+		
+		
+	}
+	
+	/**
+	 * Lance l'enregistrement des valeurs dans la base
+	 */
+	private void enregistrerValeurAPI() {
+		GestionSGBD.historiseValeurVoiesAPI();
+		
+		/*
+		new Thread(
+				new Runnable() {
+					public void run() {
+						GestionSGBD.historiseValeurVoiesAPI();			    	  
+					} // Fin run()
+				} // Fin Runnable
+			).start(); // Fin new Thread
+		*/
+	}
+	
+	/**
+	 * Gestion du Klaxon commandé par API
+	 * @param sonnerie
+	 */
+	public static void gestionKlaxon(boolean sonnerie) {
+		try{
+			// ===== Ouverture de la connection =====
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			@SuppressWarnings("unused")
+			double [] reqReponse = null;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con.connect();
+			if (con.isConnected()) {
+				EFS_Maitre_Variable.nombreLectureAPI++;
+			}
+			else {
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+			}
+			if (sonnerie) {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2010, 1));			
+			} 
+			else {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2010, 0));			
+			} // Fin if sonnerie
+			con.close();
 		} // Fin Try
 		catch (Exception e){
-			System.out.println("Erreur Lecture ... ");
-			System.err.println(e.getMessage());
+			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Klaxon : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
 		} // Fin catch		
-
-		// Contrôle si changement dans les valeurs
-		blChgtAI = false; blChgtDI = false;
-		for(int i = 0; i < MAX_AI; i++) {
-			if((tbIdAI[i] != -1) && (tbAncAI[i] != tbAI[i])) {
-				blChgtAI = true;
-			}
-		} // fin for i
-		for(int i = 0; i < MAX_DI; i++) {
-			if((tbIdDI[i] != -1) && (tbAncDI[i] != tbDI[i])) {
-				blChgtDI = true;
-			}
-		} // fin for i
-		
-/*
-		// =====================> Enregistrement des valeurs HISTORIQUE <=====================================
-        if (blEnregistrementHistorique) {
-        	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));  
-        	pnlInfo.setJpbInformationValue(0); cptPrg = 0; pctPrg = (double) (100 / (MAX_AI + MAX_DI));
-            if (MODBUS_DEBUG) System.out.println("Enregistrement des AI Historique ");
-            pnlInfo.setLblInformation(0, "Enregistrement des AI Historique ...");
-			for (int i = 0; i < MAX_AI; i++) {
-				if (tbIdAI[i] != -1) {
-					strSql = "INSERT INTO AI_Historique (idCapteur, VoieApi, Valeur, DateLecture) "
-							+ "VALUES (" + tbIdAI[i] + ", " + (i + 1) + ", " + (tbAI[i] + tbCalibrationAI[i]) + ", sysdate)"; 
-					ctn.fonctionSql(strSql);
-				} // Fin if != -1
-				pnlInfo.setJpbInformationValue((int) ((cptPrg++) * pctPrg));
-				pnlInfo.repaint();
-			} // Fin for i
-            pnlInfo.setLblInformation(0, "Enregistrement des DI Historique ...");
-			for (int i = 0; i < MAX_DI; i++) {
-				if (tbIdDI[i] != -1) {
-					strSql = "INSERT INTO DI_Historique (idCapteur, VoieApi, Valeur, DateLecture) "
-							+ "VALUES (" + tbIdDI[i] + ", " + (i + 1) + ", " + tbDI[i] + ", sysdate)"; 
-					ctn.fonctionSql(strSql);
-				} // Fin if != -1
-				pnlInfo.setJpbInformationValue((int) ((cptPrg++) * pctPrg));
-				pnlInfo.repaint();
-			} // Fin for i
-			blEnregistrementHistorique = false;
-			pnlInfo.setJpbInformationValue(100);
-			pnlInfo.setJpbInformationValue(0);
-        	setCursor(Cursor.getDefaultCursor());
-        } // Fin if blEnregistrementHistorique
-		// =====================> Fin Enregistrement des valeurs HISTORIQUE <=====================================
-*/
-		
-	} // Fin lectureTpsReel	
-
-
+	} // Fin gestionKlaxon()
+	
+	
+	/**
+	 * Gestion des actions
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == tmrTpsReel) {
 			try {
 				tmrTpsReel.stop();
 				lectureTpsReel();
+				gestionAlarmesEnCours();
+				gestionAlarmesPreSeuil();
 				tmrTpsReel.start();
 			} catch (Exception ex) {
-				ex.printStackTrace();
-				System.exit(-1);
-			} // Fin try					
-		} // Fin If
-		
+				GestionLogger.gestionLogger.warning("Probleme dans le TIMER de lecture des valeurs ...");
+				EFS_Maitre_Variable.compteurErreurAPI++;
+			} // Fin try		
+		}
+		if (ae.getSource() == tmrHistoriserValeurAPI) {
+			try {
+				tmrHistoriserValeurAPI.stop();
+				enregistrerValeurAPI();
+				tmrHistoriserValeurAPI.start();
+			} catch (Exception ex) {
+				GestionLogger.gestionLogger.warning("Probleme dans le TIMER d'enregistrement des valeurs ...");
+				EFS_Maitre_Variable.compteurErreurAPI++;
+			} // Fin try		
+		}
 	}
 	
 }

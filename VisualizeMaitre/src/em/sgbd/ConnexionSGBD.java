@@ -29,7 +29,7 @@ public class ConnexionSGBD {
 	public static Connection getInstance(int typeSgbd, String base, String server, String utilisateur, String pwd) {
 		switch (typeSgbd) {
 			case AE_Constantes.AE_SGBD_ORACLE : {
-				if(ctnOracle == null) {
+//				if(ctnOracle == null) {
 					try {
 						Class.forName("oracle.jdbc.driver.OracleDriver");
 						ctnOracle = DriverManager.getConnection("jdbc:oracle:thin:" + server + ":" + base, utilisateur, pwd);
@@ -37,7 +37,7 @@ public class ConnexionSGBD {
 					} catch (Exception e) {
 						GestionLogger.gestionLogger.warning("Erreur connexion à la base Oracle\n  " + e.getMessage());
 					} // Fin try - catch
-				} // fin if
+//				} // fin if
 				ctnBase = ctnOracle;
 				break;
 			} // Fin case Oracle	

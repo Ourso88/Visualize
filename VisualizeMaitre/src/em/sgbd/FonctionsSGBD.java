@@ -7,6 +7,8 @@ import java.sql.Statement;
 
 import em.fonctions.GestionLogger;
 import em.general.AE_Constantes;
+import em.general.AE_Variables;
+import em.general.EFS_Maitre_Variable;
 
 
 /**
@@ -16,7 +18,7 @@ import em.general.AE_Constantes;
  * Fonctions pour la connexion aux bases de données MySql, Oracle, Access, SQL_Lite
  */
 public class FonctionsSGBD {
-	private static Connection ctn;
+	public Connection ctn;
 	private int typeSgbd;
 
 	private Statement maTransmission;
@@ -58,6 +60,7 @@ public class FonctionsSGBD {
 			ctn.close();
 		} catch (SQLException e) {
 			GestionLogger.gestionLogger.warning("Erreur close \n " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	} // Fin Close
 	
@@ -78,6 +81,7 @@ public class FonctionsSGBD {
 	 *    ResultSet avec les données de la requéte
 	 */
 	public ResultSet lectureData(String strReq) {
+		testConnexionBase();
 		try {
 			if (typeSgbd != AE_Constantes.AE_SGBD_SQLITE) {
 				maTransmission = ctn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -87,9 +91,11 @@ public class FonctionsSGBD {
 			}
 			monResultat = maTransmission.executeQuery(strReq);
 		}
-		catch (Exception e) {
-			GestionLogger.gestionLogger.warning("Erreur lectureData\n " + "Requete = " + strReq + "\n" + e.getMessage());
+			catch (Exception e) {
+				GestionLogger.gestionLogger.warning("Erreur lectureData\n " + "Requete = " + strReq + "\n" + e.getMessage());
+				EFS_Maitre_Variable.compteurErreurSGBD++;
 		} // Fin try - catch
+			
 		return monResultat;
 	} // Fil LectureData
 
@@ -103,6 +109,7 @@ public class FonctionsSGBD {
 		@SuppressWarnings("unused")
 		int nb = 0;
 		
+		testConnexionBase();
 		try {
 			maTransmission = ctn.createStatement();
 			nb = maTransmission.executeUpdate(strReq);
@@ -110,7 +117,7 @@ public class FonctionsSGBD {
 		}
 		catch (Exception e) {
 			GestionLogger.gestionLogger.warning("Erreur fonctionSql \n " + "Requete = " + strReq + "\n" + e.getMessage());
-			System.exit(0);
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		} // Fin try - catch
 	} // Fil LectureData	
 	
@@ -125,6 +132,27 @@ public class FonctionsSGBD {
 		}
 		catch (Exception e) {
 			GestionLogger.gestionLogger.warning("Erreur fonction closeLectureData \n  " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		} // Fin try - catch
 	}
+
+	/**
+	 * Teste si la connexion à la base de données n'est pas fermée
+	 */
+	private void testConnexionBase() {
+		try {
+			if(ctn.isClosed()) {
+				GestionLogger.gestionLogger.warning("Erreur Connexion SGBD Fermée ...");
+				ctn = ConnexionSGBD.getInstance(AE_Variables.AE_SGBD_TYPE, AE_Variables.AE_SGBD_SERVEUR, AE_Variables.AE_SGBD_BASE, AE_Variables.AE_SGBD_USER, AE_Variables.AE_SGBD_MDP);
+				if(ctn.isClosed()) {
+					GestionLogger.gestionLogger.warning("Erreur Connexion SGBD TOUJOURS Fermée ...");
+				}
+			}
+		} catch (SQLException e) {
+			GestionLogger.gestionLogger.warning("Erreur Connexion SGBD Fermée impossible de rouvrir ... ");
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+		}
+	}
+	
+
 } // Fin Class

@@ -61,11 +61,11 @@ public class GestionLogger {
 		
 		try {
 			if(fhXml == null) {
-				fhXml = new FileHandler("ViperLogging.xml", true);
+				fhXml = new FileHandler("GTC_MAITRE_Logging.xml", true);
 				gestionLogger.addHandler(fhXml);
 			}
 			if(fhTxt == null) {
-				fhTxt = new FileHandler("ViperLogging.log", true);
+				fhTxt = new FileHandler("GTC_MAITRE_Logging.log", true);
 				MyLogFormatter formatter = new MyLogFormatter();
 				fhTxt.setFormatter(formatter);
 				gestionLogger.addHandler(fhTxt);

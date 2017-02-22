@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 
 import em.fonctions.GestionLogger;
+import em.general.EFS_Maitre_Variable;
 
 /**
  * Gestion de la communication Modbus avec l'API
@@ -51,7 +52,7 @@ public class AE_TCP_Connection implements AE_TCP_Modbus {
 				m_Connected = true;
 			} catch (IOException e) {
 				GestionLogger.gestionLogger.warning("Erreur de connexion API : " + e.getMessage());
-				e.printStackTrace();
+				EFS_Maitre_Variable.nombreLectureAPI++;
 			}
 		}
 	} //Fin connect
@@ -211,6 +212,7 @@ public class AE_TCP_Connection implements AE_TCP_Modbus {
 		} // Fin Try
 		catch (IOException ex) {
 			GestionLogger.gestionLogger.warning("Erreur lors de l'envoi d'une requête à l'API : " + ex.getMessage());
+			EFS_Maitre_Variable.nombreLectureAPI++;
 		} // Fin Catch
 		
 		return getReponse(reqIn);

@@ -9,9 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import em.general.AE_Constantes;
+import em.general.AE_Variables;
 import em.sgbd.FonctionsSGBD;
 
 /**
@@ -29,7 +31,7 @@ public class AE_Fonctions implements AE_Constantes {
 	 * 		Fenetre appelante
 	 */
 	public static void testVersion(Component appel) {
-		FonctionsSGBD ctn = new FonctionsSGBD(AE_SGBD_TYPE, AE_SGBD_SERVEUR, AE_SGBD_BASE, AE_SGBD_USER, AE_SGBD_MDP);	
+		FonctionsSGBD ctn = new FonctionsSGBD(AE_Variables.AE_SGBD_TYPE, AE_Variables.AE_SGBD_SERVEUR, AE_Variables.AE_SGBD_BASE, AE_Variables.AE_SGBD_USER, AE_Variables.AE_SGBD_MDP);	
 		String strSql = "";
 		
 		strSql = "SELECT * FROM Version"; 
@@ -110,7 +112,7 @@ public class AE_Fonctions implements AE_Constantes {
 	public static long trouveIdMax(String id, String table) throws SQLException {
 		long idMax = -1L;
 		
-		FonctionsSGBD ctn = new FonctionsSGBD(AE_SGBD_TYPE, AE_SGBD_SERVEUR, AE_SGBD_BASE, AE_SGBD_USER, AE_SGBD_MDP);
+		FonctionsSGBD ctn = new FonctionsSGBD(AE_Variables.AE_SGBD_TYPE, AE_Variables.AE_SGBD_SERVEUR, AE_Variables.AE_SGBD_BASE, AE_Variables.AE_SGBD_USER, AE_Variables.AE_SGBD_MDP);
 		String strSql = "SELECT MAX(" + id + ") AS MaxId FROM " + table;
 		ResultSet rs = ctn.lectureData(strSql);
 		if(rs.next()) {
@@ -212,4 +214,35 @@ public class AE_Fonctions implements AE_Constantes {
 		return arrondir;
 	}	
 	
+	/**
+	 * Test le niveau de l'utilisateur
+	 * @param niveauDemande
+	 * @return
+	 */
+	public static boolean testNiveau(int niveauDemande) {
+		if(AE_Variables.idUtilisateur == -1) {
+			afficheMessage(null, "Avertissement", "Veuillez vous connecter ...");
+			return false;
+		} else if(AE_Variables.niveauUtilisateur >= niveauDemande) {
+			return true;
+		} else {
+			afficheMessage(null, "Avertissement", "Vous n'avez pas le niveau pour cette action ...");
+			return false;
+		}
+	}
+	
+	/**
+	 * Saisie d'un tecte libre
+	 * @param titreQuestion
+	 * @param titreFenetre
+	 * @return
+	 */
+	public static String saisieTexte(String titreQuestion, String titreFenetre) {
+		String reponse = new String("");
+		
+		JFrame frame = new JFrame("Saisie Texte");
+	    reponse = JOptionPane.showInputDialog(frame, titreQuestion, titreFenetre, JOptionPane.QUESTION_MESSAGE + JOptionPane.OK_OPTION);		
+		
+		return reponse;
+	}	
 }

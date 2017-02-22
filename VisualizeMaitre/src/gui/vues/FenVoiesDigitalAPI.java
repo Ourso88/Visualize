@@ -21,7 +21,6 @@ import em.general.EFS_General;
 import em.general.EFS_Maitre_Variable;
 import em.general.JTableConstantes;
 import gui.modeles.ModeleJTableVoiesDigitalAPI;
-import kernel.DigitalInput;
 import kernel.VoiesAPI;
 
 /**
@@ -107,13 +106,7 @@ public class FenVoiesDigitalAPI extends JFrame implements AE_Constantes, VoiesAP
 	 * Raffraichissement des valeurs du tableau
 	 */
 	private void raffraichissementValeur() {
-		for(int i = 0; i < tbDigiAPI.size(); i++) {
-			mdlDigitalInput.setValueAt(tbDigiAPI.get(i).getValeurAPI(), i, JT_VOIES_API_DIGI_VALEUR);
-			mdlDigitalInput.setValueAt(tbDigiAPI.get(i).isAlarmeEnclenchee(), i, JT_VOIES_API_DIGI_ALARME_ENCLENCHEE);
-			mdlDigitalInput.setValueAt(tbDigiAPI.get(i).getDateAlarmeApparition(), i, JT_VOIES_API_DIGI_DATE_APPARITION_ALARME);
-			mdlDigitalInput.setValueAt(tbDigiAPI.get(i).isAlarmeTempoEcoulee(), i, JT_VOIES_API_DIGI_TEMPO_ALARME_ECOULEE);
-		}
-		
+		mdlDigitalInput.fireTableDataChanged();
 		pnlInfo.setLblInformation(2, "Cpt : " + EFS_Maitre_Variable.nombreLectureAPI);
 	}	
 	
@@ -122,25 +115,7 @@ public class FenVoiesDigitalAPI extends JFrame implements AE_Constantes, VoiesAP
 	 */
 	private void remplirTableauVoiesDigitales() {
 		for(int i = 0; i < tbDigiAPI.size(); i++) {
-			mdlDigitalInput.addVoiesAPI(new DigitalInput(
-					tbDigiAPI.get(i).getIdCapteur(),
-					tbDigiAPI.get(i).getNom(),
-					tbDigiAPI.get(i).getDescription(),
-					tbDigiAPI.get(i).getIdEquipement(),
-					tbDigiAPI.get(i).getIdPosteTechnique(),
-					tbDigiAPI.get(i).getIdTypeMateriel(),
-					tbDigiAPI.get(i).getIdZoneSubstitution(),
-					tbDigiAPI.get(i).getTypeCapteur(),
-					tbDigiAPI.get(i).getAlarme(),
-					tbDigiAPI.get(i).getIdService(),
-					tbDigiAPI.get(i).getVoieApi(),
-					tbDigiAPI.get(i).getInhibition(),
-					tbDigiAPI.get(i).getIdUnite(),
-					tbDigiAPI.get(i).getContact(),
-					tbDigiAPI.get(i).getIdEntreeDigitale(),
-					tbDigiAPI.get(i).getTempo(),
-					tbDigiAPI.get(i).getnOnF()
-					));
+			mdlDigitalInput.addVoiesAPI(tbDigiAPI.get(i));
 		}
 	}	
 	

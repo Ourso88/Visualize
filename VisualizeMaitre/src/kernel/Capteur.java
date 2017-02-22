@@ -21,7 +21,8 @@ public class Capteur {
 	int inhibition;
 	long idUnite;
 	String contact;
-
+	String inventaire;
+	
 	/**
 	 * Constructeur vide
 	 */
@@ -30,6 +31,21 @@ public class Capteur {
 	}
 	
 	
+	/**
+	 * @return the inventaire
+	 */
+	public String getInventaire() {
+		return inventaire;
+	}
+
+	/**
+	 * @param inventaire the inventaire to set
+	 */
+	public void setInventaire(String inventaire) {
+		this.inventaire = inventaire;
+	}
+
+
 	/**
 	 * @return the idCapteur
 	 */

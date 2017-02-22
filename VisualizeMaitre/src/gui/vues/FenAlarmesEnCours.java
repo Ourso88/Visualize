@@ -20,7 +20,7 @@ import em.fonctions.GestionLogger;
 import em.general.AE_Constantes;
 import em.general.EFS_General;
 import em.general.JTableConstantes;
-import gui.modeles.ModeleJTableAlarmesEnCoursV2;
+import gui.modeles.ModeleJTableAlarmesEnCours;
 import kernel.VoiesAPI;
 
 /**
@@ -38,7 +38,7 @@ public class FenAlarmesEnCours extends JFrame implements AE_Constantes, VoiesAPI
 	
 	// ==> pnlCorps <== 
 	private JPanel pnlBoutons = new JPanel();
-    private ModeleJTableAlarmesEnCoursV2 mdlAlarmesEnCours = new ModeleJTableAlarmesEnCoursV2();	
+    private ModeleJTableAlarmesEnCours mdlAlarmesEnCours = new ModeleJTableAlarmesEnCours();	
     private JTable jtbAlarmesEnCours;
     TableRowSorter<TableModel> sorterJtbAlarmesEnCours;	
     JScrollPane jspAlarmeEnCours;
@@ -85,7 +85,7 @@ public class FenAlarmesEnCours extends JFrame implements AE_Constantes, VoiesAPI
 	    this.add("Center", pnlCorps);
 	    this.add("South", pnlInfo);	
 	    
-	    // Tableau jtbVoiesAPI
+	    // Tableau jtbAlarmesEnCours
 	    jtbAlarmesEnCours = new JTable(mdlAlarmesEnCours);
 	    jtbAlarmesEnCours.setFillsViewportHeight(true);        
 	    jtbAlarmesEnCours.setBackground(AE_BLEU);
@@ -98,6 +98,7 @@ public class FenAlarmesEnCours extends JFrame implements AE_Constantes, VoiesAPI
         jspAlarmeEnCours = new JScrollPane(jtbAlarmesEnCours);
         jspAlarmeEnCours.setBackground(AE_BLEU);
         jspAlarmeEnCours.setOpaque(true);
+
         pnlCorps.setLayout(new BorderLayout());
         pnlCorps.add("North", pnlBoutons);
         pnlCorps.add("Center", jspAlarmeEnCours);

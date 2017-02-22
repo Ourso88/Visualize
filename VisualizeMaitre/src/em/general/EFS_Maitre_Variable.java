@@ -18,21 +18,13 @@ import em.general.AE_Constantes;
  *
  */
 public class EFS_Maitre_Variable {
-
-	public static int idUtilisateur;
-	public static int niveauUtilisateur;
-	public static String nomUtilisateur;
-	public static String prenomUtilisateur;
-
-	public static String EFS_SGBD_SERVEUR = new String("@srvbesbdd02.bfc-citrix.local:1521");
-	public static String EFS_SGBD_BASE = new String("GTCBFC");
-	public static String EFS_SGBD_USER = new String("gtcbfc");
-	public static String EFS_SGBD_MDP = new String("gtcbfc25");	
 	public static String ADR_IP_API;
 
 	public static int TEST_GTC_MINUTE = 10;
 	
 	public static long nombreLectureAPI = 0;
+	public static long compteurErreurSGBD = 0;
+	public static long compteurErreurAPI = 0;
 	
 	/**
 	 * Initialise les variables pour l'accès à la base de données
@@ -47,26 +39,26 @@ public class EFS_Maitre_Variable {
 			BufferedReader entree = new BufferedReader(new FileReader(nomFichier));
 			// Nom Serveur
 			ligne = entree.readLine();
-			EFS_SGBD_SERVEUR = "@" + ligne;
+			AE_Variables.AE_SGBD_SERVEUR = "@" + ligne;
 			ligne = entree.readLine();
-			EFS_SGBD_SERVEUR += ":" + ligne;
+			AE_Variables.AE_SGBD_SERVEUR += ":" + ligne;
 			ligne = entree.readLine();
 			if (ligne.equals("BESANCON")) {
-				EFS_SGBD_BASE = "GTCBFC";
-				EFS_SGBD_USER = "gtcbfc";
-				EFS_SGBD_MDP = "gtcbfc25";
+				AE_Variables.AE_SGBD_BASE = "GTCBFC";
+				AE_Variables.AE_SGBD_USER = "gtcbfc";
+				AE_Variables.AE_SGBD_MDP = "gtcbfc25";
 				ADR_IP_API = "10.27.0.10";
 				TEST_GTC_MINUTE = 10;
 			} else if (ligne.equals("DIJON")) {
-				EFS_SGBD_BASE = "GTCBFC";
-				EFS_SGBD_USER = "GTCDijon";
-				EFS_SGBD_MDP = "GTCBFC_dijon25";
+				AE_Variables.AE_SGBD_BASE = "GTCBFC";
+				AE_Variables.AE_SGBD_USER = "GTCDijon";
+				AE_Variables.AE_SGBD_MDP = "GTCBFC_dijon25";
 				ADR_IP_API = "10.21.4.31";
 				TEST_GTC_MINUTE = 30; // Modification 26/05/2016 et Modification 24/06/2016
 			} else {
-				EFS_SGBD_BASE = "xe";
-				EFS_SGBD_USER = "gtcbfc";
-				EFS_SGBD_MDP = "gtcbfc25";
+				AE_Variables.AE_SGBD_BASE = "xe";
+				AE_Variables.AE_SGBD_USER = "gtcbfc";
+				AE_Variables.AE_SGBD_MDP = "gtcbfc25";
 				//siteEFS = "AXIOME";
 				ADR_IP_API = "192.168.0.20";
 			}
