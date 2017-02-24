@@ -19,7 +19,7 @@ import kernel.DigitalInput;
 public class ModeleJTableVoiesDigitalAPI extends AbstractTableModel implements JTableConstantes{
 	private static final long serialVersionUID = 1L;
 	private final List<DigitalInput> lstDigitalInput = new ArrayList<DigitalInput>();
-    private final String[] entetes = {"Nom", "Valeur API", "Alarme enclenchée", "Date apparition alarme", "Tempo ecoulee", "Type Alarme", "Tempo (mn)"};
+    private final String[] entetes = {"Nom", "Valeur API", "Alarme enclenchée", "Date apparition alarme", "Tempo ecoulee", "Type Alarme", "Tempo (s)"};
     
     /**
      * Constructeur
@@ -71,7 +71,7 @@ public class ModeleJTableVoiesDigitalAPI extends AbstractTableModel implements J
 	    	case JT_VOIES_API_DIGI_NOM: // Nom
 	    		return lstDigitalInput.get(rowIndex).getNom(); 
 	    	case JT_VOIES_API_DIGI_VALEUR: // Valeur lue
-	    		return lstDigitalInput.get(rowIndex).getValeurAPI() / 10;
+	    		return lstDigitalInput.get(rowIndex).getValeurAPI();
 	    	case JT_VOIES_API_DIGI_ALARME_ENCLENCHEE: // Alarme enclenchée
 	    		if(lstDigitalInput.get(rowIndex).isAlarmeEnclenchee()) {
 	    			if(lstDigitalInput.get(rowIndex).getAlarme() == EFS_General.ALARME_ALERT) {

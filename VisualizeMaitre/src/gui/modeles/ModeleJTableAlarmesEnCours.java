@@ -116,7 +116,11 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EF
 	    			return "???";
 	    		}
 	    	case JT_ALARME_EN_COURS_VALEUR: 
-	    		return lstAlarmeEnCours.get(rowIndex).getValeurAPI() / 10; 
+	    		if(lstAlarmeEnCours.get(rowIndex).getTypeCapteur() == CAPTEUR_ANALOGIQUE_ENTREE) {
+	    			return lstAlarmeEnCours.get(rowIndex).getValeurAPI() / 10;
+	    		} else {
+	    			return lstAlarmeEnCours.get(rowIndex).getValeurAPI();
+	    		}
 	    	case JT_ALARME_EN_COURS_APPEL_ALERT: 
 	    		if(lstAlarmeEnCours.get(rowIndex).isAppelAlert()) {
 	    			return "A";

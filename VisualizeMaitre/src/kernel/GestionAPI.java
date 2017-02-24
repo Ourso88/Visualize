@@ -20,6 +20,7 @@ import em.general.EFS_Maitre_Variable;
 public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	private Timer tmrTpsReel = new Timer(TIMER_LECTURE_TPS_REEL, this);	
 	private Timer tmrHistoriserValeurAPI = new Timer(TIMER_ENREGISTREMENT_HISTORIQUE, this);	
+	private Timer tmrMinute = new Timer(TIMER_MINUTE, this);	
 	
 	/**
 	 * Constructeur
@@ -27,6 +28,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	public GestionAPI() {
 		tmrTpsReel.start();
 		tmrHistoriserValeurAPI.start();
+		tmrMinute.start();
 	}
 	
 	
@@ -72,7 +74,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			} while(adresseLecture < (ADR_API_AI_TPS_REEL + MAX_AI)); // Fin while
 
 			for(int i = 0; i < tbAnaAPI.size(); i++) {
-				tbAnaAPI.get(i).setValeurAPI(tbAI[tbAnaAPI.get(i).getVoieApi()]);
+				tbAnaAPI.get(i).setValeurAPI(tbAI[tbAnaAPI.get(i).getVoieApi() - 1]);
 			}
 			// ======================================================
 			
@@ -97,7 +99,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			} // Fin for i
 			
 			for(int i = 0; i < tbDigiAPI.size(); i++) {
-				tbDigiAPI.get(i).setValeurAPI(tbDI[tbDigiAPI.get(i).getVoieApi()]);
+				tbDigiAPI.get(i).setValeurAPI(tbDI[tbDigiAPI.get(i).getVoieApi() - 1]);
 			}
 			// ======================================================
 			
@@ -113,140 +115,173 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 */
 	private void gestionAlarmesEnCours() {
 		boolean trouve = false;
-		// Parcourir tous les AI
-		for(int i = 0; i < tbAnaAPI.size(); i++) {
-			// Regarder si en alarme
-			if(tbAnaAPI.get(i).isAlarmeEnclenchee()) {
-				// Regarder si tempo dépassée
-				if(tbAnaAPI.get(i).isAlarmeTempoEcoulee()) {
-					// Regarder si déjà dans le tableau
-					trouve = false;
-					for(int j = 0; j < tbAlarme.size(); j++) {
-						if(tbAnaAPI.get(i).getIdCapteur() == tbAlarme.get(j).getIdCapteur()) {
-							trouve = true;
+		try {
+			// Parcourir tous les AI
+			for(int i = 0; i < tbAnaAPI.size(); i++) {
+				// Regarder si en alarme
+				if(tbAnaAPI.get(i).isAlarmeEnclenchee()) {
+					// Regarder si tempo dépassée
+					if(tbAnaAPI.get(i).isAlarmeTempoEcoulee()) {
+						// Regarder si déjà dans le tableau
+						trouve = false;
+						for(int j = 0; j < tbAlarme.size(); j++) {
+							if(tbAnaAPI.get(i).getIdCapteur() == tbAlarme.get(j).getIdCapteur()) {
+								trouve = true;
+							}
 						}
-					}
-					if(!trouve) {
-						tbAlarme.add(new AlarmeEnCours(CAPTEUR_ANALOGIQUE_ENTREE, i));
-					}
-				} // fin if Tempo
-			} // fin if Alarme
-		} // fin for(i)	
+						if(!trouve) {
+							tbAlarme.add(new AlarmeEnCours(CAPTEUR_ANALOGIQUE_ENTREE, i));
+						}
+					} // fin if Tempo
+				} // fin if Alarme
+			} // fin for(i)
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Lecture des AI : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		}
 
 		// Parcourir tous les DI
-		for(int i = 0; i < tbDigiAPI.size(); i++) {
-			// Regarder si en alarme
-			if(tbDigiAPI.get(i).isAlarmeEnclenchee()) {
-				// Regarder si tempo dépassée
-				if(tbDigiAPI.get(i).isAlarmeTempoEcoulee()) {
-					// Regarder si déjà dans le tableau
-					trouve = false;
-					for(int j = 0; j < tbAlarme.size(); j++) {
-						if(tbDigiAPI.get(i).getIdCapteur() == tbAlarme.get(j).getIdCapteur()) {
-							trouve = true;
+		try {
+			for(int i = 0; i < tbDigiAPI.size(); i++) {
+				// Regarder si en alarme
+				if(tbDigiAPI.get(i).isAlarmeEnclenchee()) {
+					// Regarder si tempo dépassée
+					if(tbDigiAPI.get(i).isAlarmeTempoEcoulee()) {
+						// Regarder si déjà dans le tableau
+						trouve = false;
+						for(int j = 0; j < tbAlarme.size(); j++) {
+							if(tbDigiAPI.get(i).getIdCapteur() == tbAlarme.get(j).getIdCapteur()) {
+								trouve = true;
+							}
 						}
-					}
-					if(!trouve) {
-						tbAlarme.add(new AlarmeEnCours(CAPTEUR_DIGITAL_ENTREE, i));
-					}
-				} // fin if Tempo
-			} // fin if Alarme
-		} // fin for(i)	
-		
-		
-		for(int i = 0; i < tbAlarme.size(); i++) {
-			// Nouvelle Valeur AI
-			if(tbAlarme.get(i).getTypeCapteur() == CAPTEUR_ANALOGIQUE_ENTREE) {
-				tbAlarme.get(i).setValeurAPI(tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getValeurAPI());
-				// Modification date Apparition
-				if(tbAlarme.get(i).getDateApparition() != tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition()) {
-					tbAlarme.get(i).setDateApparition(tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition());
-				}
-				// Disparition
-				if(!tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
-					tbAlarme.get(i).setAlarmeEnclenchee(false);
-				}
-			}
-			// Nouvelle Valeur DI
-			if(tbAlarme.get(i).getTypeCapteur() == CAPTEUR_DIGITAL_ENTREE) {
-				tbAlarme.get(i).setValeurAPI(tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getValeurAPI());
-				// Modification Date Apparition
-				if(tbAlarme.get(i).getDateApparition() != tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition()) {
-					tbAlarme.get(i).setDateApparition(tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition());
-				}
-				// Disparition
-				if(!tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
-					tbAlarme.get(i).setAlarmeEnclenchee(false);
-				}
-			}
-			// Historiser
-			if(tbAlarme.get(i).isHistoriser()) {
-				GestionSGBD.historiserAlarme(i);
-				tbAlarme.remove(i);
-			}
+						if(!trouve) {
+							tbAlarme.add(new AlarmeEnCours(CAPTEUR_DIGITAL_ENTREE, i));
+						}
+					} // fin if Tempo
+				} // fin if Alarme
+			} // fin for(i)	
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Lecture des DI : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
 		}
+
+		try {
+			for(int i = 0; i < tbAlarme.size(); i++) {
+				// Nouvelle Valeur AI
+				if(tbAlarme.get(i).getTypeCapteur() == CAPTEUR_ANALOGIQUE_ENTREE) {
+					tbAlarme.get(i).setValeurAPI(tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getValeurAPI());
+					// Modification date Apparition
+					if(tbAlarme.get(i).getDateApparition() != tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition()) {
+						tbAlarme.get(i).setDateApparition(tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition());
+					}
+					// Disparition
+					if(!tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
+						tbAlarme.get(i).setAlarmeEnclenchee(false);
+					}
+				}
+				// Nouvelle Valeur DI
+				if(tbAlarme.get(i).getTypeCapteur() == CAPTEUR_DIGITAL_ENTREE) {
+					tbAlarme.get(i).setValeurAPI(tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getValeurAPI());
+					// Modification Date Apparition
+					if(tbAlarme.get(i).getDateApparition() != tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition()) {
+						tbAlarme.get(i).setDateApparition(tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).getDateAlarmeApparition());
+					}
+					// Disparition
+					if(!tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
+						tbAlarme.get(i).setAlarmeEnclenchee(false);
+					}
+				}
+				// Historiser
+				if(tbAlarme.get(i).isHistoriser()) {
+					GestionSGBD.historiserAlarme(i);
+					tbAlarme.remove(i);
+					break;
+				}
+			}
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Gestion des alarmes : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		}
+			
 	}
 	/**
 	 * Gere les pre seuil
 	 */
 	private void gestionAlarmesPreSeuil() {
 		boolean trouve = false;
-		// Parcourir tous les tempos non enclenchées
-		for(int i = 0; i < tbAnaAPI.size(); i++) {
-			// Regarder si en alarme
-			if(tbAnaAPI.get(i).isAlarmeEnclenchee()) {
-				// Regarder si tempo dépassée
-				if(!tbAnaAPI.get(i).isAlarmeTempoEcoulee()) {
-					// Regarder si déjà dans le tableau
-					trouve = false;
-					for(int j = 0; j < tbAlarmeSeuil.size(); j++) {
-						if(tbAnaAPI.get(i).getIdCapteur() == tbAlarmeSeuil.get(j).getIdCapteur()) {
-							trouve = true;
-						}
-					}
-					if(!trouve) {
-						tbAlarmeSeuil.add(new AlarmeSeuil(i));
-					}
-				} // fin if Tempo
-			} // fin if Alarme
-		} // fin for(i)	
 		
-		// Parcourir tous les pre seuil enclenchées
-		for(int i = 0; i < tbAnaAPI.size(); i++) {
-			// Regarder si en alarme
-			if(tbAnaAPI.get(i).isPreAlarmeEnclenchee()) {
-				// Regarder si tempo dépassée
-				if(tbAnaAPI.get(i).isPreAlarmeTempoEcoulee()) {
-					// Regarder si déjà dans le tableau
-					trouve = false;
-					for(int j = 0; j < tbAlarmeSeuil.size(); j++) {
-						if(tbAnaAPI.get(i).getIdCapteur() == tbAlarmeSeuil.get(j).getIdCapteur()) {
-							trouve = true;
+		try {
+			// Parcourir tous les tempos non enclenchées
+			for(int i = 0; i < tbAnaAPI.size(); i++) {
+				// Regarder si en alarme
+				if(tbAnaAPI.get(i).isAlarmeEnclenchee() && (tbAnaAPI.get(i).getActivationPreSeuil() == PRE_SEUIL_EN_ACTIVITE)) {
+					// Regarder si tempo dépassée
+					if(!tbAnaAPI.get(i).isAlarmeTempoEcoulee()) {
+						// Regarder si déjà dans le tableau
+						trouve = false;
+						for(int j = 0; j < tbAlarmeSeuil.size(); j++) {
+							if(tbAnaAPI.get(i).getIdCapteur() == tbAlarmeSeuil.get(j).getIdCapteur()) {
+								trouve = true;
+							}
 						}
-					}
-					if(!trouve) {
-						tbAlarmeSeuil.add(new AlarmeSeuil(i));
-					}
-				} // fin if Tempo
-			} // fin if Alarme
-		} // fin for(i)
-		
-		// Retirer ceux qui ont changé de statut
-		for(int i = 0; i < tbAlarmeSeuil.size(); i++) {
-			// Nouvelle Valeur AI
-			tbAlarmeSeuil.get(i).setValeurAPI(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).getValeurAPI());
-			tbAlarmeSeuil.get(i).setSeuilAtteint(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).getSeuilAtteint());
-			// Disparition
-			if(!tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isPreAlarmeEnclenchee()) {
-				if(!tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
-					tbAlarmeSeuil.remove(i);
-				}
-			}
-			if(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeEnclenchee() && tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeTempoEcoulee()) {
-				tbAlarmeSeuil.remove(i);
-			}
+						if(!trouve) {
+							tbAlarmeSeuil.add(new AlarmeSeuil(i));
+						}
+					} // fin if Tempo
+				} // fin if Alarme
+			} // fin for(i)	
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Tempo non enclenchées : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
 		}
 		
+		try {
+			// Parcourir tous les pre seuil enclenchées
+			for(int i = 0; i < tbAnaAPI.size(); i++) {
+				// Regarder si en alarme
+				if(tbAnaAPI.get(i).isPreAlarmeEnclenchee()) {
+					// Regarder si tempo dépassée
+					if(tbAnaAPI.get(i).isPreAlarmeTempoEcoulee()) {
+						// Regarder si déjà dans le tableau
+						trouve = false;
+						for(int j = 0; j < tbAlarmeSeuil.size(); j++) {
+							if(tbAnaAPI.get(i).getIdCapteur() == tbAlarmeSeuil.get(j).getIdCapteur()) {
+								trouve = true;
+							}
+						}
+						if(!trouve) {
+							tbAlarmeSeuil.add(new AlarmeSeuil(i));
+						}
+					} // fin if Tempo
+				} // fin if Alarme
+			} // fin for(i)
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Pre Seuil enclenchées : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		}
+		
+		try {
+			// Retirer ceux qui ont changé de statut
+			for(int i = 0; i < tbAlarmeSeuil.size(); i++) {
+				// Nouvelle Valeur AI
+				tbAlarmeSeuil.get(i).setValeurAPI(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).getValeurAPI());
+				tbAlarmeSeuil.get(i).setSeuilAtteint(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).getSeuilAtteint());
+				// Disparition
+				if(!tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isPreAlarmeEnclenchee()) {
+					if(!tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
+						tbAlarmeSeuil.remove(i);
+						break;
+					}
+				}
+				if(tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeEnclenchee() && tbAnaAPI.get(tbAlarmeSeuil.get(i).getIndexCapteur()).isAlarmeTempoEcoulee()) {
+					tbAlarmeSeuil.remove(i);
+					break;
+				}
+			}
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Changement de statut : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		}
 		
 	}
 	
@@ -254,9 +289,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 * Lance l'enregistrement des valeurs dans la base
 	 */
 	private void enregistrerValeurAPI() {
-		GestionSGBD.historiseValeurVoiesAPI();
+//		GestionSGBD.historiseValeurVoiesAPI();
 		
-		/*
 		new Thread(
 				new Runnable() {
 					public void run() {
@@ -264,7 +298,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 					} // Fin run()
 				} // Fin Runnable
 			).start(); // Fin new Thread
-		*/
+			
 	}
 	
 	/**
@@ -272,6 +306,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 * @param sonnerie
 	 */
 	public static void gestionKlaxon(boolean sonnerie) {
+/*		
 		try{
 			// ===== Ouverture de la connection =====
 			//  Variables TCP
@@ -300,8 +335,16 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 		catch (Exception e){
 			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Klaxon : " + e.getMessage());
 			EFS_Maitre_Variable.compteurErreurAPI++;
-		} // Fin catch		
+		} // Fin catch
+*/				
 	} // Fin gestionKlaxon()
+	
+	/**
+	 * Inscrit dans la base l'activite du programme
+	 */
+	private void gestionActivite() {
+//		GestionSGBD.ecritureActivite();
+	}
 	
 	
 	/**
@@ -319,6 +362,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			} catch (Exception ex) {
 				GestionLogger.gestionLogger.warning("Probleme dans le TIMER de lecture des valeurs ...");
 				EFS_Maitre_Variable.compteurErreurAPI++;
+				tmrTpsReel.start();
 			} // Fin try		
 		}
 		if (ae.getSource() == tmrHistoriserValeurAPI) {
@@ -329,6 +373,18 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			} catch (Exception ex) {
 				GestionLogger.gestionLogger.warning("Probleme dans le TIMER d'enregistrement des valeurs ...");
 				EFS_Maitre_Variable.compteurErreurAPI++;
+				tmrHistoriserValeurAPI.start();
+			} // Fin try		
+		}
+		if (ae.getSource() == tmrMinute) {
+			try {
+				tmrMinute.stop();
+				gestionActivite();
+				tmrMinute.start();
+			} catch (Exception ex) {
+				GestionLogger.gestionLogger.warning("Probleme dans le TIMER Minute GestionActivite ...");
+				EFS_Maitre_Variable.compteurErreurSGBD++;
+				tmrMinute.start();
 			} // Fin try		
 		}
 	}

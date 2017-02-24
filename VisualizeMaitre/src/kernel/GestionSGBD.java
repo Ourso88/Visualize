@@ -16,7 +16,7 @@ import em.sgbd.FonctionsSGBD;
  * @since 19/02/2017
  *
  */
-public class GestionSGBD implements VoiesAPI{
+public class GestionSGBD implements VoiesAPI {
 	
 	/**
 	 * Teste si la connexion à la base de données n'est pas fermée
@@ -34,7 +34,7 @@ public class GestionSGBD implements VoiesAPI{
 				}
 			}
 		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("Erreur Connexion SGBD Fermée impossible de rouvrir ... ");
+			GestionLogger.gestionLogger.severe("Erreur Connexion SGBD Fermée impossible de rouvrir ... ");
 			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}
@@ -64,8 +64,11 @@ public class GestionSGBD implements VoiesAPI{
 				+ ", '" + tbAlarme.get(indexAlarme).getCommentairePriseEnCompte() + "'"
 				+ ")";
 			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
 		} catch (Exception e) {
-			GestionLogger.gestionLogger.warning("SGBD - Erreur historiserAlarme : " + e.getMessage());
+			GestionLogger.gestionLogger.severe("SGBD - Erreur historiserAlarme : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}
 	
@@ -78,27 +81,31 @@ public class GestionSGBD implements VoiesAPI{
 			String strSql = "";
 			// Analogique
 			for(int i = 0; i < tbAnaAPI.size(); i++) {
-				strSql = "INSERT INTO AI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
+				strSql = "INSERT INTO V2_AI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
 					+ tbAnaAPI.get(i).getIdCapteur()
 					+ ", " + tbAnaAPI.get(i).getVoieApi()
 					+ ", sysdate"
 					+ ", " + tbAnaAPI.get(i).getValeurAPI()
 					+ ")";
 				AE_Variables.ctnOracle.fonctionSql(strSql);
+				EFS_Maitre_Variable.nombreLectureSGBD++;
 			}
 
 			// Analogique
 			for(int i = 0; i < tbDigiAPI.size(); i++) {
-				strSql = "INSERT INTO DI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
+				strSql = "INSERT INTO V2_DI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
 					+ tbDigiAPI.get(i).getIdCapteur()
 					+ ", " + tbDigiAPI.get(i).getVoieApi()
 					+ ", sysdate"
 					+ ", " + tbDigiAPI.get(i).getValeurAPI()
 					+ ")";
 				AE_Variables.ctnOracle.fonctionSql(strSql);
+				EFS_Maitre_Variable.nombreLectureSGBD++;
 			}
 		} catch (Exception e) {
 			GestionLogger.gestionLogger.warning("SGBD - Erreur historiserAlarme : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}
 	
@@ -112,15 +119,19 @@ public class GestionSGBD implements VoiesAPI{
 			String strSql = "";
 			if (alerte) {
 				strSql = "UPDATE AlarmeAlerte SET Alarme = 1 WHERE idAlarmeAlerte = 1";
-				AE_Variables.ctnOracle.fonctionSql(strSql);
+//				AE_Variables.ctnOracle.fonctionSql(strSql);
+				EFS_Maitre_Variable.nombreLectureSGBD++;
 			} 
 			else {
 	
 				strSql = "UPDATE AlarmeAlerte SET Alarme = 0, RelanceProgramme = 0 WHERE idAlarmeAlerte = 1";
-				AE_Variables.ctnOracle.fonctionSql(strSql);		
+//				AE_Variables.ctnOracle.fonctionSql(strSql);		
+				EFS_Maitre_Variable.nombreLectureSGBD++;
 			} // Fin if alerte
 		} catch (Exception e) {
-			GestionLogger.gestionLogger.warning("SGBD - Erreur APPEL ALERT : " + e.getMessage());
+			GestionLogger.gestionLogger.severe("SGBD - Erreur APPEL ALERT : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	} // Fin gestionAlert()	
 	
@@ -134,14 +145,19 @@ public class GestionSGBD implements VoiesAPI{
 			// Table Capteur
 			String strSql = "UPDATE Capteur SET Inhibition = 0 WHERE idCapteur = " + idCapteur;
 			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
 			// Table AlarmeEnCours
 			strSql = "DELETE FROM AlarmeEnCours WHERE idCapteur = " + idCapteur;
 			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
 			// Table Inhibition
 			strSql = "DELETE FROM Inhibition WHERE idCapteur = " + idCapteur;
 			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
 		} catch (Exception e) {
 			GestionLogger.gestionLogger.warning("SGBD - Erreur suppression En Maintenance : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}
 	
@@ -180,6 +196,8 @@ public class GestionSGBD implements VoiesAPI{
 
 		} catch (SQLException e) {
 			GestionLogger.gestionLogger.warning("SGBD : Erreur Test Integrite : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}		
 	}
 	
@@ -220,13 +238,16 @@ public class GestionSGBD implements VoiesAPI{
 				result.getLong("seuilTempo"),
 				result.getLong("preSeuilTempo"),
 				result.getString("unite"),
-				result.getInt("valeurConsigne")
+				result.getInt("valeurConsigne"),
+				result.getInt("ActivationPreSeuil")
 				));
 			}
 			result.close();
 			AE_Variables.ctnOracle.closeLectureData();
 		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("SGBD : Erreur lecture Table EntreeAnalogique : " + e.getMessage());
+			GestionLogger.gestionLogger.severe("SGBD : Erreur lecture Table EntreeAnalogique : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}
 	
@@ -266,7 +287,9 @@ public class GestionSGBD implements VoiesAPI{
 			result.close();
 			AE_Variables.ctnOracle.closeLectureData();
 		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("SGBD : Erreur lecture Table EntreeDigitale : " + e.getMessage());
+			GestionLogger.gestionLogger.severe("SGBD : Erreur lecture Table EntreeDigitale : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}	
 
@@ -289,9 +312,28 @@ public class GestionSGBD implements VoiesAPI{
 			result.close();
 			AE_Variables.ctnOracle.closeLectureData();
 		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("SGBD : Erreur lecture Table PriseEnCompte : " + e.getMessage());
+			GestionLogger.gestionLogger.severe("SGBD : Erreur lecture Table PriseEnCompte : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 
+	}	
+	
+	/**
+	 * Ecriture dans la SGBD des valeur API pour les voies
+	 */
+	public static void ecritureActivite() {
+		testConnexionBase();
+		try {
+			String strSql = "";
+			strSql = "INSERT INTO Activite (DateActivite, Description, Poste, DateActiviteVB) VALUES (sysdate, 'Gestion Modbus V2', " + EFS_General.POSTE_MAITRE + ", sysdate)";
+			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("SGBD - Erreur ecriture activité : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+		}
 	}	
 	
 	/**

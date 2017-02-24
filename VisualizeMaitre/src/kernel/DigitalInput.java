@@ -123,10 +123,14 @@ public class DigitalInput extends Capteur implements EFS_General {
 	 * @param valeurAPI the valeurAPI to set
 	 */
 	public void setValeurAPI(int valeurAPI) {
-		if((valeurAPI == 1) && (this.getnOnF() == CAPTEUR_DIGITAL_NF)) {
-			this.setAlarmeEnclenchee(true);
-		} else if((valeurAPI == 0) && (this.getnOnF() == CAPTEUR_DIGITAL_NO)) {
-			this.setAlarmeEnclenchee(true);
+		if((valeurAPI == 1) && (this.getnOnF() == CAPTEUR_DIGITAL_NO)) {
+			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT) || (this.getAlarme() == ALARME_ETAT)) && (this.getInhibition() == 0)) {
+				this.setAlarmeEnclenchee(true);
+			}
+		} else if((valeurAPI == 0) && (this.getnOnF() == CAPTEUR_DIGITAL_NF)) {
+			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT) || (this.getAlarme() == ALARME_ETAT)) && (this.getInhibition() == 0)) {
+				this.setAlarmeEnclenchee(true);
+			}
 		} else {
 			this.setAlarmeEnclenchee(false);
 		}
@@ -149,7 +153,7 @@ public class DigitalInput extends Capteur implements EFS_General {
 		}
 		// Calcul si tempo est passé
 		if(alarmeEnclenchee) {
-			if(this.getDateAlarmeApparition().plusMinutes(this.getTempo()).isBefore(LocalDateTime.now())) {
+			if(this.getDateAlarmeApparition().plusSeconds(this.getTempo()).isBefore(LocalDateTime.now())) {
 				this.setAlarmeTempoEcoulee(true);
 			} else {
 				this.setAlarmeTempoEcoulee(false);

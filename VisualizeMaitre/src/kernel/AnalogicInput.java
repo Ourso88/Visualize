@@ -22,6 +22,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	private long preSeuilTempo;
 	private String unite;
 	private int valeurConsigne;
+	private int activationPreSeuil;
 	
 	private double valeurAPI;
 	
@@ -77,7 +78,8 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 */
 	public AnalogicInput(long idCapteur, String nom, String description, long idEquipement, long idPosteTechnique, long idTypeMateriel,	long idZoneSubstitution, 
 						 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, String inventaire, long idEntreeAnalogique,
-						 int seuilHaut, int preSeuilHaut, int seuilBas,	int preSeuilBas, int calibration, long seuilTempo, long preSeuilTempo, String unite, int valeurConsigne) {
+						 int seuilHaut, int preSeuilHaut, int seuilBas,	int preSeuilBas, int calibration, long seuilTempo, long preSeuilTempo, String unite, int valeurConsigne,
+						 int activationPreSeuil) {
 		this.setIdCapteur(idCapteur);
 		this.setNom(nom);
 		this.setDescription(description);
@@ -103,6 +105,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 		this.setPreSeuilTempo(preSeuilTempo);
 		this.setUnite(unite);
 		this.setValeurConsigne(valeurConsigne);
+		this.setActivationPreSeuil(activationPreSeuil);
 	}
 	
 
@@ -446,18 +449,26 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 * @param preAlarmeEnclenchee the preAlarmeEnclenchee to set
 	 */
 	public void setPreAlarmeEnclenchee(boolean preAlarmeEnclenchee) {
-		if(!this.preAlarmeEnclenchee && preAlarmeEnclenchee) {
-			this.setDatePreAlarmeApparition(LocalDateTime.now());
-		}
-		// Calcul si tempo est passé
-		if(preAlarmeEnclenchee) {
-			if(this.getDatePreAlarmeApparition().plusMinutes(this.getPreSeuilTempo()).isBefore(LocalDateTime.now())) {
-				this.setPreAlarmeTempoEcoulee(true);
+		if(this.getActivationPreSeuil() == PRE_SEUIL_EN_ACTIVITE) {
+			if((this.getPreSeuilBas() != this.getPreSeuilHaut()) && (this.getPreSeuilBas() != this.getSeuilBas()) && (this.getPreSeuilHaut() != this.getSeuilHaut())) {
+				if(!this.preAlarmeEnclenchee && preAlarmeEnclenchee) {
+					this.setDatePreAlarmeApparition(LocalDateTime.now());
+				}
+				// Calcul si tempo est passé
+				if(preAlarmeEnclenchee) {
+					if(this.getDatePreAlarmeApparition().plusMinutes(this.getPreSeuilTempo()).isBefore(LocalDateTime.now())) {
+						this.setPreAlarmeTempoEcoulee(true);
+					} else {
+						this.setPreAlarmeTempoEcoulee(false);
+					}
+				}
+				this.preAlarmeEnclenchee = preAlarmeEnclenchee;
 			} else {
-				this.setPreAlarmeTempoEcoulee(false);
+				this.preAlarmeEnclenchee = false;
 			}
+		} else {
+			this.preAlarmeEnclenchee = false;
 		}
-		this.preAlarmeEnclenchee = preAlarmeEnclenchee;
 	}
 
 	/**
@@ -544,6 +555,20 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 */
 	public void setDatePreAlarmeApparition(LocalDateTime datePreAlarmeApparition) {
 		DatePreAlarmeApparition = datePreAlarmeApparition;
+	}
+
+	/**
+	 * @return the activationPreSeuil
+	 */
+	public int getActivationPreSeuil() {
+		return activationPreSeuil;
+	}
+
+	/**
+	 * @param activationPreSeuil the activationPreSeuil to set
+	 */
+	public void setActivationPreSeuil(int activationPreSeuil) {
+		this.activationPreSeuil = activationPreSeuil;
 	}
 
 

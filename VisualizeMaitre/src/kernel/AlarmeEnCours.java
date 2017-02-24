@@ -28,6 +28,7 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	private int typeAlarme;
 	private String commentairePriseEnCompte;
 	private boolean appelAlert;
+	private String descriptionAlarme;
 	
 	/**
 	 * Constructeur
@@ -312,6 +313,20 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	 */
 	public void setAppelAlert(boolean appelAlert) {
 		this.appelAlert = appelAlert;
+	}
+
+	/**
+	 * @return the descriptionAlarme
+	 */
+	public String getDescriptionAlarme() {
+		return descriptionAlarme;
+	}
+
+	/**
+	 * @param descriptionAlarme the descriptionAlarme to set
+	 */
+	public void setDescriptionAlarme(String descriptionAlarme) {
+		this.descriptionAlarme = descriptionAlarme;
 	}
 	
 }

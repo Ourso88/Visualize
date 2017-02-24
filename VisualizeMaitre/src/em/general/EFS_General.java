@@ -1,7 +1,7 @@
 package em.general;
 
 public interface EFS_General {
-	public static final int POSTE_MAITRE = 1;
+	public static final int POSTE_MAITRE = 2;
 	
 	public static final boolean MODE_DEBUG_BASE = false;
 
@@ -11,9 +11,9 @@ public interface EFS_General {
 	public static final int NB_MOT_LECTURE_DI = 40;
 	public static final int NB_MOT_LECTURE_MAITRE_CLIENT = 50;
 	  
-	public static final int ADR_API_AI_TPS_REEL = 500;
-//	public static final int ADR_API_AI_TPS_REEL = 1500;
-	public static final int ADR_API_DI_TPS_REEL = 1410;
+//	public static final int ADR_API_AI_TPS_REEL = 500; // Adresse API Axiome
+    public static final int ADR_API_AI_TPS_REEL = 1500; // Adresse AI - API Besançon et Dijon
+	public static final int ADR_API_DI_TPS_REEL = 1410; // Adresse DI - API Besançon et Dijon
 	public static final int ADR_API_ECHANGE_MAITRE_CLIENT = 2050;
 	
 	
@@ -44,6 +44,10 @@ public interface EFS_General {
 	public static final int CAPTEUR_EN_SERVICE = 0;
 	public static final int CAPTEUR_EN_MAINTENANCE = 1;
 	
+	// PreSeuil
+	public static final int PRE_SEUIL_INACTIF = 0;
+	public static final int PRE_SEUIL_EN_ACTIVITE = 1;
+	
 	// Timer general
 	
 	// Timer rafraichissement fenetre
@@ -55,11 +59,11 @@ public interface EFS_General {
 	// Timer SGBD
 	public static final int TIMER_MINUTE = 60000;
 	public static final int TIMER_ENREGISTREMENT_TPS_REEL = 10000;
-	public static final int TIMER_ENREGISTREMENT_HISTORIQUE = 5000; // 180000;
+	public static final int TIMER_ENREGISTREMENT_HISTORIQUE = 60000; // 180000;
 	public static final int TIMER_LOGIN = 300000;
 	
 	// Timer API
-	public static int TIMER_LECTURE_TPS_REEL = 500; //20000;
+	public static int TIMER_LECTURE_TPS_REEL = 1000; //20000;
 	public static int TIMER_LECTURE_TPS_REEL_ACCELERE = 3000;
 	
 }

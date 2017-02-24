@@ -23,6 +23,7 @@ public class EFS_Maitre_Variable {
 	public static int TEST_GTC_MINUTE = 10;
 	
 	public static long nombreLectureAPI = 0;
+	public static long nombreLectureSGBD = 0;
 	public static long compteurErreurSGBD = 0;
 	public static long compteurErreurAPI = 0;
 	

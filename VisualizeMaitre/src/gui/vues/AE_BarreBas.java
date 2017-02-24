@@ -189,23 +189,31 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * Affiche les informations dans la barre du bas
+	 */
+	private void afficherInformation() {
+		lblHeure.setText(AE_Fonctions.formatDate("HH:mm:ss"));
+		lblInformation[2].setText("API - " + EFS_Maitre_Variable.nombreLectureAPI + " / SGBD - " + EFS_Maitre_Variable.nombreLectureSGBD);
+		lblInformation[4].setText("API : " + EFS_Maitre_Variable.compteurErreurAPI);
+		if(EFS_Maitre_Variable.compteurErreurAPI > 0) {
+			lblInformation[4].setBackground(AE_Constantes.AE_ROUGE);
+			lblInformation[4].setOpaque(true);
+			lblInformation[4].setForeground(AE_Constantes.AE_BLANC);
+		}
+		lblInformation[6].setText("SGBD : " + EFS_Maitre_Variable.compteurErreurSGBD);
+		if(EFS_Maitre_Variable.compteurErreurSGBD > 0) {
+			lblInformation[6].setBackground(AE_Constantes.AE_ROUGE);
+			lblInformation[6].setOpaque(true);
+			lblInformation[6].setForeground(AE_Constantes.AE_BLANC);
+		}
+	}
+	
+	/**
 	 * Gestion du timer pour afficher l'heure
 	 */
 	public void actionPerformed(ActionEvent e){
 		if (e.getSource() == tmrHeure) {
-			lblHeure.setText(AE_Fonctions.formatDate("HH:mm:ss"));
-			lblInformation[4].setText("API : " + EFS_Maitre_Variable.compteurErreurAPI);
-			if(EFS_Maitre_Variable.compteurErreurAPI > 0) {
-				lblInformation[4].setBackground(AE_Constantes.AE_ROUGE);
-				lblInformation[4].setOpaque(true);
-				lblInformation[4].setForeground(AE_Constantes.AE_BLANC);
-			}
-			lblInformation[6].setText("SGBD : " + EFS_Maitre_Variable.compteurErreurSGBD);
-			if(EFS_Maitre_Variable.compteurErreurSGBD > 0) {
-				lblInformation[6].setBackground(AE_Constantes.AE_ROUGE);
-				lblInformation[6].setOpaque(true);
-				lblInformation[6].setForeground(AE_Constantes.AE_BLANC);
-			}
+			afficherInformation();
 		} 
 	} 	
 		

@@ -21,6 +21,7 @@ public class AlarmeSeuil implements EFS_General, VoiesAPI {
 	private double valeurAPI;
 	private boolean preAlarmeEnclenchee; 
 	private String seuilAtteint;
+	private int activationPreSeuil;
 	
 	/**
 	 * Constructeur
@@ -37,6 +38,7 @@ public class AlarmeSeuil implements EFS_General, VoiesAPI {
 		this.setPreAlarmeEnclenchee(tbAnaAPI.get(indexCapteur).isPreAlarmeEnclenchee());
 		this.setSeuilAtteint(tbAnaAPI.get(indexCapteur).getSeuilAtteint());
 		this.setInventaire(tbAnaAPI.get(indexCapteur).getInventaire());
+		this.setActivationPreSeuil(tbAnaAPI.get(indexCapteur).getActivationPreSeuil());
 	}
 
 	/**
@@ -163,6 +165,20 @@ public class AlarmeSeuil implements EFS_General, VoiesAPI {
 	 */
 	public void setSeuilAtteint(String seuilAtteint) {
 		this.seuilAtteint = seuilAtteint;
+	}
+
+	/**
+	 * @return the activationPreSeuil
+	 */
+	public int getActivationPreSeuil() {
+		return activationPreSeuil;
+	}
+
+	/**
+	 * @param activationPreSeuil the activationPreSeuil to set
+	 */
+	public void setActivationPreSeuil(int activationPreSeuil) {
+		this.activationPreSeuil = activationPreSeuil;
 	}
 	
 	

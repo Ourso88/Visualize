@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -125,7 +127,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 		this.setTitle("Visualize MAITRE - Gestion alarmes");
 	    this.setSize(1200, 800);
 		this.setResizable(true);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	    this.setLocationRelativeTo(null);
 	    java.net.URL icone = getClass().getResource("/eye.png");
 	    this.setIconImage(new ImageIcon(icone).getImage());
@@ -133,6 +135,15 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    pnlEntete.setTitreEcran("Gestion Alarmes");
 	    
 	    // Actions
+	    this.addWindowListener(new WindowAdapter() {
+	        public void windowClosing(WindowEvent e) {
+	        	if(AE_Fonctions.testNiveau(40)) {
+        			GestionLogger.gestionLogger.info("Fin de l'application");
+	        		System.exit(0);
+	        	}
+	        }        
+	      }
+	    );
 	    btnVoiesAnalogique.addActionListener(this);
 	    btnVoiesDigitale.addActionListener(this);
 	    btnPriseEnCompte.addActionListener(this);
@@ -586,6 +597,8 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 		}
 		
 		if (ae.getSource() == btnInformation) {
+			GestionSGBD.gestionAlert(false);
+			GestionAPI.gestionKlaxon(false);
 		}
 
 		if (ae.getSource() == btnLogin) {
