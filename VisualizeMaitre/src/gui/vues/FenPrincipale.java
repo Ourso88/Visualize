@@ -167,7 +167,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    splInformation.setDividerLocation(400);
 	    
 	    // Definition des parties de la fenetre
-	    this.add("North",pnlEntete);
+	    this.add("North", pnlEntete);
 	    this.add("Center", splCorps);
 	    this.add("South", pnlInfo);
 	    
@@ -563,6 +563,37 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	}
 	
 	/**
+	 * Appel de la fenetre courbe
+	 */
+	private void gererCourbe() {
+        if (jtbAlarmesEnCours.getRowCount() > 0) {
+        	if (jtbAlarmesEnCours.getSelectedRowCount() > 0) {
+        		int indexSelection = jtbAlarmesEnCours.getSelectedRow();
+		        
+		        FenCourbe fenetre = new FenCourbe(tbAlarme.get(indexSelection).getIndexCapteur());
+		        fenetre.setVisible(true);
+        	} else {
+		        FenCourbe fenetre = new FenCourbe(-1);
+		        fenetre.setVisible(true);
+        	}
+        } else {
+	        FenCourbe fenetre = new FenCourbe(-1);
+	        fenetre.setVisible(true);
+    	}
+	}
+	
+	private void gererInformation() {
+        if (jtbAlarmesEnCours.getRowCount() > 0) {
+        	if (jtbAlarmesEnCours.getSelectedRowCount() > 0) {
+        		int indexSelection = jtbAlarmesEnCours.getSelectedRow();
+		        
+		        FenInformation fenetre = new FenInformation(tbAlarme.get(indexSelection).getIndexCapteur());
+		        fenetre.setVisible(true);
+        	}
+    	}
+	}
+	
+	/**
 	 * Gestion des actions
 	 */
 	@Override
@@ -596,9 +627,14 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 			gererRetirerMaintenance();
 		}
 		
+		if (ae.getSource() == btnCourbe) {
+			gererCourbe();
+		}
+
 		if (ae.getSource() == btnInformation) {
-			GestionSGBD.gestionAlert(false);
-			GestionAPI.gestionKlaxon(false);
+			if(AE_Fonctions.testNiveau(40)) {
+				gererInformation();
+			}
 		}
 
 		if (ae.getSource() == btnLogin) {
