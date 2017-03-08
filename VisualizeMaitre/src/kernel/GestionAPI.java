@@ -131,6 +131,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 						}
 						if(!trouve) {
 							tbAlarme.add(new AlarmeEnCours(CAPTEUR_ANALOGIQUE_ENTREE, i));
+							GestionSGBD.enregistrerAlarmeEnCours(tbAlarme.size() - 1);
 						}
 					} // fin if Tempo
 				} // fin if Alarme
@@ -156,6 +157,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 						}
 						if(!trouve) {
 							tbAlarme.add(new AlarmeEnCours(CAPTEUR_DIGITAL_ENTREE, i));
+							GestionSGBD.enregistrerAlarmeEnCours(tbAlarme.size() - 1);
 						}
 					} // fin if Tempo
 				} // fin if Alarme
@@ -340,6 +342,93 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	} // Fin gestionKlaxon()
 	
 	/**
+	 * Gere les echanges via l'automate
+	 */
+	private void gestionEchangeViaAPI() {
+		double tbEchange[] = new double [MAX_ECHANGE_MAITRE_CLIENT];
+		
+		try {
+			// ===== Ouverture de la connection =====================
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			double [] reqReponse;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, EFS_General.MODBUS_PORT);
+			con.connect();
+			if (con.isConnected()) {
+				EFS_Maitre_Variable.nombreLectureAPI++;
+			}
+			else {
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+				EFS_Maitre_Variable.compteurErreurAPI++;
+			}
+			// ======================================================
+			
+			// ===== Envoi des requetes de lecture pour les AI ======
+			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.READ_MULTIPLE_REGISTERS, ADR_API_ECHANGE_MAITRE_CLIENT, MAX_ECHANGE_MAITRE_CLIENT));
+			for (int i = 0; i < MAX_ECHANGE_MAITRE_CLIENT; i++) {
+				tbEchange[i] = reqReponse[i]; 
+			} // Fin for i
+
+			// ======================================================
+			con.close();
+
+			if(tbEchange[0] > 0) {
+				switch((int) tbEchange[0]) {
+				case VIA_API_PRISE_EN_COMPTE:
+					if (!GestionSGBD.prendreEnCompteViaAPI((long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur prise en compte via API ... ");
+					}
+					resetEchangeViaAPI();
+					break;
+				default:
+					break;
+				}
+			}
+			
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("Erreur lecture MODBUS : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch	
+		
+	}
+	
+	/**
+	 * Remet à zéro la zone d'échange API
+	 */
+	private void resetEchangeViaAPI() {
+		try{
+			// ===== Ouverture de la connection =====
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			@SuppressWarnings("unused")
+			double [] reqReponse = null;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con.connect();
+			if (con.isConnected()) {
+				EFS_Maitre_Variable.nombreLectureAPI++;
+			}
+			else {
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+			}
+			for(int i = 0; i < MAX_ECHANGE_MAITRE_CLIENT; i++) {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, ADR_API_ECHANGE_MAITRE_CLIENT + i, 0));
+			}
+			con.close();
+		} // Fin Try
+		catch (Exception e){
+			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS reset zone échange via API : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch
+		
+	}
+	
+	/**
 	 * Inscrit dans la base l'activite du programme
 	 */
 	private void gestionActivite() {
@@ -358,6 +447,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 				lectureTpsReel();
 				gestionAlarmesEnCours();
 				gestionAlarmesPreSeuil();
+				gestionEchangeViaAPI();
 				tmrTpsReel.start();
 			} catch (Exception ex) {
 				GestionLogger.gestionLogger.warning("Probleme dans le TIMER de lecture des valeurs ...");

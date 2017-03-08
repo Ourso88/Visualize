@@ -14,13 +14,16 @@ public interface EFS_General {
 //	public static final int ADR_API_AI_TPS_REEL = 500; // Adresse API Axiome
     public static final int ADR_API_AI_TPS_REEL = 1500; // Adresse AI - API Besançon et Dijon
 	public static final int ADR_API_DI_TPS_REEL = 1410; // Adresse DI - API Besançon et Dijon
-	public static final int ADR_API_ECHANGE_MAITRE_CLIENT = 2050;
+	
+	// Echange Maitre - Clients via API
+	public static final int ADR_API_ECHANGE_MAITRE_CLIENT = 2060;
+	public static final int VIA_API_PRISE_EN_COMPTE = 1;
+	public static final int MAX_ECHANGE_MAITRE_CLIENT = 50;
 	
 	
 	
 	public static final int MAX_AI = 400;
 	public static final int MAX_DI = 640;
-	public static final int MAX_ECHANGE_MAITRE_CLIENT = 50;
 	public static final int MAX_ALARME_EN_COURS = 100;
 	
 	public static final int TEST_GTC_HEURE = 16;

@@ -2,6 +2,7 @@ package kernel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import em.fonctions.GestionLogger;
@@ -64,6 +65,10 @@ public class GestionSGBD implements VoiesAPI {
 				+ ", '" + tbAlarme.get(indexAlarme).getCommentairePriseEnCompte() + "'"
 				+ ")";
 			AE_Variables.ctnOracle.fonctionSql(strSql);
+			
+			// Le supprimer de la table  V2_AlarmeEnCours
+			AE_Variables.ctnOracle.fonctionSql("DELETE FROM V2_AlarmeEnCours WHERE idCapteur = " + tbAlarme.get(indexAlarme).getIdCapteur());
+			
 			EFS_Maitre_Variable.nombreLectureSGBD++;
 		} catch (Exception e) {
 			GestionLogger.gestionLogger.severe("SGBD - Erreur historiserAlarme : " + e.getMessage());
@@ -335,6 +340,137 @@ public class GestionSGBD implements VoiesAPI {
 			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}	
+	
+	/**
+	 * Modification dans la SGBD du seuil bas de la voie API
+	 */
+	public static boolean modifierSeuilBas(long idCapteur, int seuilBas) {
+		testConnexionBase();
+		try {
+			String strSql = "UPDATE EntreeAnalogique SET SeuilBas = " + seuilBas + " WHERE idCapteur = " + idCapteur;
+			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			return true;
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("SGBD - Modification seuil bas : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+			return false;
+		}
+	}
+
+	/**
+	 * Modification dans la SGBD du seuil haut de la voie API
+	 */
+	public static boolean modifierSeuilHaut(long idCapteur, int seuilHaut) {
+		testConnexionBase();
+		try {
+			String strSql = "UPDATE EntreeAnalogique SET SeuilHaut = " + seuilHaut + " WHERE idCapteur = " + idCapteur;
+			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			return true;
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("SGBD - Modification seuil haut : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+			return false;
+		}
+	}
+	
+	/**
+	 * Modification dans la SGBD de la tempo seuil de la voie API
+	 */
+	public static boolean modifierSeuilTempo(long idCapteur, int seuilTempo) {
+		testConnexionBase();
+		try {
+			String strSql = "UPDATE EntreeAnalogique SET SeuilTempo = " + seuilTempo + " WHERE idCapteur = " + idCapteur;
+			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			return true;
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.warning("SGBD - Modification seuil haut : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+			return false;
+		}
+	}
+
+	/**
+	 * Enregistre dans la base Oracle l'alarme qui vient de se déclencher
+	 * @param indexAlarme
+	 */
+	public static void enregistrerAlarmeEnCours(int indexAlarme) {
+		testConnexionBase();
+		try {
+			long idCapteur = tbAlarme.get(indexAlarme).getIdCapteur();
+			String strSql = "SELECT * FROM V2_AlarmeEnCours WHERE idCapteur = " + idCapteur;
+			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
+			while(result.next()) {
+				AE_Variables.ctnOracle.fonctionSql("DELETE FROM V2_AlarmeEnCours WHERE idCapteur = " + idCapteur);
+			}
+			result.close();
+			AE_Variables.ctnOracle.closeLectureData();
+			
+			// Enregistrer dans la base la nouvelle Alarme
+    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			
+			String strDateApparition = tbAlarme.get(indexAlarme).getDateApparition().format(formatter);
+			double valeur = tbAlarme.get(indexAlarme).getValeurAPI();
+			
+			strSql = "INSERT INTO V2_AlarmeEnCours (idCapteur, DateApparition, Valeur) VALUES("
+					+ idCapteur
+					+ ", '"  + strDateApparition + "'"
+					+ ", " + valeur
+					+ ")";
+				AE_Variables.ctnOracle.fonctionSql(strSql);
+				EFS_Maitre_Variable.nombreLectureSGBD++;
+			
+		} catch (SQLException e) {
+			GestionLogger.gestionLogger.severe("SGBD : Erreur enregistrer alarme en cours : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+		}
+	}
+
+	
+	/**
+	 * Prise en compte d'une alarme par un client
+	 */
+	public static boolean prendreEnCompteViaAPI(long idCapteur) {
+		testConnexionBase();
+		// Recherche dans la table V2_AlarmeEnCours
+		try {
+			boolean prisEnCompte = false;
+			String strSql = "SELECT * FROM V2_AlarmeEnCours WHERE idCapteur = " + idCapteur;
+			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
+			if(result.next()) {
+				// Rechercher dans la tbAlarme
+				for(int i = 0; i < tbAlarme.size(); i++) {
+					if(tbAlarme.get(i).getIdCapteur() == idCapteur) {
+				        tbAlarme.get(i).setDatePriseEnCompte(LocalDateTime.now());
+				        tbAlarme.get(i).setPrisEnCompte(true);
+						tbAlarme.get(i).setIdPriseEnCompte(result.getInt("idPriseEnCompte"));
+						tbAlarme.get(i).setCommentairePriseEnCompte(result.getString("CommentairePriseEnCompte"));
+						// Couper Klaxon
+						GestionAPI.gestionKlaxon(false);
+						// Couper Appel Alert
+						GestionSGBD.gestionAlert(false);
+						prisEnCompte = true;
+						break;
+					}
+				}
+			}
+			result.close();
+			AE_Variables.ctnOracle.closeLectureData();
+			return prisEnCompte;
+		} catch (SQLException e) {
+			GestionLogger.gestionLogger.severe("SGBD : Erreur de prise en compte via un client : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+			return false;
+		}
+		
+	}
 	
 	/**
 	 * Renvoie un tableau des raisons de prise en compte

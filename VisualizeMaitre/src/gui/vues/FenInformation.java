@@ -13,7 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import em.fonctions.GestionLogger;
 import em.general.AE_Constantes;
+import kernel.GestionSGBD;
 import kernel.VoiesAPI;
 
 /**
@@ -169,11 +171,75 @@ public class FenInformation extends JFrame implements AE_Constantes, VoiesAPI, A
 	}
 	
 	/**
+	 * Modifie le seuil bas de la voie
+	 */
+	private void modifierSeuilBas() {
+		try {
+			double num = Double.parseDouble(txtSeuilBas.getText());
+			
+			if(GestionSGBD.modifierSeuilBas(tbAnaAPI.get(indexCapteur).getIdCapteur(), (int) (num * 10))) {
+				tbAnaAPI.get(indexCapteur).setSeuilBas((int) num * 10);
+			} else {
+				txtSeuilBas.setText(String.valueOf(tbAnaAPI.get(indexCapteur).getSeuilBas() / 10));
+			}
+		} catch (NumberFormatException nfe) {
+			GestionLogger.gestionLogger.info("Le seuil bas n'est pas numérique : " + nfe.getMessage());
+			txtSeuilBas.setText(String.valueOf(tbAnaAPI.get(indexCapteur).getSeuilBas() / 10));
+		}
+	}
+
+	/**
+	 * Modifie le seuil haut de la voie
+	 */
+	private void modifierSeuilHaut() {
+		try {
+			double num = Double.parseDouble(txtSeuilHaut.getText());
+			
+			if(GestionSGBD.modifierSeuilHaut(tbAnaAPI.get(indexCapteur).getIdCapteur(), (int) (num * 10))) {
+				tbAnaAPI.get(indexCapteur).setSeuilHaut((int) num * 10);
+			} else {
+				txtSeuilHaut.setText(String.valueOf(tbAnaAPI.get(indexCapteur).getSeuilHaut() / 10));
+			}
+		} catch (NumberFormatException nfe) {
+			GestionLogger.gestionLogger.info("Le seuil haut n'est pas numérique : " + nfe.getMessage());
+			txtSeuilHaut.setText(String.valueOf(tbAnaAPI.get(indexCapteur).getSeuilHaut() / 10));
+		}
+	}
+
+	/**
+	 * Modifie le seuil haut de la voie
+	 */
+	private void modifierSeuilTempo() {
+		try {
+			double num = Double.parseDouble(txtTempo.getText());
+			
+			if(GestionSGBD.modifierSeuilTempo(tbAnaAPI.get(indexCapteur).getIdCapteur(), (int) (num))) {
+				tbAnaAPI.get(indexCapteur).setSeuilTempo((int) num);
+			} else {
+				txtTempo.setText(String.valueOf(tbAnaAPI.get(indexCapteur).getSeuilTempo()));
+			}
+		} catch (NumberFormatException nfe) {
+			GestionLogger.gestionLogger.info("La tempo n'est pas numérique : " + nfe.getMessage());
+			txtTempo.setText(String.valueOf(tbAnaAPI.get(indexCapteur).getSeuilTempo()));
+		}
+	}
+	
+	
+	/**
 	 * Gere les actions des boutons
 	 * @param ae
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		if(ae.getSource() == btnModifierSeuilBas) {
+			modifierSeuilBas();
+		}
+		if(ae.getSource() == btnModifierSeuilHaut) {
+			modifierSeuilHaut();
+		}
+		if(ae.getSource() == btnModifierTempo) {
+			modifierSeuilTempo();
+		}
 		
 	}
 }

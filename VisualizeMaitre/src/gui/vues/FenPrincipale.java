@@ -433,6 +433,8 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 		        
 		        tbAlarme.get(indexSelection).setDatePriseEnCompte(LocalDateTime.now());
 		        tbAlarme.get(indexSelection).setPrisEnCompte(true);
+				tbAlarme.get(indexSelection).setIdPriseEnCompte(-1);
+				tbAlarme.get(indexSelection).setCommentairePriseEnCompte("---");
 				mdlAlarmesEnCours.fireTableDataChanged();
 				// Couper Klaxon
 				GestionAPI.gestionKlaxon(false);
@@ -461,6 +463,8 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 					} else {
 						raison = "---";
 					}
+					tbAlarme.get(indexSelection).setIdPriseEnCompte((int) idPriseEnCompte);
+					tbAlarme.get(indexSelection).setCommentairePriseEnCompte(raison);
 				}
         	}
         }
@@ -586,9 +590,10 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         if (jtbAlarmesEnCours.getRowCount() > 0) {
         	if (jtbAlarmesEnCours.getSelectedRowCount() > 0) {
         		int indexSelection = jtbAlarmesEnCours.getSelectedRow();
-		        
-		        FenInformation fenetre = new FenInformation(tbAlarme.get(indexSelection).getIndexCapteur());
-		        fenetre.setVisible(true);
+		        if(tbAlarme.get(indexSelection).getTypeCapteur() == CAPTEUR_ANALOGIQUE_ENTREE) {
+		        	FenInformation fenetre = new FenInformation(tbAlarme.get(indexSelection).getIndexCapteur());
+		        	fenetre.setVisible(true);
+		        }
         	}
     	}
 	}
