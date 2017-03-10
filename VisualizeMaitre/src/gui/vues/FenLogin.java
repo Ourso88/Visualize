@@ -186,6 +186,7 @@ public class FenLogin extends JFrame implements AE_Constantes, ActionListener {
 					AE_Variables.nomUtilisateur = result.getString("Nom");
 					AE_Variables.prenomUtilisateur = result.getString("Prenom");
 					AE_Variables.niveauUtilisateur = result.getInt("Niveau");
+					GestionLogger.gestionLogger.info("Login de " + AE_Variables.nomUtilisateur + " " + AE_Variables.prenomUtilisateur);
 					
 					this.dispose();
 				} else {

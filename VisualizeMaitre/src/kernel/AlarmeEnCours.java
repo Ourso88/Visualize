@@ -49,6 +49,7 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 			this.setAppelAlert(tbAnaAPI.get(indexCapteur).isAppelAlert());
 			this.setTypeAlarme(tbAnaAPI.get(indexCapteur).getAlarme());
 			this.setInventaire(tbAnaAPI.get(indexCapteur).getInventaire());
+			this.setDescriptionAlarme(tbAnaAPI.get(indexCapteur).getAlarmeDescription());
 		} else if(typeCapteur == CAPTEUR_DIGITAL_ENTREE) {
 			this.setIdCapteur(tbDigiAPI.get(indexCapteur).getIdCapteur());
 			this.setNomCapteur(tbDigiAPI.get(indexCapteur).getNom());
@@ -60,6 +61,7 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 			this.setAppelAlert(tbDigiAPI.get(indexCapteur).isAppelAlert());
 			this.setTypeAlarme(tbDigiAPI.get(indexCapteur).getAlarme());
 			this.setInventaire(tbDigiAPI.get(indexCapteur).getInventaire());
+			this.setDescriptionAlarme(tbDigiAPI.get(indexCapteur).getAlarmeDescription());
 		}
 		this.setPrisEnCompte(false);
 		this.setHistoriser(false);

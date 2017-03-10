@@ -179,6 +179,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 					// Disparition
 					if(!tbAnaAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
 						tbAlarme.get(i).setAlarmeEnclenchee(false);
+					} else {
+						tbAlarme.get(i).setAlarmeEnclenchee(true);
 					}
 				}
 				// Nouvelle Valeur DI
@@ -191,6 +193,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 					// Disparition
 					if(!tbDigiAPI.get(tbAlarme.get(i).getIndexCapteur()).isAlarmeEnclenchee()) {
 						tbAlarme.get(i).setAlarmeEnclenchee(false);
+					} else {
+						tbAlarme.get(i).setAlarmeEnclenchee(true);
 					}
 				}
 				// Historiser
@@ -309,7 +313,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 */
 	public static void gestionKlaxon(boolean sonnerie) {
 /*		
-		try{
+		try {
 			// ===== Ouverture de la connection =====
 			//  Variables TCP
 			InetAddress addr = null; // Adresse IP du serveur	
@@ -338,7 +342,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Klaxon : " + e.getMessage());
 			EFS_Maitre_Variable.compteurErreurAPI++;
 		} // Fin catch
-*/				
+*/		
 	} // Fin gestionKlaxon()
 	
 	/**

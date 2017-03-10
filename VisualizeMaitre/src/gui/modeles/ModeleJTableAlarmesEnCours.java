@@ -101,7 +101,7 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EF
 	    			return "---";
 	    		}
 	    	case JT_ALARME_EN_COURS_ALARME_DESCRIPTION:
-	    		return "???";
+	    		return lstAlarmeEnCours.get(rowIndex).getDescriptionAlarme();
 	    	case JT_ALARME_EN_COURS_TYPE: 
 	    		switch(lstAlarmeEnCours.get(rowIndex).getTypeAlarme()) {
 	    		case ALARME_RIEN:

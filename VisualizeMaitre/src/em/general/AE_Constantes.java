@@ -44,4 +44,5 @@ public interface AE_Constantes {
 	Color AE_VERT_002 = new Color(143, 214, 189);
 	Color AE_ROUGE = new Color(255, 0, 0); 
 	Color AE_NOIR = new Color(0, 0, 0); 
+	Color AE_ORANGE = new Color(255, 153, 0); 
 }

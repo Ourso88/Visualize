@@ -30,6 +30,10 @@ public class VizualizeMaitreMain implements VoiesAPI {
 		// Test d'integrité de la base
 		GestionSGBD.testIntegriteBase();
 		
+		// Initialisation
+		GestionLogger.gestionLogger.info("Initialisation des tables de données");
+		GestionSGBD.viderAlarmeEnCours();
+		
 		// Chargement des voies API
 		GestionLogger.gestionLogger.info("Chargement des voies API");
 		GestionSGBD.lectureAnalogicInput();
@@ -40,7 +44,7 @@ public class VizualizeMaitreMain implements VoiesAPI {
 		@SuppressWarnings("unused")
 		GestionAPI lectureAPI = new GestionAPI();
 		
-		GestionLogger.gestionLogger.info("Appel fenetre Voies API");
+		GestionLogger.gestionLogger.info("Appel fenetre principale");
 		FenPrincipale fenetre = new FenPrincipale();
 		fenetre.setVisible(true);
 	}

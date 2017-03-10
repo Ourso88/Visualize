@@ -39,6 +39,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	private LocalDateTime DatePreAlarmeApparition;
 	private boolean alarmeTempoEcoulee;
 	private boolean preAlarmeTempoEcoulee;
+	private String alarmeDescription;
 	
 	private boolean appelAlert;
 	
@@ -122,32 +123,36 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	public void setValeurAPI(double valeurAPI) {
 		this.valeurAPI = valeurAPI + this.getCalibration();
 		
-		if(valeurAPI < seuilBas) {
+		if(this.valeurAPI < seuilBas) {
 			setSeuilBasAtteint(true);
 			setPreSeuilBasAtteint(false);
 			setSeuilHautAtteint(false);
 			setPreSeuilHautAtteint(false);
 			setSeuilAtteint("BAS");
-		} else if(valeurAPI < preSeuilBas) {
+			setAlarmeDescription("Seuil bas dépassé : " + (this.getSeuilBas() / 10) + " < " + (this.getSeuilBas() / 10));
+		} else if(this.valeurAPI < preSeuilBas) {
 			setSeuilBasAtteint(false);
 			setPreSeuilBasAtteint(true);
 			setSeuilHautAtteint(false);
 			setPreSeuilHautAtteint(false);
 			setSeuilAtteint("PRE - BAS");
+			setAlarmeDescription("---");
 			// Remise à zéro
 			setAppelAlert(false);
-		} else if(valeurAPI > seuilHaut) {
+		} else if(this.valeurAPI > seuilHaut) {
 			setSeuilBasAtteint(false);
 			setPreSeuilBasAtteint(false);
 			setSeuilHautAtteint(true);
 			setPreSeuilHautAtteint(false);
 			setSeuilAtteint("HAUT");
-		} else if(valeurAPI > preSeuilHaut) {
+			setAlarmeDescription("Seuil haut dépassé : " + (this.getSeuilHaut() / 10) + " < " + (this.getSeuilHaut() / 10));
+		} else if(this.valeurAPI > preSeuilHaut) {
 			setSeuilBasAtteint(false);
 			setPreSeuilBasAtteint(false);
 			setSeuilHautAtteint(false);
 			setPreSeuilHautAtteint(true);
 			setSeuilAtteint("PRE - HAUT");
+			setAlarmeDescription("---");
 			// Remise à zéro
 			setAppelAlert(false);
 		} else {
@@ -156,6 +161,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 			setSeuilHautAtteint(false);
 			setPreSeuilHautAtteint(false);
 			setSeuilAtteint("AUCUN");
+			setAlarmeDescription("---");
 			// Remise à zéro
 			setAppelAlert(false);
 		}
@@ -569,6 +575,20 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	 */
 	public void setActivationPreSeuil(int activationPreSeuil) {
 		this.activationPreSeuil = activationPreSeuil;
+	}
+
+	/**
+	 * @return the alarmeDescription
+	 */
+	public String getAlarmeDescription() {
+		return alarmeDescription;
+	}
+
+	/**
+	 * @param alarmeDescription the alarmeDescription to set
+	 */
+	public void setAlarmeDescription(String alarmeDescription) {
+		this.alarmeDescription = alarmeDescription;
 	}
 
 

@@ -37,6 +37,7 @@ import gui.modeles.ModeleJTableAlarmesEnCours;
 import gui.modeles.ModeleJTableAlarmesHistorique;
 import gui.modeles.ModeleJTableAlarmesSeuil;
 import gui.modeles.ModeleJTableCapteurMaintenance;
+import gui.renderers.JTableAlarmesEnCoursAppelAlert;
 import gui.renderers.JTableAlarmesEnCoursColorCellRenderer;
 import kernel.AlarmeHistorique;
 import kernel.CapteurMaintenance;
@@ -107,7 +108,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
     
     // Timer
     private Timer tmrRefresh = new Timer(TIMER_FEN_PRINCIPALE, this);	
-	
+    private Timer tmrLogin = new Timer(TIMER_LOGIN, this);	
 	
     /**
      * Constucteur
@@ -118,6 +119,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
     	remplirHistoriqueAlarme();
     	remplirEnMaintenance();
     	tmrRefresh.start();
+    	tmrLogin.start();
     }	
 	
 	/**
@@ -192,6 +194,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    jtbAlarmesEnCours.setFillsViewportHeight(true);
 	    jtbAlarmesEnCours.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    jtbAlarmesEnCours.setBackground(AE_BLEU);
+	    jtbAlarmesEnCours.setSelectionBackground(AE_MARRON);
 	    
 	    sorterJtbAlarmesEnCours =  new TableRowSorter<TableModel>(jtbAlarmesEnCours.getModel());
         jtbAlarmesEnCours.setRowSorter(sorterJtbAlarmesEnCours);        
@@ -199,6 +202,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         sorterJtbAlarmesEnCours.setSortsOnUpdates(true);
         
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_NOM).setCellRenderer(new JTableAlarmesEnCoursColorCellRenderer());
+        jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_APPEL_ALERT).setCellRenderer(new JTableAlarmesEnCoursAppelAlert());
         
         jspAlarmeEnCours = new JScrollPane(jtbAlarmesEnCours);
         jspAlarmeEnCours.setBackground(AE_BLEU);
@@ -209,6 +213,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    jtbAlarmesSeuil.setFillsViewportHeight(true);
 	    jtbAlarmesSeuil.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    jtbAlarmesSeuil.setBackground(AE_BLEU);
+	    jtbAlarmesSeuil.setSelectionBackground(AE_MARRON);
 	    
 	    sorterJtbAlarmesSeuil =  new TableRowSorter<TableModel>(jtbAlarmesSeuil.getModel());
         jtbAlarmesSeuil.setRowSorter(sorterJtbAlarmesSeuil);        
@@ -224,6 +229,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    jtbCapteurMaintenance.setFillsViewportHeight(true);
 	    jtbCapteurMaintenance.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    jtbCapteurMaintenance.setBackground(AE_BLEU);
+	    jtbCapteurMaintenance.setSelectionBackground(AE_MARRON);
 	    
 	    sorterJtbCapteurMaintenance =  new TableRowSorter<TableModel>(jtbCapteurMaintenance.getModel());
         jtbCapteurMaintenance.setRowSorter(sorterJtbCapteurMaintenance);        
@@ -239,7 +245,8 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    jtbAlarmesHistorique.setFillsViewportHeight(true);
 	    jtbAlarmesHistorique.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    jtbAlarmesHistorique.setBackground(AE_BLEU);
-	    
+	    jtbAlarmesHistorique.setSelectionBackground(AE_MARRON);
+	    	    
 	    sorterJtbAlarmesHistorique =  new TableRowSorter<TableModel>(jtbAlarmesHistorique.getModel());
         jtbAlarmesHistorique.setRowSorter(sorterJtbAlarmesHistorique);        
         sorterJtbAlarmesHistorique.setSortable(0,  false);
@@ -430,18 +437,10 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         if (jtbAlarmesEnCours.getRowCount() > 0) {
         	if (jtbAlarmesEnCours.getSelectedRowCount() > 0) {
         		int indexSelection = jtbAlarmesEnCours.getSelectedRow();
-		        
-		        tbAlarme.get(indexSelection).setDatePriseEnCompte(LocalDateTime.now());
-		        tbAlarme.get(indexSelection).setPrisEnCompte(true);
+
+				long idPriseEnCompte = 1; // Autre
 				tbAlarme.get(indexSelection).setIdPriseEnCompte(-1);
 				tbAlarme.get(indexSelection).setCommentairePriseEnCompte("---");
-				mdlAlarmesEnCours.fireTableDataChanged();
-				// Couper Klaxon
-				GestionAPI.gestionKlaxon(false);
-				// Couper Appel Alert
-				GestionSGBD.gestionAlert(false);
-				
-				long idPriseEnCompte = 1; // Autre
 				String raison = "En attente";
 				// Demande du motif de prise en compte
 				if(tbAlarme.get(indexSelection).getTypeAlarme() == ALARME_ALERT) {
@@ -466,6 +465,14 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 					tbAlarme.get(indexSelection).setIdPriseEnCompte((int) idPriseEnCompte);
 					tbAlarme.get(indexSelection).setCommentairePriseEnCompte(raison);
 				}
+        		
+		        tbAlarme.get(indexSelection).setDatePriseEnCompte(LocalDateTime.now());
+		        tbAlarme.get(indexSelection).setPrisEnCompte(true);
+				mdlAlarmesEnCours.fireTableDataChanged();
+				// Couper Klaxon
+				GestionAPI.gestionKlaxon(false);
+				// Couper Appel Alert
+				GestionSGBD.gestionAlert(false);
         	}
         }
 	}	
@@ -603,11 +610,21 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		if (ae.getSource() == tmrLogin && AE_Variables.idUtilisateur != -1) {
+			GestionLogger.gestionLogger.info("Delog de " + AE_Variables.nomUtilisateur + " " + AE_Variables.prenomUtilisateur);
+			AE_Variables.idUtilisateur = -1;
+			AE_Variables.niveauUtilisateur = 0;
+			AE_Variables.nomUtilisateur = "";
+			AE_Variables.prenomUtilisateur = "";
+		} // Fin If
+		
 		if (ae.getSource() == btnVoiesAnalogique) {
+			tmrLogin.restart();
 			FenVoiesAnalogicAPI fenetre = new FenVoiesAnalogicAPI();
 			fenetre.setVisible(true);
 		}
 		if (ae.getSource() == btnVoiesDigitale) {
+			tmrLogin.restart();
 			FenVoiesDigitalAPI fenetre = new FenVoiesDigitalAPI();
 			fenetre.setVisible(true);
 		}
@@ -624,19 +641,23 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 		
 		}
 		if (ae.getSource() == btnPriseEnCompte) {
+			tmrLogin.restart();
 			if(AE_Fonctions.testNiveau(40)) {
 				gererPriseEnCompte();
 			}
 		}
 		if (ae.getSource() == btnRetirerMaintenance) {
+			tmrLogin.restart();
 			gererRetirerMaintenance();
 		}
 		
 		if (ae.getSource() == btnCourbe) {
+			tmrLogin.restart();
 			gererCourbe();
 		}
 
 		if (ae.getSource() == btnInformation) {
+			tmrLogin.restart();
 			if(AE_Fonctions.testNiveau(40)) {
 				gererInformation();
 			}
@@ -644,18 +665,17 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 
 		if (ae.getSource() == btnLogin) {
 			if(AE_Variables.idUtilisateur != -1) {
+				GestionLogger.gestionLogger.info("Delog de " + AE_Variables.nomUtilisateur + " " + AE_Variables.prenomUtilisateur);
 				AE_Variables.idUtilisateur = -1;
 				AE_Variables.nomUtilisateur = "";
 				AE_Variables.prenomUtilisateur = "";
 				AE_Variables.niveauUtilisateur = 0;
-				
 			} else {
+				tmrLogin.restart();
 				FenLogin fenetre = new FenLogin();
 				fenetre.setVisible(true);
 			}
 		}
-
-		
 	}		
 	
 }

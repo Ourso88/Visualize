@@ -1,15 +1,9 @@
 package em.general;
 
-import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import em.fonctions.AE_Fonctions;
-import em.general.AE_Constantes;
 
 /**
  * Gére les variables propre à l'EFS
@@ -75,34 +69,4 @@ public class EFS_Maitre_Variable {
 			e.printStackTrace();
 		}
 	}	
-	
-	/**
-	 * Test la version du programme par rapport à celle de la base de données
-	 * @param appel
-	 */
-	public static void testVersion(Component appel) {
-		String strSql = "";
-		
-		strSql = "SELECT * FROM Version"; 
-		ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
-		try {
-			int versionBase = -1;
-			result.last();
-			versionBase = result.getInt("VersionMaitre");
-			if (versionBase != AE_Constantes.VERSION) AE_Fonctions.afficheMessage(appel, "AVERTISSEMENT", "La version du programme n'est pas à jour ! Veuillez contacter le service technique ...");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			result.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		// Fermeture base
-		AE_Variables.ctnOracle.closeLectureData();
-		
-	}
-	
-	
 }

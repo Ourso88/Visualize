@@ -22,6 +22,8 @@ public class DigitalInput extends Capteur implements EFS_General {
 	private boolean alarmeTempoEcoulee;
 	private boolean appelAlert;
 	
+	private String alarmeDescription;
+	
 	/**
 	 * Constructeur vide
 	 */
@@ -125,10 +127,12 @@ public class DigitalInput extends Capteur implements EFS_General {
 	public void setValeurAPI(int valeurAPI) {
 		if((valeurAPI == 1) && (this.getnOnF() == CAPTEUR_DIGITAL_NO)) {
 			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT) || (this.getAlarme() == ALARME_ETAT)) && (this.getInhibition() == 0)) {
+				this.setAlarmeDescription("CAPTEUR NO : 1");
 				this.setAlarmeEnclenchee(true);
 			}
 		} else if((valeurAPI == 0) && (this.getnOnF() == CAPTEUR_DIGITAL_NF)) {
 			if(((this.getAlarme() == ALARME_ALERT) || (this.getAlarme() == ALARME_DEFAUT) || (this.getAlarme() == ALARME_ETAT)) && (this.getInhibition() == 0)) {
+				this.setAlarmeDescription("CAPTEUR NF : 0");
 				this.setAlarmeEnclenchee(true);
 			}
 		} else {
@@ -212,6 +216,20 @@ public class DigitalInput extends Capteur implements EFS_General {
 	 */
 	public void setAppelAlert(boolean appelAlert) {
 		this.appelAlert = appelAlert;
+	}
+
+	/**
+	 * @return the alarmeDescription
+	 */
+	public String getAlarmeDescription() {
+		return alarmeDescription;
+	}
+
+	/**
+	 * @param alarmeDescription the alarmeDescription to set
+	 */
+	public void setAlarmeDescription(String alarmeDescription) {
+		this.alarmeDescription = alarmeDescription;
 	}
 
 	

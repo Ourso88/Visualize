@@ -1,11 +1,14 @@
 package kernel;
 
+import java.awt.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import em.fonctions.AE_Fonctions;
 import em.fonctions.GestionLogger;
+import em.general.AE_Constantes;
 import em.general.AE_Variables;
 import em.general.EFS_General;
 import em.general.EFS_Maitre_Variable;
@@ -469,6 +472,50 @@ public class GestionSGBD implements VoiesAPI {
 			EFS_Maitre_Variable.compteurErreurSGBD++;
 			return false;
 		}
+		
+	}
+	
+	/**
+	 *  Vide la table V2_AlarmeEnCours
+	 */
+	public static void viderAlarmeEnCours() {
+		testConnexionBase();
+		try {
+			String strSql = "DELETE FROM V2_AlarmeEnCours";
+			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.severe("SGBD : Erreur vidage V2_AlarmeEnCours");
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+		}
+	}
+
+	/**
+	 * Test la version du programme par rapport à celle de la base de données
+	 * @param appel
+	 */
+	public static void testVersion(Component appel) {
+		String strSql = "";
+		
+		strSql = "SELECT * FROM Version"; 
+		ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
+		try {
+			int versionBase = -1;
+			result.last();
+			versionBase = result.getInt("VersionMaitre");
+			if (versionBase != AE_Constantes.VERSION) AE_Fonctions.afficheMessage(appel, "AVERTISSEMENT", "La version du programme n'est pas à jour ! Veuillez contacter le service technique ...");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			result.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		// Fermeture base
+		AE_Variables.ctnOracle.closeLectureData();
 		
 	}
 	
