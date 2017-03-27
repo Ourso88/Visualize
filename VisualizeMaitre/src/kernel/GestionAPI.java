@@ -3,6 +3,9 @@ package kernel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.Timer;
 
@@ -21,6 +24,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	private Timer tmrTpsReel = new Timer(TIMER_LECTURE_TPS_REEL, this);	
 	private Timer tmrHistoriserValeurAPI = new Timer(TIMER_ENREGISTREMENT_HISTORIQUE, this);	
 	private Timer tmrMinute = new Timer(TIMER_MINUTE, this);	
+	private boolean blTestHoraire = false;
 	
 	/**
 	 * Constructeur
@@ -438,8 +442,146 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 * Inscrit dans la base l'activite du programme
 	 */
 	private void gestionActivite() {
-//		GestionSGBD.ecritureActivite();
+		GestionSGBD.ecritureActivite();
 	}
+	
+	private void testAlarmeHoraire() {
+		// Test horaire du soir
+	    Calendar cal = Calendar.getInstance();
+		Date now = new Date(); 
+		    
+	   cal.setTime(now);
+	   int heure = cal.get(Calendar.HOUR_OF_DAY);
+	   int minute = cal.get(Calendar.MINUTE);
+	   
+	   if (((heure >= TEST_GTC_HEURE && minute > EFS_Maitre_Variable.TEST_GTC_MINUTE) && 
+			   (heure < TEST_GTC_HEURE + 1 && minute < EFS_Maitre_Variable.TEST_GTC_MINUTE + 10))) {
+		   if (!blTestHoraire) {
+		       blTestHoraire = true;
+		       GestionSGBD.gestionTestAlert(true);
+		       // Mise à jour de l'heure automate
+		       ecrireDate();
+		   }
+	   }
+	   else {
+		   if (blTestHoraire) {
+			   GestionSGBD.gestionTestAlert(false);
+		   }			   
+	       blTestHoraire = false;
+	   }
+	} // Fin testAlarmeHoraire()	
+	
+	/**
+	 * Remet l'automate à l'heure
+	 */
+	private void ecrireDate() {
+		Date now = new Date();
+		String dateSeconde = "";
+		String dateMinute = "";
+		String dateHeure = "";
+		String dateJour = "";
+		String dateMois = "";
+		String dateAnnee = "";
+		SimpleDateFormat formaterSeconde = null;
+		SimpleDateFormat formaterMinute = null;
+		SimpleDateFormat formaterHeure = null;
+		SimpleDateFormat formaterJour = null;
+		SimpleDateFormat formaterMois = null;
+		SimpleDateFormat formaterAnnee = null;
+		formaterSeconde = new SimpleDateFormat("ss"); 		
+		formaterMinute = new SimpleDateFormat("mm"); 		
+		formaterHeure = new SimpleDateFormat("HH"); 		
+		formaterJour = new SimpleDateFormat("dd"); 		
+		formaterMois = new SimpleDateFormat("MM"); 		
+		formaterAnnee = new SimpleDateFormat("yyyy"); 		
+
+		dateSeconde = formaterSeconde.format(now);
+		dateMinute = formaterMinute.format(now);
+		dateHeure = formaterHeure.format(now);
+		dateJour = formaterJour.format(now);
+		dateMois = formaterMois.format(now);
+		dateAnnee = formaterAnnee.format(now);
+		
+		
+		try {
+			// ===== Ouverture de la connection =====
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			double [] reqReponse;
+			
+			int echangeDate = 0;
+			int var1 = 0;
+			int var2 = 0;
+			int var3 = 0;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con.connect();
+
+			// ===== Ecriture d'un mot =====
+			echangeDate = Integer.parseInt(dateSeconde);  //28; // Seconde 28 s
+			var1 = echangeDate / 10;
+			var2 = echangeDate % 10;
+			
+			echangeDate = (var1 * 16) + var2;
+			echangeDate *= 256;
+			
+			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2005, echangeDate));
+
+			
+			echangeDate =  Integer.parseInt(dateMinute); //35; // 35 mn
+			var1 = echangeDate / 10;
+			var2 = echangeDate % 10;
+			
+			var3 = (var1 * 16) + var2;	
+			
+			echangeDate =  Integer.parseInt(dateHeure); //13; // 13 h
+			var1 = echangeDate / 10;
+			var2 = echangeDate % 10;
+			
+			echangeDate = (((var1 * 16) + var2) * 256) + var3;	
+			
+			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2006, echangeDate));
+
+
+			echangeDate =  Integer.parseInt(dateJour);//25; // 22 jour
+			var1 = echangeDate / 10;
+			var2 = echangeDate % 10;
+			
+			var3 = (var1 * 16) + var2;	
+			
+			echangeDate =  Integer.parseInt(dateMois); // 12; // 12 mois
+			var1 = echangeDate / 10;
+			var2 = echangeDate % 10;
+			
+			echangeDate = (((var1 * 16) + var2) * 256) + var3;	
+			
+			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2007, echangeDate));			
+			
+			echangeDate =  Integer.parseInt(dateAnnee) - 2000;//17; // 22 
+			var1 = echangeDate / 10;
+			var2 = echangeDate % 10;
+			
+			var3 = (var1 * 16) + var2;	
+			
+			echangeDate = 20; // 12 
+			var1 = echangeDate / 10;
+			var2 = echangeDate % 10;
+			
+			echangeDate = (((var1 * 16) + var2) * 256) + var3;	
+			
+			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2008, echangeDate));			
+			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2009, 1));
+			
+            con.close();
+		} // Fin Try
+		catch (Exception e){
+			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS remise à lheure automate : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch			
+	} // fin EcrireDate()
+	
 	
 	
 	/**

@@ -541,6 +541,21 @@ public class GestionSGBD implements VoiesAPI {
 	}
 	
 	/**
+	 * Test le systeme Alert
+	 */
+	public static void gestionTestAlert(boolean alerte) {
+		testConnexionBase();
+		String strSql = "";
+		if (alerte) {
+			strSql = "UPDATE AlarmeAlerte SET TestAlert = 1 WHERE idAlarmeAlerte = 1";
+		} 
+		else {
+			strSql = "UPDATE AlarmeAlerte SET TestAlert = 0 WHERE idAlarmeAlerte = 1";
+		} // Fin if alerte
+		AE_Variables.ctnOracle.fonctionSql(strSql);
+	} // Fin gestionTestAlert()		
+	
+	/**
 	 * Renvoie un tableau des raisons de prise en compte
 	 */
 	public static String[] renvoieRaisonPriseEnCompte() {
