@@ -10,6 +10,7 @@ public class AE_Variables {
 	public static boolean modeDebug = false;
 	
 	public static FonctionsSGBD ctnOracle = null;
+	public static FonctionsSGBD ctnHistorise = null;
 	
 	public static int AE_SGBD_TYPE = AE_Constantes.AE_SGBD_ORACLE;
 	public static String AE_SGBD_SERVEUR = new String("@srvbesbdd02.bfc-citrix.local:1521");

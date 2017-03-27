@@ -42,6 +42,27 @@ public class GestionSGBD implements VoiesAPI {
 			EFS_Maitre_Variable.compteurErreurSGBD++;
 		}
 	}
+
+	/**
+	 * Teste si la connexion à la base de données n'est pas fermée
+	 */
+	private static void testConnexionBaseHistorise() {
+		try {
+			if(AE_Variables.ctnHistorise.ctn.isClosed()) {
+				GestionLogger.gestionLogger.warning("Erreur Connexion SGBD Fermée ...");
+				AE_Variables.ctnHistorise.ctn.clearWarnings();
+				AE_Variables.ctnHistorise = new FonctionsSGBD(AE_Variables.AE_SGBD_TYPE, AE_Variables.AE_SGBD_SERVEUR, AE_Variables.AE_SGBD_BASE, AE_Variables.AE_SGBD_USER, AE_Variables.AE_SGBD_MDP);
+				EFS_Maitre_Variable.compteurErreurSGBD++;
+				if(AE_Variables.ctnHistorise.ctn.isClosed()) {
+					GestionLogger.gestionLogger.warning("Erreur Connexion SGBD TOUJOURS Fermée ...");
+					EFS_Maitre_Variable.compteurErreurSGBD++;
+				}
+			}
+		} catch (SQLException e) {
+			GestionLogger.gestionLogger.severe("Erreur Connexion SGBD Fermée impossible de rouvrir ... ");
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+		}
+	}
 	
 	/**
 	 * Historise une alarme
@@ -84,7 +105,7 @@ public class GestionSGBD implements VoiesAPI {
 	 * Ecriture dans la SGBD des valeur API pour les voies
 	 */
 	public static void historiseValeurVoiesAPI() {
-		testConnexionBase();
+		testConnexionBaseHistorise();
 		try {
 			String strSql = "";
 			// Analogique
@@ -95,7 +116,7 @@ public class GestionSGBD implements VoiesAPI {
 					+ ", sysdate"
 					+ ", " + tbAnaAPI.get(i).getValeurAPI()
 					+ ")";
-				AE_Variables.ctnOracle.fonctionSql(strSql);
+				AE_Variables.ctnHistorise.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;
 			}
 
@@ -107,7 +128,7 @@ public class GestionSGBD implements VoiesAPI {
 					+ ", sysdate"
 					+ ", " + tbDigiAPI.get(i).getValeurAPI()
 					+ ")";
-				AE_Variables.ctnOracle.fonctionSql(strSql);
+				AE_Variables.ctnHistorise.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;
 			}
 		} catch (Exception e) {

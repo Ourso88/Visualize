@@ -111,12 +111,25 @@ public class FonctionsSGBD {
 		
 		testConnexionBase();
 		try {
-			maTransmission = ctn.createStatement();
-			nb = maTransmission.executeUpdate(strReq);
-			maTransmission.close();
+			int cptErreur = 0;
+			boolean transmis = false;
+			
+			do {
+				try {
+					maTransmission = ctn.createStatement();
+					nb = maTransmission.executeUpdate(strReq);
+					maTransmission.close();
+					transmis = true;
+				} catch (Exception e) {
+					GestionLogger.gestionLogger.warning("Erreur fonctionSql \n " + "Requete = " + strReq + "\n" + e.getMessage());
+					EFS_Maitre_Variable.compteurErreurSGBD++;
+					cptErreur++;
+				}
+			} while (cptErreur < 5 && !transmis);
+			
 		}
 		catch (Exception e) {
-			GestionLogger.gestionLogger.warning("Erreur fonctionSql \n " + "Requete = " + strReq + "\n" + e.getMessage());
+			GestionLogger.gestionLogger.severe("5 Erreurs fonctionSql \n " + "Requete = " + strReq + "\n" + e.getMessage());
 			EFS_Maitre_Variable.compteurErreurSGBD++;
 		} // Fin try - catch
 	} // Fil LectureData	

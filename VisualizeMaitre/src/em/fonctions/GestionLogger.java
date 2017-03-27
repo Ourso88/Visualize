@@ -8,18 +8,23 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import em.general.AE_Constantes;
+
 /**
  * Gestion du logger - Creation, formatage, utilisation
  * @author Eric Mariani
  * @since 03/01/2017
  *
  */
-public class GestionLogger {
+public class GestionLogger implements AE_Constantes {
 	public static Logger gestionLogger;
 	private static Handler fhXml;
 	private static Handler fhTxt;
 	
-	
+	/**
+	 * Initialise le logger
+	 * @param pClasseAppellante
+	 */
 	public static void initialisation(String pClasseAppellante) {
 		gestionLogger = Logger.getLogger(pClasseAppellante);
 		
@@ -65,7 +70,7 @@ public class GestionLogger {
 				gestionLogger.addHandler(fhXml);
 			}
 			if(fhTxt == null) {
-				fhTxt = new FileHandler("GTC_MAITRE_Logging.log", true);
+				fhTxt = new FileHandler(LOGGER_FICHIER_TEXTE, true);
 				MyLogFormatter formatter = new MyLogFormatter();
 				fhTxt.setFormatter(formatter);
 				gestionLogger.addHandler(fhTxt);
@@ -78,4 +83,13 @@ public class GestionLogger {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Sauvegarde les fichiers dans une base de données
+	 */
+	public static void sauvegarde() {
+		// Parcours du répertoire courant
+		
+	}
+	
 }

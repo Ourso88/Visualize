@@ -39,6 +39,7 @@ import gui.modeles.ModeleJTableAlarmesSeuil;
 import gui.modeles.ModeleJTableCapteurMaintenance;
 import gui.renderers.JTableAlarmesEnCoursAppelAlert;
 import gui.renderers.JTableAlarmesEnCoursColorCellRenderer;
+import gui.renderers.JTableAlarmesEnCoursValeur;
 import kernel.AlarmeHistorique;
 import kernel.CapteurMaintenance;
 import kernel.GestionAPI;
@@ -203,6 +204,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_NOM).setCellRenderer(new JTableAlarmesEnCoursColorCellRenderer());
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_APPEL_ALERT).setCellRenderer(new JTableAlarmesEnCoursAppelAlert());
+        jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_VALEUR).setCellRenderer(new JTableAlarmesEnCoursValeur());
         
         jspAlarmeEnCours = new JScrollPane(jtbAlarmesEnCours);
         jspAlarmeEnCours.setBackground(AE_BLEU);

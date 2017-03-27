@@ -15,6 +15,8 @@ public interface AE_Constantes {
 	public static final int LANGUE_FR = 0;
 	public static final int LANGUE_US = 1;
 		
+	// Logger
+	public static final String LOGGER_FICHIER_TEXTE = "GTC_MAITRE_Logging.log";
 	// Timer
 	public static final int TIMER_RAFFRAICHISSEMENT_MINUTE = 60000;
 	

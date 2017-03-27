@@ -370,7 +370,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			}
 			// ======================================================
 			
-			// ===== Envoi des requetes de lecture pour les AI ======
+			// ===== Envoi des requetes de lecture pour les Mots d'échange ======
 			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.READ_MULTIPLE_REGISTERS, ADR_API_ECHANGE_MAITRE_CLIENT, MAX_ECHANGE_MAITRE_CLIENT));
 			for (int i = 0; i < MAX_ECHANGE_MAITRE_CLIENT; i++) {
 				tbEchange[i] = reqReponse[i]; 
@@ -384,6 +384,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 				case VIA_API_PRISE_EN_COMPTE:
 					if (!GestionSGBD.prendreEnCompteViaAPI((long)tbEchange[1])) {
 						GestionLogger.gestionLogger.info("Erreur prise en compte via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Prise en compte via API idCapteur = " + tbEchange[1]);
 					}
 					resetEchangeViaAPI();
 					break;

@@ -7,8 +7,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import em.general.AE_Constantes;
 
-
-public class JTableAlarmesEnCoursAppelAlert  extends DefaultTableCellRenderer implements AE_Constantes {
+/**
+ * Gestion des couleurs pour le JTable colonne Appel Alert
+ * @author Eric Mariani
+ * @since 10/03/2017
+ */
+public class JTableAlarmesEnCoursAppelAlert extends DefaultTableCellRenderer implements AE_Constantes {
 	private static final long serialVersionUID = 1L;
 
 	@Override

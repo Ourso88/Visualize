@@ -26,6 +26,7 @@ public class VizualizeMaitreMain implements VoiesAPI {
 
 		GestionLogger.gestionLogger.info("Connexion à la base de donnée");
 		AE_Variables.ctnOracle = new FonctionsSGBD(AE_Variables.AE_SGBD_TYPE, AE_Variables.AE_SGBD_SERVEUR, AE_Variables.AE_SGBD_BASE, AE_Variables.AE_SGBD_USER, AE_Variables.AE_SGBD_MDP);
+		AE_Variables.ctnHistorise = new FonctionsSGBD(AE_Variables.AE_SGBD_TYPE, AE_Variables.AE_SGBD_SERVEUR, AE_Variables.AE_SGBD_BASE, AE_Variables.AE_SGBD_USER, AE_Variables.AE_SGBD_MDP);
 		
 		// Test d'integrité de la base
 		GestionSGBD.testIntegriteBase();
