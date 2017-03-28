@@ -48,7 +48,7 @@ public class EFS_Maitre_Variable {
 				AE_Variables.AE_SGBD_BASE = "GTCBFC";
 				AE_Variables.AE_SGBD_USER = "GTCDijon";
 				AE_Variables.AE_SGBD_MDP = "GTCBFC_dijon25";
-				ADR_IP_API = "10.21.4.31";
+				ADR_IP_API = "10.21.102.31";
 				TEST_GTC_MINUTE = 30; // Modification 26/05/2016 et Modification 24/06/2016
 			} else {
 				AE_Variables.AE_SGBD_BASE = "xe";

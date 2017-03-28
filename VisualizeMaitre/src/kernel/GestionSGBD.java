@@ -412,7 +412,7 @@ public class GestionSGBD implements VoiesAPI {
 			EFS_Maitre_Variable.nombreLectureSGBD++;
 			return true;
 		} catch (Exception e) {
-			GestionLogger.gestionLogger.warning("SGBD - Modification seuil haut : " + e.getMessage());
+			GestionLogger.gestionLogger.warning("SGBD - Modification seuil tempo : " + e.getMessage());
 			EFS_Maitre_Variable.nombreLectureSGBD++;
 			EFS_Maitre_Variable.compteurErreurSGBD++;
 			return false;
@@ -493,7 +493,75 @@ public class GestionSGBD implements VoiesAPI {
 			EFS_Maitre_Variable.compteurErreurSGBD++;
 			return false;
 		}
-		
+	}
+
+	/**
+	 * Prise en compte d'une alarme par un client
+	 */
+	public static boolean modifierViaAPI(int typeModification, long idCapteur) {
+		testConnexionBase();
+		try {
+			boolean retour = false;
+			String strSql = "SELECT * FROM Capteur WHERE idCapteur = " + idCapteur;
+			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
+			if(result.next()) {
+				int typeCapteur = result.getInt("TypeCapteur");
+				if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
+					strSql = "SELECT * FROM EntreeAnalogique WHERE idCapteur = " + idCapteur;
+				} else {
+					strSql = "SELECT * FROM EntreeDigitale WHERE idCapteur = " + idCapteur;
+				}
+				result = AE_Variables.ctnOracle.lectureData(strSql);
+				if(result.next()) {
+					switch(typeModification) {
+					case EFS_General.VIA_API_TEMPO:
+						if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
+							long tempo = result.getLong("SeuilTempo");
+							for(int i = 0; i < tbAnaAPI.size(); i++) {
+								if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
+									tbAnaAPI.get(i).setSeuilTempo(tempo);
+									retour = true;
+								}
+							}
+						} else {
+							int tempo = result.getInt("Tempo");
+							for(int i = 0; i < tbDigiAPI.size(); i++) {
+								if(tbDigiAPI.get(i).getIdCapteur() == idCapteur) {
+									tbDigiAPI.get(i).setTempo(tempo);;
+									retour = true;
+								}
+							}
+						}
+					case EFS_General.VIA_API_PRE_SEUIL_TEMPO:
+						if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
+							long tempo = result.getLong("PreSeuilTempo");
+							for(int i = 0; i < tbAnaAPI.size(); i++) {
+								if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
+									tbAnaAPI.get(i).setPreSeuilTempo(tempo);
+									retour = true;
+								}
+							}
+						}
+					default:
+						break;
+					}
+				} else {
+					GestionLogger.gestionLogger.warning("SGBD : Erreur modification via un client Capteur Ana ou Digi non trouvé ");
+					retour = false;
+				}
+			} else {
+				GestionLogger.gestionLogger.warning("SGBD : Erreur modification via un client Capteur non trouvé ");
+				retour = false;
+			}
+			result.close();
+			AE_Variables.ctnOracle.closeLectureData();
+			return retour;
+		} catch (SQLException e) {
+			GestionLogger.gestionLogger.severe("SGBD : Erreur modification via un client : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+			return false;
+		}
 	}
 	
 	/**

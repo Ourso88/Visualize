@@ -393,6 +393,22 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 					}
 					resetEchangeViaAPI();
 					break;
+				case VIA_API_TEMPO:
+					if (!GestionSGBD.modifierViaAPI(VIA_API_TEMPO, (long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur Tempo Modifier via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Modification Tempo via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
+				case VIA_API_PRE_SEUIL_TEMPO:
+					if (!GestionSGBD.modifierViaAPI(VIA_API_PRE_SEUIL_TEMPO, (long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur Tempo Pre Seuil Modifier via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Modification Tempo pre seuil via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
 				default:
 					break;
 				}

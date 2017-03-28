@@ -18,6 +18,8 @@ public interface EFS_General {
 	// Echange Maitre - Clients via API
 	public static final int ADR_API_ECHANGE_MAITRE_CLIENT = 2060;
 	public static final int VIA_API_PRISE_EN_COMPTE = 1;
+	public static final int VIA_API_TEMPO = 2;
+	public static final int VIA_API_PRE_SEUIL_TEMPO = 3;
 	public static final int MAX_ECHANGE_MAITRE_CLIENT = 50;
 	
 	
