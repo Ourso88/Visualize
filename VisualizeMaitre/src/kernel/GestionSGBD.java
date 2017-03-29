@@ -79,7 +79,7 @@ public class GestionSGBD implements VoiesAPI {
 			String strDatePriseEnCompte = tbAlarme.get(indexAlarme).getDatePriseEnCompte().format(formatter);
 
 			
-			strSql = "INSERT INTO V2_AlarmeHistorique (idCapteur, VoieAPI, DateApparition, DatePriseEnCompte, DateDisparition, idPriseEncompte, CommentairePriseEnCompte) VALUES("
+			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, DateApparition, DatePriseEnCompte, DateDisparition, idPriseEncompte, CommentairePriseEnCompte) VALUES("
 				+ tbAlarme.get(indexAlarme).getIdCapteur()
 				+ ", " + tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getVoieApi()
 				+ ", '" + strDateApparition + "'"
@@ -110,7 +110,7 @@ public class GestionSGBD implements VoiesAPI {
 			String strSql = "";
 			// Analogique
 			for(int i = 0; i < tbAnaAPI.size(); i++) {
-				strSql = "INSERT INTO V2_AI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
+				strSql = "INSERT INTO AI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
 					+ tbAnaAPI.get(i).getIdCapteur()
 					+ ", " + tbAnaAPI.get(i).getVoieApi()
 					+ ", sysdate"
@@ -122,7 +122,7 @@ public class GestionSGBD implements VoiesAPI {
 
 			// Analogique
 			for(int i = 0; i < tbDigiAPI.size(); i++) {
-				strSql = "INSERT INTO V2_DI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
+				strSql = "INSERT INTO DI_HISTORIQUE (idCapteur, VoieAPI, DateLecture, Valeur) VALUES("
 					+ tbDigiAPI.get(i).getIdCapteur()
 					+ ", " + tbDigiAPI.get(i).getVoieApi()
 					+ ", sysdate"
@@ -148,13 +148,13 @@ public class GestionSGBD implements VoiesAPI {
 			String strSql = "";
 			if (alerte) {
 				strSql = "UPDATE AlarmeAlerte SET Alarme = 1 WHERE idAlarmeAlerte = 1";
-//				AE_Variables.ctnOracle.fonctionSql(strSql);
+				AE_Variables.ctnOracle.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;
 			} 
 			else {
 	
 				strSql = "UPDATE AlarmeAlerte SET Alarme = 0, RelanceProgramme = 0 WHERE idAlarmeAlerte = 1";
-//				AE_Variables.ctnOracle.fonctionSql(strSql);		
+				AE_Variables.ctnOracle.fonctionSql(strSql);		
 				EFS_Maitre_Variable.nombreLectureSGBD++;
 			} // Fin if alerte
 		} catch (Exception e) {
@@ -355,7 +355,7 @@ public class GestionSGBD implements VoiesAPI {
 		testConnexionBase();
 		try {
 			String strSql = "";
-			strSql = "INSERT INTO Activite (DateActivite, Description, Poste, DateActiviteVB) VALUES (sysdate, 'Gestion Modbus V2', " + EFS_General.POSTE_MAITRE + ", sysdate)";
+			strSql = "INSERT INTO Activite (DateActivite, Description, Poste, DateActiviteVB) VALUES (sysdate, 'Poste Maitre V2', " + EFS_General.POSTE_MAITRE + ", sysdate)";
 			AE_Variables.ctnOracle.fonctionSql(strSql);
 			EFS_Maitre_Variable.nombreLectureSGBD++;
 		} catch (Exception e) {

@@ -461,6 +461,9 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 		GestionSGBD.ecritureActivite();
 	}
 	
+	/**
+	 * Test si Alert fonctionne (vers 16h ...)
+	 */
 	private void testAlarmeHoraire() {
 		// Test horaire du soir
 	    Calendar cal = Calendar.getInstance();
@@ -524,7 +527,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			//  Variables TCP
 			InetAddress addr = null; // Adresse IP du serveur	
 			AE_TCP_Connection con = null; //the connection
-			double [] reqReponse;
+//			double [] reqReponse;
 			
 			int echangeDate = 0;
 			int var1 = 0;
@@ -543,7 +546,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			echangeDate = (var1 * 16) + var2;
 			echangeDate *= 256;
 			
-			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2005, echangeDate));
+//			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2005, echangeDate));
+			con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2005, echangeDate));
 
 			
 			echangeDate =  Integer.parseInt(dateMinute); //35; // 35 mn
@@ -558,7 +562,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			
 			echangeDate = (((var1 * 16) + var2) * 256) + var3;	
 			
-			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2006, echangeDate));
+//			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2006, echangeDate));
+			con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2006, echangeDate));
 
 
 			echangeDate =  Integer.parseInt(dateJour);//25; // 22 jour
@@ -573,7 +578,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			
 			echangeDate = (((var1 * 16) + var2) * 256) + var3;	
 			
-			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2007, echangeDate));			
+//			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2007, echangeDate));			
+			con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2007, echangeDate));			
 			
 			echangeDate =  Integer.parseInt(dateAnnee) - 2000;//17; // 22 
 			var1 = echangeDate / 10;
@@ -587,8 +593,10 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			
 			echangeDate = (((var1 * 16) + var2) * 256) + var3;	
 			
-			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2008, echangeDate));			
-			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2009, 1));
+//			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2008, echangeDate));			
+			con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2008, echangeDate));			
+//			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2009, 1));
+			con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, 2009, 1));
 			
             con.close();
 		} // Fin Try
@@ -634,6 +642,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			try {
 				tmrMinute.stop();
 				gestionActivite();
+				testAlarmeHoraire();
 				tmrMinute.start();
 			} catch (Exception ex) {
 				GestionLogger.gestionLogger.warning("Probleme dans le TIMER Minute GestionActivite ...");

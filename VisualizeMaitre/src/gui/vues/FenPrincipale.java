@@ -485,7 +485,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	private void remplirHistoriqueAlarme() {
 		try {
 			mdlAlarmesHistorique.removeAll();
-			String strSql = "SELECT * FROM (V2_AlarmeHistorique LEFT JOIN Capteur ON V2_AlarmeHistorique.idCapteur = Capteur.idCapteur) ORDER BY DateDisparition DESC";
+			String strSql = "SELECT * FROM (AlarmeHistorique LEFT JOIN Capteur ON AlarmeHistorique.idCapteur = Capteur.idCapteur) ORDER BY DateDisparition DESC";
 					
 			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
 			while(result.next()) {

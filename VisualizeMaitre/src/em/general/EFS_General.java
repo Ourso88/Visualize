@@ -1,7 +1,7 @@
 package em.general;
 
 public interface EFS_General {
-	public static final int POSTE_MAITRE = 2;
+	public static final int POSTE_MAITRE = 1;
 	
 	public static final boolean MODE_DEBUG_BASE = false;
 
