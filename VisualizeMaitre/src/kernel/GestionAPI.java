@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -607,6 +608,18 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	} // fin EcrireDate()
 	
 	
+	/**
+	 * Gestion des rappel Alert
+	 */
+	private void gererRappelAlert() {
+		if(EFS_Maitre_Variable.mnRappelAlert > 0) {
+			if(EFS_Maitre_Variable.dateRappelAlert.plusMinutes(EFS_Maitre_Variable.mnRappelAlert).isBefore(LocalDateTime.now())) {
+				GestionLogger.gestionLogger.info("[DIVERS] Rappel Alert après " + EFS_Maitre_Variable.mnRappelAlert + " mn");
+				GestionSGBD.gestionAlert(true);
+				EFS_Maitre_Variable.mnRappelAlert = 0;
+			}
+		}
+	}
 	
 	/**
 	 * Gestion des actions
@@ -643,6 +656,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 				tmrMinute.stop();
 				gestionActivite();
 				testAlarmeHoraire();
+				gererRappelAlert();
 				tmrMinute.start();
 			} catch (Exception ex) {
 				GestionLogger.gestionLogger.warning("Probleme dans le TIMER Minute GestionActivite ...");

@@ -176,7 +176,7 @@ public class FenGestionValeurAPI extends JFrame implements AE_Constantes, Action
 				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
 			}
 //			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, adresseLecture, valeurAPI));			
-			GestionLogger.gestionLogger.warning("[API] Modification valeur API adresse = " + adresseLecture + " - Vaaleur = " + valeurAPI);
+			GestionLogger.gestionLogger.warning("[API] Modification valeur API adresse = " + adresseLecture + " - Valeur = " + valeurAPI);
 			con.close();
             
 		} // Fin Try

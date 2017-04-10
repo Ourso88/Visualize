@@ -78,8 +78,13 @@ public class GestionSGBD implements VoiesAPI {
 			String strDateDisparition = tbAlarme.get(indexAlarme).getDateDisparition().format(formatter);
 			String strDatePriseEnCompte = tbAlarme.get(indexAlarme).getDatePriseEnCompte().format(formatter);
 
-			
-			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, DateApparition, DatePriseEnCompte, DateDisparition, idPriseEncompte, CommentairePriseEnCompte) VALUES("
+			int appelAlert = 0;
+			if(tbAlarme.get(indexAlarme).isAppelAlert()) {
+				appelAlert = 1;
+			}
+
+			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, DateApparition, DatePriseEnCompte, DateDisparition, idPriseEncompte, CommentairePriseEnCompte,"
+				  + " AppelAlert, idUtilisateur, DescriptionAlarme) VALUES("
 				+ tbAlarme.get(indexAlarme).getIdCapteur()
 				+ ", " + tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getVoieApi()
 				+ ", '" + strDateApparition + "'"
@@ -87,6 +92,9 @@ public class GestionSGBD implements VoiesAPI {
 				+ ", '" + strDatePriseEnCompte + "'"
 				+ ", " + tbAlarme.get(indexAlarme).getIdPriseEnCompte()
 				+ ", '" + tbAlarme.get(indexAlarme).getCommentairePriseEnCompte() + "'"
+				+ ", " + appelAlert
+				+ ", " + tbAlarme.get(indexAlarme).getIdUtilisateur()
+				+ ", '" + tbAlarme.get(indexAlarme).getDescriptionAlarme() + "'"
 				+ ")";
 			AE_Variables.ctnOracle.fonctionSql(strSql);
 			
@@ -144,23 +152,27 @@ public class GestionSGBD implements VoiesAPI {
 	 */
 	public static void gestionAlert(boolean alerte) {
 		testConnexionBase();
+		EFS_Maitre_Variable.appelAlert = alerte;
 		try {
 			String strSql = "";
 			if (alerte) {
 				strSql = "UPDATE AlarmeAlerte SET Alarme = 1 WHERE idAlarmeAlerte = 1";
 				AE_Variables.ctnOracle.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;
+				EFS_Maitre_Variable.mnRappelAlert = 0;
+				GestionLogger.gestionLogger.info("[SGBD] - Passage AlarmeAlerte.Alarme à 1");
 			} 
 			else {
-	
 				strSql = "UPDATE AlarmeAlerte SET Alarme = 0, RelanceProgramme = 0 WHERE idAlarmeAlerte = 1";
 				AE_Variables.ctnOracle.fonctionSql(strSql);		
 				EFS_Maitre_Variable.nombreLectureSGBD++;
+				GestionLogger.gestionLogger.info("[SGBD] - Passage AlarmeAlerte.Alarme à 0");
 			} // Fin if alerte
 		} catch (Exception e) {
 			GestionLogger.gestionLogger.severe("SGBD - Erreur APPEL ALERT : " + e.getMessage());
 			EFS_Maitre_Variable.nombreLectureSGBD++;
 			EFS_Maitre_Variable.compteurErreurSGBD++;
+			EFS_Maitre_Variable.appelAlert = false;
 		}
 	} // Fin gestionAlert()	
 	
@@ -441,10 +453,11 @@ public class GestionSGBD implements VoiesAPI {
 			String strDateApparition = tbAlarme.get(indexAlarme).getDateApparition().format(formatter);
 			double valeur = tbAlarme.get(indexAlarme).getValeurAPI();
 			
-			strSql = "INSERT INTO V2_AlarmeEnCours (idCapteur, DateApparition, Valeur) VALUES("
+			strSql = "INSERT INTO V2_AlarmeEnCours (idCapteur, DateApparition, Valeur, DescriptionAlarme) VALUES("
 					+ idCapteur
 					+ ", '"  + strDateApparition + "'"
 					+ ", " + valeur
+					+ ", '" + tbAlarme.get(indexAlarme).getDescriptionAlarme() + "'"
 					+ ")";
 				AE_Variables.ctnOracle.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;
@@ -456,6 +469,26 @@ public class GestionSGBD implements VoiesAPI {
 		}
 	}
 
+	/**
+	 * Enregistre la date de disparition dans V2_AlarmeEnCours
+	 * @param idCapteur
+	 */
+	public static void enregistrerDateDisparition(long idCapteur, LocalDateTime dateDisparition) {
+		testConnexionBase();
+		try {
+    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			
+			String strDateDisparition = dateDisparition.format(formatter);
+			
+			String strSql = "UPDATE V2_AlarmeEnCours SET DateDisparition = '" + strDateDisparition + "' WHERE idCapteur = " + idCapteur;
+			AE_Variables.ctnOracle.fonctionSql(strSql);
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+		} catch (Exception e) {
+			GestionLogger.gestionLogger.severe("SGBD : Erreur enregistrer date disparition : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+		}
+	}
 	
 	/**
 	 * Prise en compte d'une alarme par un client
@@ -475,6 +508,7 @@ public class GestionSGBD implements VoiesAPI {
 				        tbAlarme.get(i).setPrisEnCompte(true);
 						tbAlarme.get(i).setIdPriseEnCompte(result.getInt("idPriseEnCompte"));
 						tbAlarme.get(i).setCommentairePriseEnCompte(result.getString("CommentairePriseEnCompte"));
+						tbAlarme.get(i).setIdUtilisateur(result.getLong("idUtilisateur"));
 						// Couper Klaxon
 						GestionAPI.gestionKlaxon(false);
 						// Couper Appel Alert
@@ -496,7 +530,7 @@ public class GestionSGBD implements VoiesAPI {
 	}
 
 	/**
-	 * Prise en compte d'une alarme par un client
+	 * Modification de valeurs par un client
 	 */
 	public static boolean modifierViaAPI(int typeModification, long idCapteur) {
 		testConnexionBase();

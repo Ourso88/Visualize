@@ -7,11 +7,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 
@@ -67,9 +70,9 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 		lblInformation[0] =new JLabel("----------");
 		this.add(lblInformation[0], gbc);
 
-		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 1; gbc.gridy = 0;
 		gbc.weightx = 0; gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.NONE;
 		gbc.anchor = GridBagConstraints.WEST;
 		lblInformation[1] =new JLabel("");
 		lblInformation[1].setPreferredSize(new Dimension(2, 25));
@@ -85,72 +88,73 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 		gbc.gridx = 3; gbc.gridy = 0;
 		gbc.weightx = 0; gbc.weighty = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[4] =new JLabel("");
-		lblInformation[4].setPreferredSize(new Dimension(2, 25));
-		lblInformation[4].setOpaque(true);
-		lblInformation[4].setBorder(BorderFactory.createRaisedBevelBorder());
-		this.add(lblInformation[4], gbc);
+		lblInformation[2] =new JLabel("");
+		lblInformation[2].setPreferredSize(new Dimension(2, 25));
+		lblInformation[2].setOpaque(true);
+		lblInformation[2].setBorder(BorderFactory.createRaisedBevelBorder());
+		this.add(lblInformation[2], gbc);
 		
 		
-		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 4; gbc.gridy = 0;
 		gbc.weightx = 5; gbc.weighty = 0;
-		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[2] = new JLabel("----");
-		lblInformation[2].setPreferredSize(new Dimension(200, 25));
-		lblInformation[2].setMinimumSize(new Dimension(200, 25));
-		lblInformation[2].setMaximumSize(new Dimension(200, 25));
-		this.add(lblInformation[2], gbc);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.CENTER;
+		lblInformation[3] = new JLabel("----");
+		lblInformation[3].setPreferredSize(new Dimension(200, 25));
+		lblInformation[3].setMinimumSize(new Dimension(200, 25));
+		lblInformation[3].setMaximumSize(new Dimension(200, 25));
+		lblInformation[3].setHorizontalAlignment(SwingConstants.CENTER);
+		this.add(lblInformation[3], gbc);
 		
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 5; gbc.gridy = 0;
 		gbc.weightx = 0; gbc.weighty = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[3] =new JLabel("");
-		lblInformation[3].setPreferredSize(new Dimension(2, 25));
-		lblInformation[3].setOpaque(true);
-		lblInformation[3].setBorder(BorderFactory.createRaisedBevelBorder());
-		this.add(lblInformation[3], gbc);
+		lblInformation[4] =new JLabel("");
+		lblInformation[4].setPreferredSize(new Dimension(2, 25));
+		lblInformation[4].setOpaque(true);
+		lblInformation[4].setBorder(BorderFactory.createRaisedBevelBorder());
+		this.add(lblInformation[4], gbc);
 
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 6; gbc.gridy = 0;
 		gbc.weightx = 5; gbc.weighty = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[4] = new JLabel("000");
-		lblInformation[4].setPreferredSize(new Dimension(200, 25));
-		lblInformation[4].setMinimumSize(new Dimension(200, 25));
-		lblInformation[4].setMaximumSize(new Dimension(200, 25));
-		this.add(lblInformation[4], gbc);
+		lblInformation[5] = new JLabel("000");
+		lblInformation[5].setPreferredSize(new Dimension(200, 25));
+		lblInformation[5].setMinimumSize(new Dimension(200, 25));
+		lblInformation[5].setMaximumSize(new Dimension(200, 25));
+		this.add(lblInformation[5], gbc);
 		
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 7; gbc.gridy = 0;
 		gbc.weightx = 0; gbc.weighty = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[5] =new JLabel("");
-		lblInformation[5].setPreferredSize(new Dimension(2, 25));
-		lblInformation[5].setOpaque(true);
-		lblInformation[5].setBorder(BorderFactory.createRaisedBevelBorder());
-		this.add(lblInformation[5], gbc);
+		lblInformation[6] =new JLabel("");
+		lblInformation[6].setPreferredSize(new Dimension(2, 25));
+		lblInformation[6].setOpaque(true);
+		lblInformation[6].setBorder(BorderFactory.createRaisedBevelBorder());
+		this.add(lblInformation[6], gbc);
 		
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 8; gbc.gridy = 0;
 		gbc.weightx = 5; gbc.weighty = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[6] = new JLabel("000");
-		lblInformation[6].setPreferredSize(new Dimension(200, 25));
-		lblInformation[6].setMinimumSize(new Dimension(200, 25));
-		lblInformation[6].setMaximumSize(new Dimension(200, 25));
-		this.add(lblInformation[6], gbc);
+		lblInformation[7] = new JLabel("000");
+		lblInformation[7].setPreferredSize(new Dimension(200, 25));
+		lblInformation[7].setMinimumSize(new Dimension(200, 25));
+		lblInformation[7].setMaximumSize(new Dimension(200, 25));
+		this.add(lblInformation[7], gbc);
 		
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 9; gbc.gridy = 0;
 		gbc.weightx = 0; gbc.weighty = 0;
 		gbc.anchor = GridBagConstraints.WEST;
-		lblInformation[7] =new JLabel("");
-		lblInformation[7].setPreferredSize(new Dimension(2, 25));
-		lblInformation[7].setOpaque(true);
-		lblInformation[7].setBorder(BorderFactory.createRaisedBevelBorder());
-		this.add(lblInformation[7], gbc);
+		lblInformation[8] =new JLabel("");
+		lblInformation[8].setPreferredSize(new Dimension(2, 25));
+		lblInformation[8].setOpaque(true);
+		lblInformation[8].setBorder(BorderFactory.createRaisedBevelBorder());
+		this.add(lblInformation[8], gbc);
 		
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.gridx = 10; gbc.gridy = 0;
@@ -193,18 +197,35 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 	 */
 	private void afficherInformation() {
 		lblHeure.setText(AE_Fonctions.formatDate("HH:mm:ss"));
-		lblInformation[2].setText("API - " + EFS_Maitre_Variable.nombreLectureAPI + " / SGBD - " + EFS_Maitre_Variable.nombreLectureSGBD);
-		lblInformation[4].setText("API : " + EFS_Maitre_Variable.compteurErreurAPI);
-		if(EFS_Maitre_Variable.compteurErreurAPI > 0) {
-			lblInformation[4].setBackground(AE_Constantes.AE_ROUGE);
-			lblInformation[4].setOpaque(true);
-			lblInformation[4].setForeground(AE_Constantes.AE_BLANC);
+//		lblInformation[2].setText("API - " + EFS_Maitre_Variable.nombreLectureAPI + " / SGBD - " + EFS_Maitre_Variable.nombreLectureSGBD);
+		if(EFS_Maitre_Variable.appelAlert) {
+			lblInformation[3].setText("APPEL ALERT");
+			lblInformation[3].setBackground(AE_Constantes.AE_ROUGE);
+			lblInformation[3].setOpaque(true);
+			lblInformation[3].setForeground(AE_Constantes.AE_BLANC);
+		} else {
+			if(EFS_Maitre_Variable.mnRappelAlert > 0) {
+				long secondeAvantAppel = LocalDateTime.now().until(EFS_Maitre_Variable.dateRappelAlert.plusMinutes(EFS_Maitre_Variable.mnRappelAlert), ChronoUnit.SECONDS);
+				lblInformation[3].setText("Avant appel : " + (secondeAvantAppel) / 60 + " mn " + (secondeAvantAppel % 60) + "s");
+			} else {
+				lblInformation[3].setText("---");
+			}
+			lblInformation[3].setBackground(AE_Constantes.AE_VERT_002);
+			lblInformation[3].setOpaque(true);
+			lblInformation[3].setForeground(AE_Constantes.AE_NOIR);
 		}
-		lblInformation[6].setText("SGBD : " + EFS_Maitre_Variable.compteurErreurSGBD);
+		
+		lblInformation[5].setText("API : " + EFS_Maitre_Variable.compteurErreurAPI);
+		if(EFS_Maitre_Variable.compteurErreurAPI > 0) {
+			lblInformation[5].setBackground(AE_Constantes.AE_ROUGE);
+			lblInformation[5].setOpaque(true);
+			lblInformation[5].setForeground(AE_Constantes.AE_BLANC);
+		}
+		lblInformation[7].setText("SGBD : " + EFS_Maitre_Variable.compteurErreurSGBD);
 		if(EFS_Maitre_Variable.compteurErreurSGBD > 0) {
-			lblInformation[6].setBackground(AE_Constantes.AE_ROUGE);
-			lblInformation[6].setOpaque(true);
-			lblInformation[6].setForeground(AE_Constantes.AE_BLANC);
+			lblInformation[7].setBackground(AE_Constantes.AE_ROUGE);
+			lblInformation[7].setOpaque(true);
+			lblInformation[7].setForeground(AE_Constantes.AE_BLANC);
 		}
 	}
 	

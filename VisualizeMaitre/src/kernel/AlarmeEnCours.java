@@ -25,6 +25,7 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	private boolean prisEnCompte;
 	private boolean historiser;
 	private int idPriseEnCompte;
+	private long idUtilisateur;
 	private int typeAlarme;
 	private String commentairePriseEnCompte;
 	private boolean appelAlert;
@@ -179,6 +180,7 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	 */
 	public void setDateDisparition(LocalDateTime dateDisparition) {
 		this.dateDisparition = dateDisparition;
+		GestionSGBD.enregistrerDateDisparition(idCapteur, dateDisparition);
 	}
 
 	/**
@@ -329,6 +331,20 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	 */
 	public void setDescriptionAlarme(String descriptionAlarme) {
 		this.descriptionAlarme = descriptionAlarme;
+	}
+
+	/**
+	 * @return the idUtilisateur
+	 */
+	public long getIdUtilisateur() {
+		return idUtilisateur;
+	}
+
+	/**
+	 * @param idUtilisateur the idUtilisateur to set
+	 */
+	public void setIdUtilisateur(long idUtilisateur) {
+		this.idUtilisateur = idUtilisateur;
 	}
 	
 }

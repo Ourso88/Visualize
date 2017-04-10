@@ -1,6 +1,7 @@
 package gui.vues;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,8 +24,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -32,6 +37,7 @@ import em.fonctions.GestionLogger;
 import em.general.AE_Constantes;
 import em.general.AE_Variables;
 import em.general.EFS_General;
+import em.general.EFS_Maitre_Variable;
 import em.general.JTableConstantes;
 import gui.modeles.ModeleJTableAlarmesEnCours;
 import gui.modeles.ModeleJTableAlarmesHistorique;
@@ -100,7 +106,10 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
     private JButton btnPriseEnCompte = new JButton("Prise en compte");
     private JButton btnInformation = new JButton("Information");
     private JButton btnCourbe = new JButton("Courbe");
-
+    private JPanel pnlRappelAlert = new JPanel();
+    private JButton btnRappelAlert = new JButton("Rappel Alert");
+    private JTextField txtRappelAlert = new JTextField("");
+    
     private JButton btnRetirerMaintenance = new JButton("Retirer de maintenance");
 
 	ImageIcon iconLogin = new ImageIcon(getClass().getResource("/login.png"));
@@ -154,6 +163,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    btnInformation.addActionListener(this);
 	    btnRetirerMaintenance.addActionListener(this);
 	    btnLogin.addActionListener(this);
+	    btnRappelAlert.addActionListener(this);
 	    
 	    // Taille
 	    btnVoiesDigitale.setPreferredSize(btnVoiesAnalogique.getPreferredSize());
@@ -319,6 +329,15 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         pnlHistorique.add(lblTitreHistorique, BorderLayout.NORTH);	    
         pnlHistorique.add(jspAlarmeHistorique, BorderLayout.CENTER);	    
 	    
+        // pnlRappelAlert
+        pnlRappelAlert.setBackground(AE_BLEU);
+	    pnlRappelAlert.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        pnlRappelAlert.setLayout(new FlowLayout());
+        txtRappelAlert.setPreferredSize(new Dimension(75, 27));
+        txtRappelAlert.setHorizontalAlignment(SwingConstants.RIGHT);
+        pnlRappelAlert.add(btnRappelAlert);
+        pnlRappelAlert.add(txtRappelAlert);
+        
 	    //pnlBoutons
         pnlBoutons.setLayout(new FlowLayout());
         pnlBoutons.add(btnVoiesAnalogique);
@@ -326,6 +345,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         pnlBoutons.add(btnPriseEnCompte);
         pnlBoutons.add(btnInformation);
         pnlBoutons.add(btnCourbe);
+        pnlBoutons.add(pnlRappelAlert);
 	}
   
 	/**
@@ -470,6 +490,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         		
 		        tbAlarme.get(indexSelection).setDatePriseEnCompte(LocalDateTime.now());
 		        tbAlarme.get(indexSelection).setPrisEnCompte(true);
+		        tbAlarme.get(indexSelection).setIdUtilisateur(AE_Variables.idUtilisateur);
 				mdlAlarmesEnCours.fireTableDataChanged();
 				// Couper Klaxon
 				GestionAPI.gestionKlaxon(false);
@@ -595,6 +616,9 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
     	}
 	}
 	
+	/**
+	 * Gere l'appel à la fenetre information pour une voie
+	 */
 	private void gererInformation() {
         if (jtbAlarmesEnCours.getRowCount() > 0) {
         	if (jtbAlarmesEnCours.getSelectedRowCount() > 0) {
@@ -605,6 +629,17 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 		        }
         	}
     	}
+	}
+	
+	/**
+	 * Gere le rappel différé d'Alert
+	 */
+	private void gererRappelAlert() {
+		int mnRappel = Integer.valueOf(txtRappelAlert.getText());
+		if(mnRappel > 0) {
+			EFS_Maitre_Variable.dateRappelAlert = LocalDateTime.now();
+			EFS_Maitre_Variable.mnRappelAlert = mnRappel;
+		}
 	}
 	
 	/**
@@ -633,6 +668,11 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 		if (ae.getSource() == tmrRefresh) {
 			try {
 				tmrRefresh.stop();
+/*				
+				if(EFS_Maitre_Variable.mnRappelAlert != Long.valueOf(txtRappelAlert.getText())) {
+					txtRappelAlert.setText("" + EFS_Maitre_Variable.mnRappelAlert);
+				}
+*/				
 				gererAlarmes();
 				gererPreSeuils();
 				mdlAlarmesSeuil.fireTableDataChanged();
@@ -665,6 +705,13 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 			}
 		}
 
+		if (ae.getSource() == btnRappelAlert) {
+			tmrLogin.restart();
+			if(AE_Fonctions.testNiveau(40)) {
+				gererRappelAlert();
+			}
+		}
+		
 		if (ae.getSource() == btnLogin) {
 			if(AE_Variables.idUtilisateur != -1) {
 				GestionLogger.gestionLogger.info("Delog de " + AE_Variables.nomUtilisateur + " " + AE_Variables.prenomUtilisateur);
