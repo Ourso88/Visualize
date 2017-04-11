@@ -35,6 +35,14 @@ public class JTableAlarmesEnCoursValeur extends DefaultTableCellRenderer impleme
 	        	setBackground(AE_BLEU);
 	        	setForeground(AE_NOIR);
 	        }
+        } else if(tbAlarme.get(row).getTypeCapteur() == EFS_General.CAPTEUR_DIGITAL_ENTREE) {
+        	if(tbDigiAPI.get(tbAlarme.get(row).getIndexCapteur()).isAlarmeEnclenchee()) {
+	        	setBackground(AE_ROUGE);
+	        	setForeground(AE_BLANC);
+        	} else {
+	        	setBackground(AE_BLEU);
+	        	setForeground(AE_NOIR);
+        	}
         } else {
         	setBackground(AE_BLEU);
         	setForeground(AE_NOIR);

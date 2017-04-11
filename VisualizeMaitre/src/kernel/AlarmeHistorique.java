@@ -19,7 +19,7 @@ public class AlarmeHistorique {
 	/**
 	 * Constructeur
 	 */
-	public AlarmeHistorique(long idAlarmeHistorique, long idCapteur, int typeCapteur, String dateApparition,	String datePriseEnCompte, String dateDisparition,	String nomCapteur, String descriptionCapteur) {
+	public AlarmeHistorique(long idAlarmeHistorique, long idCapteur, int typeCapteur, String dateApparition, String datePriseEnCompte, String dateDisparition,	String nomCapteur, String descriptionCapteur) {
 		this.setIdAlarmeHistorique(idAlarmeHistorique);
 		this.setIdCapteur(idCapteur);
 		this.setTypeCapteur(typeCapteur);

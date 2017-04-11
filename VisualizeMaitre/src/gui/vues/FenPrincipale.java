@@ -126,7 +126,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
     public FenPrincipale() {
     	super();
     	build();
-    	remplirHistoriqueAlarme();
+//    	remplirHistoriqueAlarme();
     	remplirEnMaintenance();
     	tmrRefresh.start();
     	tmrLogin.start();
@@ -338,6 +338,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         pnlRappelAlert.add(btnRappelAlert);
         pnlRappelAlert.add(txtRappelAlert);
         
+        
 	    //pnlBoutons
         pnlBoutons.setLayout(new FlowLayout());
         pnlBoutons.add(btnVoiesAnalogique);
@@ -345,7 +346,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         pnlBoutons.add(btnPriseEnCompte);
         pnlBoutons.add(btnInformation);
         pnlBoutons.add(btnCourbe);
-        pnlBoutons.add(pnlRappelAlert);
+        //pnlBoutons.add(pnlRappelAlert);
 	}
   
 	/**
@@ -368,7 +369,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 						// A supprimer
 						try {
 							mdlAlarmesEnCours.removeAlarmeEnCours(i);
-							remplirHistoriqueAlarme();
+							// remplirHistoriqueAlarme();
 						} catch (Exception ev) {
 							GestionLogger.gestionLogger.warning("Probleme suppression ..." + ev.getMessage());
 						}

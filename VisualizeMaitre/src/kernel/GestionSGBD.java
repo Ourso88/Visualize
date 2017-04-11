@@ -554,6 +554,7 @@ public class GestionSGBD implements VoiesAPI {
 							for(int i = 0; i < tbAnaAPI.size(); i++) {
 								if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
 									tbAnaAPI.get(i).setSeuilTempo(tempo);
+									GestionLogger.gestionLogger.info("[SGBD] Modification Tempo via API idCapteur = " + idCapteur + " à " + tempo);
 									retour = true;
 								}
 							}
@@ -562,6 +563,7 @@ public class GestionSGBD implements VoiesAPI {
 							for(int i = 0; i < tbDigiAPI.size(); i++) {
 								if(tbDigiAPI.get(i).getIdCapteur() == idCapteur) {
 									tbDigiAPI.get(i).setTempo(tempo);;
+									GestionLogger.gestionLogger.info("[SGBD] Modification Tempo via API idCapteur = " + idCapteur + " à " + tempo);
 									retour = true;
 								}
 							}
