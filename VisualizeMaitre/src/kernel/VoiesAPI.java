@@ -15,5 +15,5 @@ public interface VoiesAPI {
 	public static final List<AlarmeEnCours> tbAlarme = new ArrayList<AlarmeEnCours>();
 	public static final List<AlarmeSeuil> tbAlarmeSeuil = new ArrayList<AlarmeSeuil>();
 	public static final List<PriseEnCompte> tbPriseEnCompte = new ArrayList<PriseEnCompte>();
-	
+	public static final List<AlarmeHistorique> tbAlarmeHistorique = new ArrayList<AlarmeHistorique>();
 }

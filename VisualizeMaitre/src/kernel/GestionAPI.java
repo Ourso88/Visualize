@@ -612,11 +612,18 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 * Gestion des rappel Alert
 	 */
 	private void gererRappelAlert() {
-		if(EFS_Maitre_Variable.mnRappelAlert > 0) {
-			if(EFS_Maitre_Variable.dateRappelAlert.plusMinutes(EFS_Maitre_Variable.mnRappelAlert).isBefore(LocalDateTime.now())) {
-				GestionLogger.gestionLogger.info("[DIVERS] Rappel Alert après " + EFS_Maitre_Variable.mnRappelAlert + " mn");
-				GestionSGBD.gestionAlert(true);
-				EFS_Maitre_Variable.mnRappelAlert = 0;
+		for(int i = 0; i < tbAlarme.size(); i++) {
+			if(tbAlarme.get(i).getMnRappelAlert() > 0) {
+				// Suppression si disparition
+				if(!tbAlarme.get(i).isAlarmeEnclenchee()) {
+					tbAlarme.get(i).setMnRappelAlert(0);
+				} else {
+					if(tbAlarme.get(i).getDateRappelAlert().plusMinutes(tbAlarme.get(i).getMnRappelAlert()).isBefore(LocalDateTime.now())) {
+						GestionLogger.gestionLogger.info("[DIVERS] Rappel Alert après " + tbAlarme.get(i).getMnRappelAlert() + " mn");
+						GestionSGBD.gestionAlert(true);
+						tbAlarme.get(i).setMnRappelAlert(0);
+					}
+				}
 			}
 		}
 	}

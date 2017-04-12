@@ -20,7 +20,7 @@ import em.sgbd.FonctionsSGBD;
  * @since 19/02/2017
  *
  */
-public class GestionSGBD implements VoiesAPI {
+public class GestionSGBD implements VoiesAPI, EFS_General {
 	
 	/**
 	 * Teste si la connexion à la base de données n'est pas fermée
@@ -82,14 +82,44 @@ public class GestionSGBD implements VoiesAPI {
 			if(tbAlarme.get(indexAlarme).isAppelAlert()) {
 				appelAlert = 1;
 			}
+			
+			String strDescription = tbAlarme.get(indexAlarme).getDescriptionAlarme();
+			int typeCapteur = -1;
+			int voieAPI = -1;
+			long seuilTempo = -1;
+			long seuilHaut = -1;
+			long seuilBas = -1;
+			int nOnF = -1;
+			String nomCapteur = "---";
+			if(tbAlarme.get(indexAlarme).getTypeCapteur() == CAPTEUR_ANALOGIQUE_ENTREE) {
+				typeCapteur = CAPTEUR_ANALOGIQUE_ENTREE;
+				voieAPI = tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getVoieApi();
+				seuilTempo = tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getSeuilTempo();
+				seuilHaut = tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getSeuilHaut();
+				seuilBas = tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getSeuilBas();
+				nomCapteur = tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getNom();
+			} else if(tbAlarme.get(indexAlarme).getTypeCapteur() == CAPTEUR_DIGITAL_ENTREE) {
+				typeCapteur = CAPTEUR_DIGITAL_ENTREE;
+				voieAPI = tbDigiAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getVoieApi();
+				seuilTempo = tbDigiAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getTempo();
+				nOnF = tbDigiAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getnOnF();
+				nomCapteur = tbDigiAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getNom();
+			} else {
+				GestionLogger.gestionLogger.severe("[DIVERS] - Erreur sur type capteur");
+			}
 
-			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, DateApparition, DatePriseEnCompte, DateDisparition, idPriseEncompte, CommentairePriseEnCompte,"
-				  + " AppelAlert, idUtilisateur, DescriptionAlarme) VALUES("
+			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, TypeCapteur, DateApparition, DatePriseEnCompte, DateDisparition, SeuilTempo, SeuilHaut, SeuilBas, NONF,"
+				   + " idPriseEncompte, CommentairePriseEnCompte, AppelAlert, idUtilisateur, DescriptionAlarme) VALUES("
 				+ tbAlarme.get(indexAlarme).getIdCapteur()
-				+ ", " + tbAnaAPI.get(tbAlarme.get(indexAlarme).getIndexCapteur()).getVoieApi()
+				+ ", " + voieAPI
+				+ ", " + typeCapteur
 				+ ", '" + strDateApparition + "'"
 				+ ", '" + strDateDisparition + "'"
 				+ ", '" + strDatePriseEnCompte + "'"
+				+ ", " + seuilTempo
+				+ ", " + seuilHaut
+				+ ", " + seuilBas
+				+ ", " + nOnF
 				+ ", " + tbAlarme.get(indexAlarme).getIdPriseEnCompte()
 				+ ", '" + tbAlarme.get(indexAlarme).getCommentairePriseEnCompte() + "'"
 				+ ", " + appelAlert
@@ -100,6 +130,19 @@ public class GestionSGBD implements VoiesAPI {
 			
 			// Le supprimer de la table  V2_AlarmeEnCours
 			AE_Variables.ctnOracle.fonctionSql("DELETE FROM V2_AlarmeEnCours WHERE idCapteur = " + tbAlarme.get(indexAlarme).getIdCapteur());
+			
+			// Ajouter à la tbAlarmeHistorique
+			tbAlarmeHistorique.add(new AlarmeHistorique(
+			-1, // idAlarmeHistorique
+			tbAlarme.get(indexAlarme).getIdCapteur(), // idCapteur
+			typeCapteur, // typeCapteur
+			strDateApparition, // dateApparition
+			strDatePriseEnCompte, // datePriseEnCompte
+			strDateDisparition, // dateDisparition
+			nomCapteur, // nomCapteur
+			strDescription
+			));
+			
 			
 			EFS_Maitre_Variable.nombreLectureSGBD++;
 		} catch (Exception e) {
@@ -453,11 +496,12 @@ public class GestionSGBD implements VoiesAPI {
 			String strDateApparition = tbAlarme.get(indexAlarme).getDateApparition().format(formatter);
 			double valeur = tbAlarme.get(indexAlarme).getValeurAPI();
 			
-			strSql = "INSERT INTO V2_AlarmeEnCours (idCapteur, DateApparition, Valeur, DescriptionAlarme) VALUES("
+			strSql = "INSERT INTO V2_AlarmeEnCours (idCapteur, DateApparition, Valeur, DescriptionAlarme, TypeCapteur) VALUES("
 					+ idCapteur
 					+ ", '"  + strDateApparition + "'"
 					+ ", " + valeur
 					+ ", '" + tbAlarme.get(indexAlarme).getDescriptionAlarme() + "'"
+					+ ", " + tbAlarme.get(indexAlarme).getTypeCapteur()
 					+ ")";
 				AE_Variables.ctnOracle.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;

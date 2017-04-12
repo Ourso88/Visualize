@@ -30,6 +30,8 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	private String commentairePriseEnCompte;
 	private boolean appelAlert;
 	private String descriptionAlarme;
+	private int mnRappelAlert;
+	private LocalDateTime dateRappelAlert;
 	
 	/**
 	 * Constructeur
@@ -68,6 +70,7 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 		this.setHistoriser(false);
 		this.setIdPriseEnCompte(-1);
 		this.setCommentairePriseEnCompte("---");
+		this.mnRappelAlert = 0;
 	}
 	
 	/**
@@ -345,6 +348,34 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	 */
 	public void setIdUtilisateur(long idUtilisateur) {
 		this.idUtilisateur = idUtilisateur;
+	}
+
+	/**
+	 * @return the mnRappelAlert
+	 */
+	public int getMnRappelAlert() {
+		return mnRappelAlert;
+	}
+
+	/**
+	 * @param mnRappelAlert the mnRappelAlert to set
+	 */
+	public void setMnRappelAlert(int mnRappelAlert) {
+		this.mnRappelAlert = mnRappelAlert;
+	}
+
+	/**
+	 * @return the dateRappelAlert
+	 */
+	public LocalDateTime getDateRappelAlert() {
+		return dateRappelAlert;
+	}
+
+	/**
+	 * @param dateRappelAlert the dateRappelAlert to set
+	 */
+	public void setDateRappelAlert(LocalDateTime dateRappelAlert) {
+		this.dateRappelAlert = dateRappelAlert;
 	}
 	
 }

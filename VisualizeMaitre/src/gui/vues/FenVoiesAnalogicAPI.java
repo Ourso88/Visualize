@@ -107,7 +107,7 @@ public class FenVoiesAnalogicAPI extends JFrame implements AE_Constantes, VoiesA
 	 */
 	private void raffraichissementValeur() {
 		mdlAnalogicInput.fireTableDataChanged();
-		pnlInfo.setLblInformation(2, "Cpt : " + EFS_Maitre_Variable.nombreLectureAPI);
+//		pnlInfo.setLblInformation(2, "Cpt : " + EFS_Maitre_Variable.nombreLectureAPI);
 	}
 	
 	/**

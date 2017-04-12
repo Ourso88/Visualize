@@ -7,8 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -204,12 +202,7 @@ public class AE_BarreBas extends JPanel implements ActionListener {
 			lblInformation[3].setOpaque(true);
 			lblInformation[3].setForeground(AE_Constantes.AE_BLANC);
 		} else {
-			if(EFS_Maitre_Variable.mnRappelAlert > 0) {
-				long secondeAvantAppel = LocalDateTime.now().until(EFS_Maitre_Variable.dateRappelAlert.plusMinutes(EFS_Maitre_Variable.mnRappelAlert), ChronoUnit.SECONDS);
-				lblInformation[3].setText("Avant appel : " + (secondeAvantAppel) / 60 + " mn " + (secondeAvantAppel % 60) + "s");
-			} else {
-				lblInformation[3].setText("---");
-			}
+			lblInformation[3].setText("ALERT");
 			lblInformation[3].setBackground(AE_Constantes.AE_VERT_002);
 			lblInformation[3].setOpaque(true);
 			lblInformation[3].setForeground(AE_Constantes.AE_NOIR);

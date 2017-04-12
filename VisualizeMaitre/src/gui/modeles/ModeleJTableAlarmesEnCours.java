@@ -128,7 +128,7 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EF
 	    			return "";
 	    		}
 	    	case JT_ALARME_EN_COURS_RAPPEL: 
-	    		return 0; 
+	    		return lstAlarmeEnCours.get(rowIndex).getMnRappelAlert(); 
 	    	default:
 	    		return null;
     	}
@@ -197,7 +197,8 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EF
             		fireTableCellUpdated(rowIndex, columnIndex);
             		break;
     	    	case JT_ALARME_EN_COURS_RAPPEL: 
-            		alarmeEnCours.setValeurAPI((Integer) aValue);
+            		alarmeEnCours.setMnRappelAlert(Integer.valueOf((String) aValue));
+            		alarmeEnCours.setDateRappelAlert(LocalDateTime.now());
             		fireTableCellUpdated(rowIndex, columnIndex);
             		break;
                 default :

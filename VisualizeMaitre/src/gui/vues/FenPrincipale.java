@@ -46,7 +46,6 @@ import gui.modeles.ModeleJTableCapteurMaintenance;
 import gui.renderers.JTableAlarmesEnCoursAppelAlert;
 import gui.renderers.JTableAlarmesEnCoursColorCellRenderer;
 import gui.renderers.JTableAlarmesEnCoursValeur;
-import kernel.AlarmeHistorique;
 import kernel.CapteurMaintenance;
 import kernel.GestionAPI;
 import kernel.GestionSGBD;
@@ -78,7 +77,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	private JPanel pnlTitreEnCours = new JPanel();
     private ModeleJTableAlarmesEnCours mdlAlarmesEnCours = new ModeleJTableAlarmesEnCours();	
     private JTable jtbAlarmesEnCours;
-    TableRowSorter<TableModel> sorterJtbAlarmesEnCours;	
+//    TableRowSorter<TableModel> sorterJtbAlarmesEnCours;	
     JScrollPane jspAlarmeEnCours;	
 	private JPanel pnlBoutons = new JPanel();
 	// ==> pnlSeuil <== 
@@ -207,10 +206,10 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    jtbAlarmesEnCours.setBackground(AE_BLEU);
 	    jtbAlarmesEnCours.setSelectionBackground(AE_MARRON);
 	    
-	    sorterJtbAlarmesEnCours =  new TableRowSorter<TableModel>(jtbAlarmesEnCours.getModel());
-        jtbAlarmesEnCours.setRowSorter(sorterJtbAlarmesEnCours);        
-        sorterJtbAlarmesEnCours.setSortable(0,  false);
-        sorterJtbAlarmesEnCours.setSortsOnUpdates(true);
+//	    sorterJtbAlarmesEnCours =  new TableRowSorter<TableModel>(jtbAlarmesEnCours.getModel());
+//        jtbAlarmesEnCours.setRowSorter(sorterJtbAlarmesEnCours);        
+//        sorterJtbAlarmesEnCours.setSortable(0,  false);
+//        sorterJtbAlarmesEnCours.setSortsOnUpdates(false);
         
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_NOM).setCellRenderer(new JTableAlarmesEnCoursColorCellRenderer());
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_APPEL_ALERT).setCellRenderer(new JTableAlarmesEnCoursAppelAlert());
@@ -261,7 +260,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    	    
 	    sorterJtbAlarmesHistorique =  new TableRowSorter<TableModel>(jtbAlarmesHistorique.getModel());
         jtbAlarmesHistorique.setRowSorter(sorterJtbAlarmesHistorique);        
-        sorterJtbAlarmesHistorique.setSortable(0,  false);
+        sorterJtbAlarmesHistorique.setSortable(JT_ALARME_HISTORIQUE_DATE_DISPARITION,  true);
         sorterJtbAlarmesHistorique.setSortsOnUpdates(true);
         
         jspAlarmeHistorique = new JScrollPane(jtbAlarmesHistorique);
@@ -394,6 +393,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 			}
 		} // fin for(i)
 
+		// Gestion de la sélection
 		int selection = -1;
         if (jtbAlarmesEnCours.getRowCount() > 0) {
         	if (jtbAlarmesEnCours.getSelectedRowCount() > 0) {
@@ -454,6 +454,28 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	}
 	
 	/**
+	 * Gestion de l'historique
+	 */
+	private void gererAlarmeHistorique() {
+		boolean trouve = false;
+		if(tbAlarmeHistorique.size() != mdlAlarmesHistorique.getRowCount()) {
+			// Vérifier si pas de nouveau ...
+			for(int i = 0; i < tbAlarmeHistorique.size(); i++) {
+				// Regarder si déjà dans la table
+				trouve = false;
+				for(int j = 0; j < mdlAlarmesHistorique.getRowCount(); j++) {
+					if(tbAlarmeHistorique.get(i).getIdCapteur() == mdlAlarmesHistorique.getIdCapteur(j)) {
+						trouve = true;
+					}
+				}
+				if(!trouve) {
+					mdlAlarmesHistorique.addAlarmeHistorique(tbAlarmeHistorique.get(i));
+				}
+			} // fin for(i)
+		}
+	}
+	
+	/**
 	 * Gere la prise en compte d'une alarme
 	 */
 	private void gererPriseEnCompte() {
@@ -500,34 +522,6 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         	}
         }
 	}	
-	
-	/**
-	 * Remplit le tableau Alarme Historique
-	 */
-	private void remplirHistoriqueAlarme() {
-		try {
-			mdlAlarmesHistorique.removeAll();
-			String strSql = "SELECT * FROM (AlarmeHistorique LEFT JOIN Capteur ON AlarmeHistorique.idCapteur = Capteur.idCapteur) ORDER BY DateDisparition DESC";
-					
-			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
-			while(result.next()) {
-				mdlAlarmesHistorique.addAlarmeHistorique(new AlarmeHistorique(
-				result.getLong("idAlarmeHistorique"),
-				result.getLong("idCapteur"),
-				result.getInt("TypeCapteur"),
-				result.getString("DateApparition"),
-				result.getString("DatePriseEnCompte"),
-				result.getString("DateDisparition"),
-				result.getString("Nom"),
-				result.getString("Description")
-				));
-			}
-			result.close();
-			AE_Variables.ctnOracle.closeLectureData();
-		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("SGBD : Erreur lecture Table Historique : " + e.getMessage());
-		}
-	}
 
 	/**
 	 * Remplit le tableau En Maintenance
@@ -669,13 +663,9 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 		if (ae.getSource() == tmrRefresh) {
 			try {
 				tmrRefresh.stop();
-/*				
-				if(EFS_Maitre_Variable.mnRappelAlert != Long.valueOf(txtRappelAlert.getText())) {
-					txtRappelAlert.setText("" + EFS_Maitre_Variable.mnRappelAlert);
-				}
-*/				
 				gererAlarmes();
 				gererPreSeuils();
+				gererAlarmeHistorique();
 				mdlAlarmesSeuil.fireTableDataChanged();
 				tmrRefresh.start();
 			} catch (Exception ex) {

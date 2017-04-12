@@ -24,6 +24,7 @@ public class EFS_Maitre_Variable {
 	public static boolean appelAlert = false;
 	public static int mnRappelAlert = 0;
 	public static LocalDateTime dateRappelAlert;
+	public static String siteGTC = "???";
 	
 	/**
 	 * Initialise les variables pour l'accès à la base de données
@@ -48,18 +49,21 @@ public class EFS_Maitre_Variable {
 				AE_Variables.AE_SGBD_MDP = "gtcbfc25";
 				ADR_IP_API = "10.27.0.10";
 				TEST_GTC_MINUTE = 10;
+				siteGTC = "BESANCON";
 			} else if (ligne.equals("DIJON")) {
 				AE_Variables.AE_SGBD_BASE = "GTCBFC";
 				AE_Variables.AE_SGBD_USER = "GTCDijon";
 				AE_Variables.AE_SGBD_MDP = "GTCBFC_dijon25";
 				ADR_IP_API = "10.21.102.31";
 				TEST_GTC_MINUTE = 30; // Modification 26/05/2016 et Modification 24/06/2016
+				siteGTC = "DIJON";
 			} else {
 				AE_Variables.AE_SGBD_BASE = "xe";
 				AE_Variables.AE_SGBD_USER = "gtcbfc";
 				AE_Variables.AE_SGBD_MDP = "gtcbfc25";
 				//siteEFS = "AXIOME";
 				ADR_IP_API = "192.168.0.20";
+				siteGTC = "AXIOME";
 			}
 			ligne = entree.readLine();
 			TEST_GTC_MINUTE = Integer.valueOf(ligne);
