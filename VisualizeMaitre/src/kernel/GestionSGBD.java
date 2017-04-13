@@ -202,7 +202,6 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 				strSql = "UPDATE AlarmeAlerte SET Alarme = 1 WHERE idAlarmeAlerte = 1";
 				AE_Variables.ctnOracle.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;
-				EFS_Maitre_Variable.mnRappelAlert = 0;
 				GestionLogger.gestionLogger.info("[SGBD] - Passage AlarmeAlerte.Alarme à 1");
 			} 
 			else {

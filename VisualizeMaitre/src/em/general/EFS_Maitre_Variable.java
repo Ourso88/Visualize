@@ -22,8 +22,6 @@ public class EFS_Maitre_Variable {
 	public static long compteurErreurSGBD = 0;
 	public static long compteurErreurAPI = 0;
 	public static boolean appelAlert = false;
-	public static int mnRappelAlert = 0;
-	public static LocalDateTime dateRappelAlert;
 	public static String siteGTC = "???";
 	
 	/**

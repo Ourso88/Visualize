@@ -105,9 +105,6 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
     private JButton btnPriseEnCompte = new JButton("Prise en compte");
     private JButton btnInformation = new JButton("Information");
     private JButton btnCourbe = new JButton("Courbe");
-    private JPanel pnlRappelAlert = new JPanel();
-    private JButton btnRappelAlert = new JButton("Rappel Alert");
-    private JTextField txtRappelAlert = new JTextField("");
     
     private JButton btnRetirerMaintenance = new JButton("Retirer de maintenance");
 
@@ -162,7 +159,6 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    btnInformation.addActionListener(this);
 	    btnRetirerMaintenance.addActionListener(this);
 	    btnLogin.addActionListener(this);
-	    btnRappelAlert.addActionListener(this);
 	    
 	    // Taille
 	    btnVoiesDigitale.setPreferredSize(btnVoiesAnalogique.getPreferredSize());
@@ -327,16 +323,6 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	    lblTitreHistorique.setOpaque(true);
         pnlHistorique.add(lblTitreHistorique, BorderLayout.NORTH);	    
         pnlHistorique.add(jspAlarmeHistorique, BorderLayout.CENTER);	    
-	    
-        // pnlRappelAlert
-        pnlRappelAlert.setBackground(AE_BLEU);
-	    pnlRappelAlert.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        pnlRappelAlert.setLayout(new FlowLayout());
-        txtRappelAlert.setPreferredSize(new Dimension(75, 27));
-        txtRappelAlert.setHorizontalAlignment(SwingConstants.RIGHT);
-        pnlRappelAlert.add(btnRappelAlert);
-        pnlRappelAlert.add(txtRappelAlert);
-        
         
 	    //pnlBoutons
         pnlBoutons.setLayout(new FlowLayout());
@@ -345,7 +331,6 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
         pnlBoutons.add(btnPriseEnCompte);
         pnlBoutons.add(btnInformation);
         pnlBoutons.add(btnCourbe);
-        //pnlBoutons.add(pnlRappelAlert);
 	}
   
 	/**
@@ -627,17 +612,6 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 	}
 	
 	/**
-	 * Gere le rappel différé d'Alert
-	 */
-	private void gererRappelAlert() {
-		int mnRappel = Integer.valueOf(txtRappelAlert.getText());
-		if(mnRappel > 0) {
-			EFS_Maitre_Variable.dateRappelAlert = LocalDateTime.now();
-			EFS_Maitre_Variable.mnRappelAlert = mnRappel;
-		}
-	}
-	
-	/**
 	 * Gestion des actions
 	 */
 	@Override
@@ -693,13 +667,6 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 			tmrLogin.restart();
 			if(AE_Fonctions.testNiveau(40)) {
 				gererInformation();
-			}
-		}
-
-		if (ae.getSource() == btnRappelAlert) {
-			tmrLogin.restart();
-			if(AE_Fonctions.testNiveau(40)) {
-				gererRappelAlert();
 			}
 		}
 		

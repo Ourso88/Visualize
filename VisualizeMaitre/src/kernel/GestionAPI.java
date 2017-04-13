@@ -317,7 +317,6 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 * @param sonnerie
 	 */
 	public static void gestionKlaxon(boolean sonnerie) {
-/*		
 		try {
 			// ===== Ouverture de la connection =====
 			//  Variables TCP
@@ -347,7 +346,6 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Klaxon : " + e.getMessage());
 			EFS_Maitre_Variable.compteurErreurAPI++;
 		} // Fin catch
-*/		
 	} // Fin gestionKlaxon()
 	
 	/**
