@@ -18,7 +18,6 @@ import javax.swing.table.TableRowSorter;
 import em.fonctions.GestionLogger;
 import em.general.AE_Constantes;
 import em.general.EFS_General;
-import em.general.EFS_Maitre_Variable;
 import em.general.JTableConstantes;
 import gui.modeles.ModeleJTableVoiesAnalogicAPI;
 import kernel.VoiesAPI;

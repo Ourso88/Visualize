@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Gére les variables propre à l'EFS
@@ -23,6 +22,7 @@ public class EFS_Maitre_Variable {
 	public static long compteurErreurAPI = 0;
 	public static boolean appelAlert = false;
 	public static String siteGTC = "???";
+	public static boolean modificationEnMaintenance = false;
 	
 	/**
 	 * Initialise les variables pour l'accès à la base de données

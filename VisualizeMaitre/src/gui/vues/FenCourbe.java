@@ -33,8 +33,8 @@ public class FenCourbe extends JFrame implements AE_Constantes, VoiesAPI, Action
 	private JComboBox<String> cmbCapteur = new JComboBox<String>();	
     private JButton btnTracer = new JButton("Tracer");
     
-    private double tbX[] = new double[1000];
-    private double tbY[] = new double[1000];
+    private double tbX[] = new double[5000];
+    private double tbY[] = new double[5000];
     private double maxX = 0;
     private double maxY = 0;
     private double minY = 0;

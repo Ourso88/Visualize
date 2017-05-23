@@ -408,6 +408,53 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 					}
 					resetEchangeViaAPI();
 					break;
+				case VIA_API_CALIBRATION:
+					if (!GestionSGBD.modifierViaAPI(VIA_API_CALIBRATION, (long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur Calibration Modifier via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Modification Calibration via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
+				case VIA_API_NO_NF:
+					if (!GestionSGBD.modifierViaAPI(VIA_API_NO_NF, (long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur NO/NF Modifier via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Modification NO/NF via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
+				case VIA_API_ALARME:
+					if (!GestionSGBD.modifierViaAPI(VIA_API_ALARME, (long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur Alarme Modifier via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Modification Alarme via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
+				case VIA_API_MAINTENANCE:
+					if (!GestionSGBD.modifierViaAPI(VIA_API_MAINTENANCE, (long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur Maintenance Modifier via API ... ");
+					} else {
+						EFS_Maitre_Variable.modificationEnMaintenance = true;
+						GestionLogger.gestionLogger.info("Modification Maintenance via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
+
+					
+				case VIA_API_SEUIL_BAS:
+				case VIA_API_SEUIL_HAUT:
+				case VIA_API_PRE_SEUIL_BAS:
+				case VIA_API_PRE_SEUIL_HAUT:
+					if (!GestionSGBD.modifierViaAPI((int) tbEchange[0], (long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur Seuil Modifier via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Modification Seuil via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
+					
 				default:
 					break;
 				}

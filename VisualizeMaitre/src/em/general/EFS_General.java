@@ -20,6 +20,14 @@ public interface EFS_General {
 	public static final int VIA_API_PRISE_EN_COMPTE = 1;
 	public static final int VIA_API_TEMPO = 2;
 	public static final int VIA_API_PRE_SEUIL_TEMPO = 3;
+	public static final int VIA_API_SEUIL_BAS = 4;
+	public static final int VIA_API_SEUIL_HAUT = 5;
+	public static final int VIA_API_PRE_SEUIL_BAS = 6;
+	public static final int VIA_API_PRE_SEUIL_HAUT = 7;
+	public static final int VIA_API_CALIBRATION = 8;
+	public static final int VIA_API_ALARME = 9;
+	public static final int VIA_API_MAINTENANCE = 10;
+	public static final int VIA_API_NO_NF = 11;
 	public static final int MAX_ECHANGE_MAITRE_CLIENT = 50;
 	
 	

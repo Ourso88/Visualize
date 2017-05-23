@@ -20,7 +20,7 @@ import kernel.VoiesAPI;
 public class ModeleJTableVoiesAnalogicAPI extends AbstractTableModel implements JTableConstantes, VoiesAPI {
 	private static final long serialVersionUID = 1L;
 	private final List<AnalogicInput> lstAnalogicInput = new ArrayList<AnalogicInput>();
-    private final String[] entetes = {"Nom", "Valeur API", "Seuil atteint", "Alarme enclenchée", "Date apparition alarme", "Tempo ecoulee", "Type Alarme", "Tempo (mn)", "Pre Tempo"};
+    private final String[] entetes = {"Nom", "Valeur API", "Seuil atteint", "Alarme enclenchée", "Date apparition alarme", "Tempo ecoulee", "Type Alarme", "Tempo (mn)", "Pre Tempo", "Inhibition"};
     
     /**
      * Constructeur
@@ -115,6 +115,8 @@ public class ModeleJTableVoiesAnalogicAPI extends AbstractTableModel implements 
 	    		return lstAnalogicInput.get(rowIndex).getSeuilTempo();
 	    	case JT_VOIES_API_PRE_TEMPO_ALARME: // Tempo pre-seuil
 	    		return lstAnalogicInput.get(rowIndex).getPreSeuilTempo();
+	    	case JT_VOIES_API_INHIBITION: // Inhibition
+	    		return lstAnalogicInput.get(rowIndex).getInhibition();
 	    	default:
 	    		return null;
     	}

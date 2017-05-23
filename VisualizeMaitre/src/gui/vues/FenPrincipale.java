@@ -1,7 +1,6 @@
 package gui.vues;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,11 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -534,7 +529,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 			result.close();
 			AE_Variables.ctnOracle.closeLectureData();
 		} catch (SQLException e) {
-			GestionLogger.gestionLogger.warning("SGBD : Erreur lecture Table Historique : " + e.getMessage());
+			GestionLogger.gestionLogger.warning("SGBD : Erreur lecture Table Inhibition : " + e.getMessage());
 		}
 	}
 
@@ -641,6 +636,10 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 				gererPreSeuils();
 				gererAlarmeHistorique();
 				mdlAlarmesSeuil.fireTableDataChanged();
+				if(EFS_Maitre_Variable.modificationEnMaintenance) {
+					remplirEnMaintenance();
+					EFS_Maitre_Variable.modificationEnMaintenance = false;
+				}
 				tmrRefresh.start();
 			} catch (Exception ex) {
 				GestionLogger.gestionLogger.warning("Probleme dans le TIMER ...");

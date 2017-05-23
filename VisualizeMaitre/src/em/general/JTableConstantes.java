@@ -10,6 +10,7 @@ public interface JTableConstantes {
 	public static final int JT_VOIES_API_TYPE_ALARME = 6;
 	public static final int JT_VOIES_API_TEMPO_ALARME = 7;
 	public static final int JT_VOIES_API_PRE_TEMPO_ALARME = 8;
+	public static final int JT_VOIES_API_INHIBITION = 9;
 
 	public static final int JT_VOIES_API_DIGI_NOM = 0;
 	public static final int JT_VOIES_API_DIGI_VALEUR = 1;

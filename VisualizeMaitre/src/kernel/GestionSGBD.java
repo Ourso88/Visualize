@@ -83,7 +83,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 				appelAlert = 1;
 			}
 			
-			String strDescription = tbAlarme.get(indexAlarme).getDescriptionAlarme();
+			String strDescription = tbAlarme.get(indexAlarme).getDescriptionCapteur();
 			int typeCapteur = -1;
 			int voieAPI = -1;
 			long seuilTempo = -1;
@@ -108,7 +108,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 				GestionLogger.gestionLogger.severe("[DIVERS] - Erreur sur type capteur");
 			}
 
-			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, TypeCapteur, DateApparition, DatePriseEnCompte, DateDisparition, SeuilTempo, SeuilHaut, SeuilBas, NONF,"
+			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, TypeCapteur, DateApparition, DateDisparition, DatePriseEnCompte, SeuilTempo, SeuilHaut, SeuilBas, NONF,"
 				   + " idPriseEncompte, CommentairePriseEnCompte, AppelAlert, idUtilisateur, DescriptionAlarme) VALUES("
 				+ tbAlarme.get(indexAlarme).getIdCapteur()
 				+ ", " + voieAPI
@@ -583,6 +583,50 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
 			if(result.next()) {
 				int typeCapteur = result.getInt("TypeCapteur");
+				
+
+				if(typeModification == EFS_General.VIA_API_MAINTENANCE) {
+					int inhibition = result.getInt("Inhibition");
+					if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
+						for(int i = 0; i < tbAnaAPI.size(); i++) {
+							if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
+								tbAnaAPI.get(i).setInhibition(inhibition);
+								GestionLogger.gestionLogger.info("[SGBD] Modification Inhibition via API idCapteur = " + idCapteur + " à " + inhibition);
+								retour = true;
+							}
+						}
+					} else {
+						for(int i = 0; i < tbDigiAPI.size(); i++) {
+							if(tbDigiAPI.get(i).getIdCapteur() == idCapteur) {
+								tbDigiAPI.get(i).setInhibition(inhibition);
+								GestionLogger.gestionLogger.info("[SGBD] Modification Inhibition via API idCapteur = " + idCapteur + " à " + inhibition);
+								retour = true;
+							}
+						}
+					}
+				}
+				
+				if(typeModification == EFS_General.VIA_API_ALARME) {
+					int alarme = result.getInt("Alarme");
+					if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
+						for(int i = 0; i < tbAnaAPI.size(); i++) {
+							if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
+								tbAnaAPI.get(i).setAlarme(alarme);
+								GestionLogger.gestionLogger.info("[SGBD] Modification Alarme via API idCapteur = " + idCapteur + " à " + alarme);
+								retour = true;
+							}
+						}
+					} else {
+						for(int i = 0; i < tbDigiAPI.size(); i++) {
+							if(tbDigiAPI.get(i).getIdCapteur() == idCapteur) {
+								tbDigiAPI.get(i).setAlarme(alarme);
+								GestionLogger.gestionLogger.info("[SGBD] Modification Alarme via API idCapteur = " + idCapteur + " à " + alarme);
+								retour = true;
+							}
+						}
+					}
+				}
+				
 				if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
 					strSql = "SELECT * FROM EntreeAnalogique WHERE idCapteur = " + idCapteur;
 				} else {
@@ -617,10 +661,58 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 							for(int i = 0; i < tbAnaAPI.size(); i++) {
 								if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
 									tbAnaAPI.get(i).setPreSeuilTempo(tempo);
+									GestionLogger.gestionLogger.info("[SGBD] Modification Pre seuil Tempo via API idCapteur = " + idCapteur + " à " + tempo);
 									retour = true;
 								}
 							}
 						}
+
+					case EFS_General.VIA_API_CALIBRATION:
+						if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
+							int calibration = result.getInt("Calibration");
+							for(int i = 0; i < tbAnaAPI.size(); i++) {
+								if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
+									tbAnaAPI.get(i).setCalibration(calibration);
+									GestionLogger.gestionLogger.info("[SGBD] Modification Calibration via API idCapteur = " + idCapteur + " à " + calibration);
+									retour = true;
+								}
+							}
+						}
+
+					case EFS_General.VIA_API_NO_NF:
+						if(typeCapteur == EFS_General.CAPTEUR_DIGITAL_ENTREE) {
+							int nOnF = result.getInt("NONF");
+							for(int i = 0; i < tbDigiAPI.size(); i++) {
+								if(tbDigiAPI.get(i).getIdCapteur() == idCapteur) {
+									tbDigiAPI.get(i).setnOnF(nOnF);
+									GestionLogger.gestionLogger.info("[SGBD] Modification NO/NF via API idCapteur = " + idCapteur + " à " + nOnF);
+									retour = true;
+								}
+							}
+						}
+					
+					case EFS_General.VIA_API_SEUIL_BAS:
+					case EFS_General.VIA_API_SEUIL_HAUT:
+					case EFS_General.VIA_API_PRE_SEUIL_BAS:
+					case EFS_General.VIA_API_PRE_SEUIL_HAUT:
+						if(typeCapteur == EFS_General.CAPTEUR_ANALOGIQUE_ENTREE) {
+							int seuilBas = result.getInt("SeuilBas");
+							int seuilHaut = result.getInt("SeuilHaut");
+							int preSeuilBas = result.getInt("PreSeuilBas");
+							int preSeuilHaut = result.getInt("PreSeuilHaut");
+							for(int i = 0; i < tbAnaAPI.size(); i++) {
+								if(tbAnaAPI.get(i).getIdCapteur() == idCapteur) {
+									tbAnaAPI.get(i).setSeuilBas(seuilBas);
+									tbAnaAPI.get(i).setSeuilHaut(seuilHaut);
+									tbAnaAPI.get(i).setPreSeuilBas(preSeuilBas);
+									tbAnaAPI.get(i).setPreSeuilHaut(preSeuilHaut);
+									GestionLogger.gestionLogger.info("[SGBD] Modification des seuils via API idCapteur = " + idCapteur);
+									retour = true;
+								}
+							}
+						}
+						break;
+						
 					default:
 						break;
 					}
