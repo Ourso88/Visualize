@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="images"/>
+	<classpathentry kind="src" path="librairies"/>
+	<classpathentry kind="lib" path="librairies/mysql-connector-java-5.1.22-bin.jar"/>
+	<classpathentry kind="lib" path="librairies/sqlite-jdbc-3.8.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="librairies/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="librairies/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="librairies/poi-3.10.1-20140818.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
