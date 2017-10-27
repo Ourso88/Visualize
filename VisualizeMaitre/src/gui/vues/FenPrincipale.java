@@ -498,7 +498,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 				// Couper Klaxon
 				GestionAPI.gestionKlaxon(false);
 				// Couper Appel Alert
-				GestionSGBD.gestionAlert(false);
+				GestionAPI.gestionAlert(false);
         	}
         }
 	}	

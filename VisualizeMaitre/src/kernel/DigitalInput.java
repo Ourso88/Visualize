@@ -194,7 +194,7 @@ public class DigitalInput extends Capteur implements EFS_General {
 		if(this.getAlarme() == ALARME_ALERT) {
 			if(!this.isAlarmeTempoEcoulee() && alarmeTempoEcoulee) {
 				// Appel Alert
-				GestionSGBD.gestionAlert(true); 
+				GestionAPI.gestionAlert(true); 
 				GestionAPI.gestionKlaxon(true);
 				GestionLogger.gestionLogger.info("<== APPEL ALERT ==> Capteur :" + this.getNom());
 				this.setAppelAlert(true);

@@ -9,7 +9,7 @@ public interface AE_Constantes {
 	public static final int NIVEAU_CONSULTATION = 0;
 	
 	// Constantes version
-	public static final int VERSION = 20001;
+	public static final int VERSION = 20101;
 
 	// Langue
 	public static final int LANGUE_FR = 0;

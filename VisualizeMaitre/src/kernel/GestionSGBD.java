@@ -189,35 +189,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 		}
 	}
 	
-	/**
-	 * Gere la gestion des Appels Alert à travers de la SGBD 
-	 * @param alerte
-	 */
-	public static void gestionAlert(boolean alerte) {
-		testConnexionBase();
-		EFS_Maitre_Variable.appelAlert = alerte;
-		try {
-			String strSql = "";
-			if (alerte) {
-				strSql = "UPDATE AlarmeAlerte SET Alarme = 1 WHERE idAlarmeAlerte = 1";
-				AE_Variables.ctnOracle.fonctionSql(strSql);
-				EFS_Maitre_Variable.nombreLectureSGBD++;
-				GestionLogger.gestionLogger.info("[SGBD] - Passage AlarmeAlerte.Alarme à 1");
-			} 
-			else {
-				strSql = "UPDATE AlarmeAlerte SET Alarme = 0, RelanceProgramme = 0 WHERE idAlarmeAlerte = 1";
-				AE_Variables.ctnOracle.fonctionSql(strSql);		
-				EFS_Maitre_Variable.nombreLectureSGBD++;
-				GestionLogger.gestionLogger.info("[SGBD] - Passage AlarmeAlerte.Alarme à 0");
-			} // Fin if alerte
-		} catch (Exception e) {
-			GestionLogger.gestionLogger.severe("SGBD - Erreur APPEL ALERT : " + e.getMessage());
-			EFS_Maitre_Variable.nombreLectureSGBD++;
-			EFS_Maitre_Variable.compteurErreurSGBD++;
-			EFS_Maitre_Variable.appelAlert = false;
-		}
-	} // Fin gestionAlert()	
-	
+
 	/**
 	 * Gestion du retrait d'un capteur en maintance
 	 * @param idCapteur
@@ -403,23 +375,6 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 	}	
 	
 	/**
-	 * Ecriture dans la SGBD des valeur API pour les voies
-	 */
-	public static void ecritureActivite() {
-		testConnexionBase();
-		try {
-			String strSql = "";
-			strSql = "INSERT INTO Activite (DateActivite, Description, Poste, DateActiviteVB) VALUES (sysdate, 'Poste Maitre V2', " + EFS_General.POSTE_MAITRE + ", sysdate)";
-			AE_Variables.ctnOracle.fonctionSql(strSql);
-			EFS_Maitre_Variable.nombreLectureSGBD++;
-		} catch (Exception e) {
-			GestionLogger.gestionLogger.warning("SGBD - Erreur ecriture activité : " + e.getMessage());
-			EFS_Maitre_Variable.nombreLectureSGBD++;
-			EFS_Maitre_Variable.compteurErreurSGBD++;
-		}
-	}	
-	
-	/**
 	 * Modification dans la SGBD du seuil bas de la voie API
 	 */
 	public static boolean modifierSeuilBas(long idCapteur, int seuilBas) {
@@ -555,7 +510,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 						// Couper Klaxon
 						GestionAPI.gestionKlaxon(false);
 						// Couper Appel Alert
-						GestionSGBD.gestionAlert(false);
+						GestionAPI.gestionAlert(false);
 						prisEnCompte = true;
 						break;
 					}
@@ -778,21 +733,6 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 		AE_Variables.ctnOracle.closeLectureData();
 		
 	}
-	
-	/**
-	 * Test le systeme Alert
-	 */
-	public static void gestionTestAlert(boolean alerte) {
-		testConnexionBase();
-		String strSql = "";
-		if (alerte) {
-			strSql = "UPDATE AlarmeAlerte SET TestAlert = 1 WHERE idAlarmeAlerte = 1";
-		} 
-		else {
-			strSql = "UPDATE AlarmeAlerte SET TestAlert = 0 WHERE idAlarmeAlerte = 1";
-		} // Fin if alerte
-		AE_Variables.ctnOracle.fonctionSql(strSql);
-	} // Fin gestionTestAlert()		
 	
 	/**
 	 * Renvoie un tableau des raisons de prise en compte

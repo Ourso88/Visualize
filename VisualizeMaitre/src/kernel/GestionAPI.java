@@ -22,6 +22,8 @@ import em.general.EFS_Maitre_Variable;
  *
  */
 public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
+	private int cptActivite = 0;
+
 	private Timer tmrTpsReel = new Timer(TIMER_LECTURE_TPS_REEL, this);	
 	private Timer tmrHistoriserValeurAPI = new Timer(TIMER_ENREGISTREMENT_HISTORIQUE, this);	
 	private Timer tmrMinute = new Timer(TIMER_MINUTE, this);	
@@ -108,6 +110,8 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			}
 			// ======================================================
 			
+			// Fermeture connection
+			con.close();
 			
 		} catch (Exception e) {
 			GestionLogger.gestionLogger.warning("Erreur lecture MODBUS : " + e.getMessage());
@@ -504,7 +508,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 * Inscrit dans la base l'activite du programme
 	 */
 	private void gestionActivite() {
-		GestionSGBD.ecritureActivite();
+		ecritureActivite();
 	}
 	
 	/**
@@ -523,14 +527,14 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			   (heure < TEST_GTC_HEURE + 1 && minute < EFS_Maitre_Variable.TEST_GTC_MINUTE + 10))) {
 		   if (!blTestHoraire) {
 		       blTestHoraire = true;
-		       GestionSGBD.gestionTestAlert(true);
+		       gestionTestAlert(true);
 		       // Mise à jour de l'heure automate
 		       ecrireDate();
 		   }
 	   }
 	   else {
 		   if (blTestHoraire) {
-			   GestionSGBD.gestionTestAlert(false);
+			   gestionTestAlert(false);
 		   }			   
 	       blTestHoraire = false;
 	   }
@@ -665,13 +669,122 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 				} else {
 					if(tbAlarme.get(i).getDateRappelAlert().plusMinutes(tbAlarme.get(i).getMnRappelAlert()).isBefore(LocalDateTime.now())) {
 						GestionLogger.gestionLogger.info("[DIVERS] Rappel Alert après " + tbAlarme.get(i).getMnRappelAlert() + " mn");
-						GestionSGBD.gestionAlert(true);
+						gestionAlert(true);
 						tbAlarme.get(i).setMnRappelAlert(0);
 					}
 				}
 			}
 		}
 	}
+	
+	/**
+	 * Test le Systeme Alert
+	 */
+	private void gestionTestAlert(boolean alerte) {
+		try {
+			// ===== Ouverture de la connection =====
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			@SuppressWarnings("unused")
+			double [] reqReponse = null;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con.connect();
+			if (con.isConnected()) {
+				EFS_Maitre_Variable.nombreLectureAPI++;
+			}
+			else {
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+			}
+			if (alerte) {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_TEST_HORAIRE, 1));			
+			} 
+			else {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_TEST_HORAIRE, 0));			
+			} // Fin if sonnerie
+			con.close();
+		} // Fin Try
+		catch (Exception e){
+			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Test horaire : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch
+
+	} // Fin gestionTestAlert()			
+	
+	/**
+	 * Test le systeme Alert
+	 */
+	public static void gestionAlert(boolean alerte) {
+		try {
+			// ===== Ouverture de la connection =====
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			@SuppressWarnings("unused")
+			double [] reqReponse = null;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con.connect();
+			if (con.isConnected()) {
+				EFS_Maitre_Variable.nombreLectureAPI++;
+			}
+			else {
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+			}
+			if (alerte) {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_ALARME, 1));			
+				GestionLogger.gestionLogger.info("[API] - Passage AlarmeAlerte.Alarme à 1");
+			} 
+			else {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_ALARME, 0));			
+				GestionLogger.gestionLogger.info("[API] - Passage AlarmeAlerte.Alarme à 0");
+			} // Fin if sonnerie
+			con.close();
+		} // Fin Try
+		catch (Exception e){
+			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Alarme : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch
+
+	} // Fin gestionTestAlert()	
+	
+	/**
+	 * Ecriture dans API de activite
+	 */
+	private void ecritureActivite() {
+		try {
+			// ===== Ouverture de la connection =====
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			@SuppressWarnings("unused")
+			double [] reqReponse = null;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con.connect();
+			if (con.isConnected()) {
+				EFS_Maitre_Variable.nombreLectureAPI++;
+				cptActivite++;
+				if(cptActivite > 20000) cptActivite = 0;
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_CONTROLE_MAITRE, cptActivite));			
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_ALARME_CONTROLE_MAITRE, 0));			
+			}
+			else {
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+			}
+			con.close();
+		} // Fin Try
+		catch (Exception e){
+			GestionLogger.gestionLogger.warning("Erreur ecriture Activite : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch
+
+	}		
+	
 	
 	/**
 	 * Gestion des actions
