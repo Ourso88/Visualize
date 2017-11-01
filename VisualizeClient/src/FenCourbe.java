@@ -17,11 +17,13 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
@@ -54,6 +56,12 @@ public class FenCourbe extends JFrame implements ActionListener {
 	private JLabel lblTitreMaximum = new JLabel("Maximum : ");
 	private JLabel lblMaximum = new JLabel("000");
 	private JPanel pnlInfoCourbe = new JPanel();
+	
+	private JPanel pnlInfoArchive = new JPanel();
+	private ButtonGroup bgArchive = new ButtonGroup();
+	private JRadioButton optActuelle = new JRadioButton("Actuelle");
+	private JRadioButton optArchive = new JRadioButton("Archive");
+
 	
 	private int idCapteur;
     
@@ -215,6 +223,18 @@ public class FenCourbe extends JFrame implements ActionListener {
         
         btnTracer.addActionListener(this);
         btnImprimer.addActionListener(this);
+        optActuelle.addActionListener(this);
+        optArchive.addActionListener(this);
+        optActuelle.setSelected(true);
+        
+        // ===== pnlInfoArchive =====
+	    bgArchive.add(optActuelle);
+	    bgArchive.add(optArchive);
+	    pnlInfoArchive.setBackground(AE_Constantes.EFS_MARRON);
+        pnlInfoArchive.add(optActuelle);
+        pnlInfoArchive.add(optArchive);
+	    optActuelle.setBackground(AE_Constantes.EFS_MARRON);
+	    optArchive.setBackground(AE_Constantes.EFS_MARRON);
         
 	    // --------------------------------------------------
 	    gbc.insets = new Insets(0, 10, 0, 0);
@@ -265,6 +285,12 @@ public class FenCourbe extends JFrame implements ActionListener {
 	    gbc.anchor= GridBagConstraints.CENTER;
 	    gbc.fill = GridBagConstraints.HORIZONTAL;
 	    pnlTri.add(cmbCapteur, gbc);
+	    // --------------------------------------------------
+	    gbc.gridx = 2; gbc.gridy = 2;
+	    gbc.gridheight = 1; gbc.gridwidth = 1;
+	    gbc.anchor= GridBagConstraints.CENTER;
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
+	    pnlTri.add(pnlInfoArchive, gbc);
 	    // --------------------------------------------------
 	    gbc.gridx = 3; gbc.gridy = 1;
 	    gbc.gridheight = 1; gbc.gridwidth = 1;
@@ -377,8 +403,7 @@ public class FenCourbe extends JFrame implements ActionListener {
 				}
 		    	cptPoint++;
 			} // Fin while result.next()
-			/*
-			if(blCapteurAnalogique) {
+			if(blCapteurAnalogique && optArchive.isSelected()) {
 			    strSql = "SELECT * FROM AI_Historique_Archive WHERE (idCapteur = " + idCapteur 
 			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")"
 			    		+ " ORDER BY DateLecture ASC";
@@ -396,7 +421,6 @@ public class FenCourbe extends JFrame implements ActionListener {
 			    	cptPoint++;
 				} // Fin while result.next()
 			}
-			*/
 
 		} catch (SQLException e) {
 			e.printStackTrace();
