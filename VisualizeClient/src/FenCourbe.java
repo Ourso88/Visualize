@@ -377,6 +377,27 @@ public class FenCourbe extends JFrame implements ActionListener {
 				}
 		    	cptPoint++;
 			} // Fin while result.next()
+			/*
+			if(blCapteurAnalogique) {
+			    strSql = "SELECT * FROM AI_Historique_Archive WHERE (idCapteur = " + idCapteur 
+			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")"
+			    		+ " ORDER BY DateLecture ASC";
+				result = ctn.lectureData(strSql);
+				while(result.next()) {
+					dateLue = result.getDate("DateLecture");
+					diffSeconde = dateLue.getTime() - dateDeb.getTime();
+					diffSeconde = diffSeconde / 1000;
+			    	tbX[cptPoint] = diffSeconde;
+					if(blCapteurAnalogique) {
+						tbY[cptPoint] = result.getDouble("Valeur") / 10;
+					} else {
+						tbY[cptPoint] = result.getDouble("Valeur");
+					}
+			    	cptPoint++;
+				} // Fin while result.next()
+			}
+			*/
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Probléme lecture de l'historique");
