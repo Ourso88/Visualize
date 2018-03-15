@@ -435,8 +435,13 @@ public class FenCourbe extends JFrame implements ActionListener {
 
 		// Calcul de la moyenne
 		if(blCapteurAnalogique) {
-			strSql = "SELECT AVG(Valeur) AS Moyenne FROM AI_Historique WHERE (idCapteur = " + idCapteur 
-		    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			if(optArchive.isSelected()) {
+				strSql = "SELECT AVG(Valeur) AS Moyenne FROM AI_Historique_Archive WHERE (idCapteur = " + idCapteur 
+			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			} else {
+				strSql = "SELECT AVG(Valeur) AS Moyenne FROM AI_Historique WHERE (idCapteur = " + idCapteur 
+			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			}
 			result = ctn.lectureData(strSql);
 			try {
 				if(result.next()) {
@@ -449,8 +454,13 @@ public class FenCourbe extends JFrame implements ActionListener {
 				System.out.println("Probléme lecture de la moyenne");
 			}
 
-			strSql = "SELECT MIN(Valeur) AS Minimum FROM AI_Historique WHERE (idCapteur = " + idCapteur 
-		    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			if(optArchive.isSelected()) {
+				strSql = "SELECT MIN(Valeur) AS Minimum FROM AI_Historique_Archive WHERE (idCapteur = " + idCapteur 
+			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			} else {
+				strSql = "SELECT MIN(Valeur) AS Minimum FROM AI_Historique WHERE (idCapteur = " + idCapteur 
+			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			}
 			result = ctn.lectureData(strSql);
 			try {
 				if(result.next()) {
@@ -463,8 +473,13 @@ public class FenCourbe extends JFrame implements ActionListener {
 				System.out.println("Probléme lecture du minimum");
 			}
 			
-			strSql = "SELECT MAX(Valeur) AS Maximum FROM AI_Historique WHERE (idCapteur = " + idCapteur 
-		    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			if(optArchive.isSelected()) {
+				strSql = "SELECT MAX(Valeur) AS Maximum FROM AI_Historique_Archive WHERE (idCapteur = " + idCapteur 
+			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			} else {
+				strSql = "SELECT MAX(Valeur) AS Maximum FROM AI_Historique WHERE (idCapteur = " + idCapteur 
+			    		+ " AND DateLecture > " + strDateDeb + " AND DateLecture < " + strDateFin + ")";
+			}
 			result = ctn.lectureData(strSql);
 			try {
 				if(result.next()) {

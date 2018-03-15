@@ -412,7 +412,7 @@ public class FenHistoriqueAlarme extends JFrame implements ActionListener {
 		
 		ctn.open();
 		// Création du filtre
-		strSql = "SELECT AlarmeHistorique.*, Capteur.Description, Capteur.Nom, Capteur.idService, Utilisateur.Nom AS nomUtilisateur"
+		strSql = "SELECT AlarmeHistorique.*, Capteur.Description, Capteur.Nom, Capteur.idService, Capteur.Alarme, Utilisateur.Nom AS nomUtilisateur"
 				   + " FROM ((AlarmeHistorique LEFT JOIN Capteur ON AlarmeHistorique.idCapteur = Capteur.idCapteur)"
 				   + " LEFT JOIN Utilisateur ON AlarmeHistorique.idUtilisateur = Utilisateur.idUtilisateur)"
 				   + " WHERE DateApparition >= " + strDateDeb + " AND DateApparition <= " + strDateFin; 
@@ -432,20 +432,23 @@ public class FenHistoriqueAlarme extends JFrame implements ActionListener {
 			while(result.next()) {
 				idService = result.getInt("idService");
 				if(testService(idService)) {
-					if(result.getInt("idPriseEnCompte") > 0 ) {
+					String nomPriseEnCompte = "";
+					if(result.getInt("idPriseEnCompte") > 0 && result.getInt("Alarme") == AE_Constantes.ALARME_ALERT) {
 						// Recherche de l'indice
 						for (int i  = 0; i < tbPriseEnCompte.size(); i++) {
 							if (tbPriseEnCompte.get(i).getId() == result.getInt("idPriseEnCompte")) {
 								idPriseEnCompte = i;
 							}
 						}
+						nomPriseEnCompte = tbPriseEnCompte.get(idPriseEnCompte).getNom();
 					} else {
 						idPriseEnCompte = 0;
+						nomPriseEnCompte = "";
 					}
 					mdlHistoriqueAlarme.addAlarme(new HistoriqueAlarme(result.getInt("idCapteur"), result.getString("Nom")
 							, result.getString("Description"), result.getDate("DateApparition"),
 							result.getDate("DateDisparition"), result.getDate("DatePriseEnCompte"), 
-							result.getString("DescriptionAlarme"), tbPriseEnCompte.get(idPriseEnCompte).getNom(),
+							result.getString("DescriptionAlarme"), nomPriseEnCompte,
 							result.getString("nomUtilisateur"), result.getString("commentairePriseEnCompte"),
 							result.getInt("idAlarmeHistorique")));
 				}
