@@ -109,7 +109,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 			}
 
 			strSql = "INSERT INTO AlarmeHistorique (idCapteur, VoieAPI, TypeCapteur, DateApparition, DateDisparition, DatePriseEnCompte, SeuilTempo, SeuilHaut, SeuilBas, NONF,"
-				   + " idPriseEncompte, CommentairePriseEnCompte, AppelAlert, idUtilisateur, DescriptionAlarme) VALUES("
+				   + " idPriseEncompte, CommentairePriseEnCompte, AppelAlert, idUtilisateur, DescriptionAlarme, idAlarmeService) VALUES("
 				+ tbAlarme.get(indexAlarme).getIdCapteur()
 				+ ", " + voieAPI
 				+ ", " + typeCapteur
@@ -125,6 +125,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 				+ ", " + appelAlert
 				+ ", " + tbAlarme.get(indexAlarme).getIdUtilisateur()
 				+ ", '" + tbAlarme.get(indexAlarme).getDescriptionAlarme() + "'"
+				+ ", " + tbAlarme.get(indexAlarme).getIdAlarmeService()
 				+ ")";
 			AE_Variables.ctnOracle.fonctionSql(strSql);
 			
@@ -140,8 +141,9 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 			strDatePriseEnCompte, // datePriseEnCompte
 			strDateDisparition, // dateDisparition
 			nomCapteur, // nomCapteur
-			strDescription
-			));
+			strDescription,
+			tbAlarme.get(indexAlarme).getIdAlarmeService()			
+			)); 
 			
 			
 			EFS_Maitre_Variable.nombreLectureSGBD++;
@@ -263,8 +265,9 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 		testConnexionBase();
 		// Lecture données
 		try {
-			String strSql = "SELECT * FROM ((EntreeAnalogique LEFT JOIN Capteur ON EntreeAnalogique.idCapteur = Capteur.idCapteur)"
-					+ " LEFT JOIN Equipement ON Capteur.idEquipement = Equipement.idEquipement)"
+			String strSql = "SELECT * FROM (((EntreeAnalogique LEFT JOIN Capteur ON EntreeAnalogique.idCapteur = Capteur.idCapteur)"
+					+ " LEFT JOIN Equipement ON Capteur.idEquipement = Equipement.idEquipement))"
+					+ " LEFT JOIN AlarmeService ON Capteur.idAlarmeService = AlarmeService.idAlarmeService"
 					+ " WHERE TypeCapteur = 1 ORDER BY VoieApi";
 			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
 			while(result.next()) {
@@ -294,7 +297,11 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 				result.getLong("preSeuilTempo"),
 				result.getString("unite"),
 				result.getInt("valeurConsigne"),
-				result.getInt("ActivationPreSeuil")
+				result.getInt("ActivationPreSeuil"),
+				result.getLong("idAlarmeService"),
+				result.getString("NomService"),
+				result.getInt("IndexMotApi"),
+				result.getBoolean("klaxon")
 				));
 			}
 			result.close();
@@ -313,8 +320,9 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 		testConnexionBase();
 		// Lecture données
 		try {
-			String strSql = "SELECT * FROM ((EntreeDigitale LEFT JOIN Capteur ON EntreeDigitale.idCapteur = Capteur.idCapteur)"
-					+ " LEFT JOIN Equipement ON Capteur.idEquipement = Equipement.idEquipement)"
+			String strSql = "SELECT * FROM (((EntreeDigitale LEFT JOIN Capteur ON EntreeDigitale.idCapteur = Capteur.idCapteur)"
+					+ " LEFT JOIN Equipement ON Capteur.idEquipement = Equipement.idEquipement))"
+					+ " LEFT JOIN AlarmeService ON Capteur.idAlarmeService = AlarmeService.idAlarmeService"
 					+ " WHERE TypeCapteur = 2 ORDER BY VoieApi";
 			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
 			while(result.next()) {
@@ -336,7 +344,11 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 				result.getString("NumeroInventaire"),
 				result.getLong("idEntreeDigitale"),
 				result.getInt("tempo"),
-				result.getInt("nOnF")
+				result.getInt("nOnF"),
+				result.getLong("idAlarmeService"),
+				result.getString("NomService"),
+				result.getInt("IndexMotApi"),
+				result.getBoolean("klaxon")
 				));
 			}
 			result.close();
@@ -450,12 +462,13 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 			String strDateApparition = tbAlarme.get(indexAlarme).getDateApparition().format(formatter);
 			double valeur = tbAlarme.get(indexAlarme).getValeurAPI();
 			
-			strSql = "INSERT INTO V2_AlarmeEnCours (idCapteur, DateApparition, Valeur, DescriptionAlarme, TypeCapteur) VALUES("
+			strSql = "INSERT INTO V2_AlarmeEnCours (idCapteur, DateApparition, Valeur, DescriptionAlarme, TypeCapteur, idAlarmeService) VALUES("
 					+ idCapteur
 					+ ", '"  + strDateApparition + "'"
 					+ ", " + valeur
 					+ ", '" + tbAlarme.get(indexAlarme).getDescriptionAlarme() + "'"
 					+ ", " + tbAlarme.get(indexAlarme).getTypeCapteur()
+					+ ", " + tbAlarme.get(indexAlarme).getIdAlarmeService()
 					+ ")";
 				AE_Variables.ctnOracle.fonctionSql(strSql);
 				EFS_Maitre_Variable.nombreLectureSGBD++;
@@ -511,6 +524,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 						GestionAPI.gestionKlaxon(false);
 						// Couper Appel Alert
 						GestionAPI.gestionAlert(false);
+						GestionAPI.gestionAlertService(false, tbAlarme.get(i).getIndexCapteur());
 						prisEnCompte = true;
 						break;
 					}

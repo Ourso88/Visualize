@@ -20,6 +20,8 @@ public interface EFS_General {
 	public static final int ADR_API_TEST_HORAIRE = 2201;
 	public static final int ADR_API_ALARME = 2202;	
 	public static final int ADR_API_ALARME_CONTROLE_MAITRE = 2203;
+
+	public static final int ADR_API_ALARME_SERVICE = 2250;	
 	
 	// Echange Maitre - Clients via API
 	public static final int ADR_API_ECHANGE_MAITRE_CLIENT = 2060;

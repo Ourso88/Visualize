@@ -202,6 +202,25 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 //        sorterJtbAlarmesEnCours.setSortable(0,  false);
 //        sorterJtbAlarmesEnCours.setSortsOnUpdates(false);
         
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_APPEL_ALERT).setPreferredWidth(30);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_APPEL_ALERT).setMaxWidth(30);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_RAPPEL).setPreferredWidth(50);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_RAPPEL).setMaxWidth(50);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_TYPE).setPreferredWidth(50);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_TYPE).setMaxWidth(50);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_VALEUR).setPreferredWidth(50);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_VALEUR).setMaxWidth(50);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_DATE_PRISE_EN_COMPTE).setPreferredWidth(120);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_DATE_PRISE_EN_COMPTE).setMaxWidth(120);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_DATE_DISPARITION).setPreferredWidth(120);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_DATE_DISPARITION).setMaxWidth(120);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_DATE_APPARITION).setPreferredWidth(120);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_DATE_APPARITION).setMaxWidth(120);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_INVENTAIRE).setPreferredWidth(100);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_INVENTAIRE).setMaxWidth(100);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_NOM).setPreferredWidth(40);
+	    jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_NOM).setMaxWidth(40);
+	    
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_NOM).setCellRenderer(new JTableAlarmesEnCoursColorCellRenderer());
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_APPEL_ALERT).setCellRenderer(new JTableAlarmesEnCoursAppelAlert());
         jtbAlarmesEnCours.getColumnModel().getColumn(JT_ALARME_EN_COURS_VALEUR).setCellRenderer(new JTableAlarmesEnCoursValeur());
@@ -499,6 +518,7 @@ public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, E
 				GestionAPI.gestionKlaxon(false);
 				// Couper Appel Alert
 				GestionAPI.gestionAlert(false);
+				GestionAPI.gestionAlertService(false, tbAlarme.get(indexSelection).getIndexMotApi()); 
         	}
         }
 	}	

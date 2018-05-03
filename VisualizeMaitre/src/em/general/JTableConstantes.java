@@ -31,6 +31,7 @@ public interface JTableConstantes {
 	public static final int JT_ALARME_EN_COURS_VALEUR = 8;
 	public static final int JT_ALARME_EN_COURS_APPEL_ALERT = 9;
 	public static final int JT_ALARME_EN_COURS_RAPPEL = 10;
+	public static final int JT_ALARME_EN_COURS_ALARME_SERVICE = 11;
 	
 	public static final int JT_ALARME_SEUIL_NOM = 0;
 	public static final int JT_ALARME_SEUIL_DESCRIPTION = 1;

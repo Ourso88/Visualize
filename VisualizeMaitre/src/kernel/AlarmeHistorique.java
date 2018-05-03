@@ -15,11 +15,13 @@ public class AlarmeHistorique {
 	private String dateDisparition;
 	private String nomCapteur; 	
 	private String descriptionCapteur; 	
+	private long idAlarmeService;
 	
 	/**
 	 * Constructeur
 	 */
-	public AlarmeHistorique(long idAlarmeHistorique, long idCapteur, int typeCapteur, String dateApparition, String datePriseEnCompte, String dateDisparition,	String nomCapteur, String descriptionCapteur) {
+	public AlarmeHistorique(long idAlarmeHistorique, long idCapteur, int typeCapteur, String dateApparition, String datePriseEnCompte, String dateDisparition,	String nomCapteur, String descriptionCapteur,
+							long idAlarmeService) {
 		this.setIdAlarmeHistorique(idAlarmeHistorique);
 		this.setIdCapteur(idCapteur);
 		this.setTypeCapteur(typeCapteur);
@@ -28,6 +30,7 @@ public class AlarmeHistorique {
 		this.setDateDisparition(dateDisparition);
 		this.setNomCapteur(nomCapteur);
 		this.setDescriptionCapteur(descriptionCapteur);
+		this.setIdAlarmeService(idAlarmeService);
 	}
 
 	/**
@@ -141,5 +144,21 @@ public class AlarmeHistorique {
 	public void setDescriptionCapteur(String descriptionCapteur) {
 		this.descriptionCapteur = descriptionCapteur;
 	}
-	
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
+	}
+
+
+
 }

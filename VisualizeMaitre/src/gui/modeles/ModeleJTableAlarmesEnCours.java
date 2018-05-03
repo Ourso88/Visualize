@@ -15,7 +15,7 @@ import kernel.VoiesAPI;
 public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EFS_General, JTableConstantes, VoiesAPI {
 	private static final long serialVersionUID = 1L;
 	private final List<AlarmeEnCours> lstAlarmeEnCours = new ArrayList<AlarmeEnCours>();
-    private final String[] entetes = {"Voie", "Description", "Inventaire", "Apparition", "Disparition", "Prise en compte", "Alarme description", "Type", "Valeur", "A", "Rappel"};
+    private final String[] entetes = {"Voie", "Description", "Inventaire", "Apparition", "Disparition", "Prise en compte", "Alarme description", "Type", "Valeur", "A", "Rappel", "Service"};
     
     /**
      * Constructeur
@@ -129,6 +129,8 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EF
 	    		}
 	    	case JT_ALARME_EN_COURS_RAPPEL: 
 	    		return lstAlarmeEnCours.get(rowIndex).getMnRappelAlert(); 
+	    	case JT_ALARME_EN_COURS_ALARME_SERVICE: 
+	    		return lstAlarmeEnCours.get(rowIndex).getNomService(); 
 	    	default:
 	    		return null;
     	}
@@ -199,6 +201,10 @@ public class ModeleJTableAlarmesEnCours extends AbstractTableModel implements EF
     	    	case JT_ALARME_EN_COURS_RAPPEL: 
             		alarmeEnCours.setMnRappelAlert(Integer.valueOf((String) aValue));
             		alarmeEnCours.setDateRappelAlert(LocalDateTime.now());
+            		fireTableCellUpdated(rowIndex, columnIndex);
+            		break;
+            	case JT_ALARME_EN_COURS_ALARME_SERVICE:
+            		alarmeEnCours.setNomService((String) aValue);
             		fireTableCellUpdated(rowIndex, columnIndex);
             		break;
                 default :

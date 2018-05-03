@@ -51,7 +51,8 @@ public class DigitalInput extends Capteur implements EFS_General {
 	 * @param nOnF
 	 */
 	public DigitalInput(long idCapteur, String nom, String description, long idEquipement, long idPosteTechnique, long idTypeMateriel,	long idZoneSubstitution, 
-			 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, String inventaire, long idEntreeDigitale, int tempo, int nOnF) {
+			 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, String inventaire, long idEntreeDigitale, 
+			 int tempo, int nOnF, long idAlarmeService, String NomService, int indexMotApi, boolean klaxon) {
 		this.setIdCapteur(idCapteur);
 		this.setNom(nom);
 		this.setDescription(description);
@@ -70,6 +71,10 @@ public class DigitalInput extends Capteur implements EFS_General {
 		this.setIdEntreeDigitale(idEntreeDigitale);
 		this.setTempo(tempo);
 		this.setnOnF(nOnF);
+		this.setIdAlarmeService(idAlarmeService);
+		this.setNomService(NomService);
+		this.setIndexMotApi(indexMotApi);
+		this.setKlaxon(klaxon);
 	}
 
 	/**
@@ -195,7 +200,10 @@ public class DigitalInput extends Capteur implements EFS_General {
 			if(!this.isAlarmeTempoEcoulee() && alarmeTempoEcoulee) {
 				// Appel Alert
 				GestionAPI.gestionAlert(true); 
-				GestionAPI.gestionKlaxon(true);
+				GestionAPI.gestionAlertService(true, this.getIndexMotApi()); 
+				if(this.isKlaxon()) {
+					GestionAPI.gestionKlaxon(true);
+				}
 				GestionLogger.gestionLogger.info("<== APPEL ALERT ==> Capteur :" + this.getNom());
 				this.setAppelAlert(true);
 			}
@@ -231,6 +239,5 @@ public class DigitalInput extends Capteur implements EFS_General {
 	public void setAlarmeDescription(String alarmeDescription) {
 		this.alarmeDescription = alarmeDescription;
 	}
-
 	
 }

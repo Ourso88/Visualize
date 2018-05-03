@@ -22,7 +22,11 @@ public class Capteur {
 	long idUnite;
 	String contact;
 	String inventaire;
-	
+	long idAlarmeService;
+	String nomService;
+	int indexMotApi;
+	boolean klaxon;
+
 	/**
 	 * Constructeur vide
 	 */
@@ -214,5 +218,70 @@ public class Capteur {
 	public void setContact(String contact) {
 		this.contact = contact;
 	}
+
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
+	}
+
+
+	/**
+	 * @return the nomService
+	 */
+	public String getNomService() {
+		return nomService;
+	}
+
+
+	/**
+	 * @param nomService the nomService to set
+	 */
+	public void setNomService(String nomService) {
+		this.nomService = nomService;
+	}
+
+
+	/**
+	 * @return the indexMotApi
+	 */
+	public int getIndexMotApi() {
+		return indexMotApi;
+	}
+
+
+	/**
+	 * @param indexMotApi the indexMotApi to set
+	 */
+	public void setIndexMotApi(int indexMotApi) {
+		this.indexMotApi = indexMotApi;
+	}
+
+
+	/**
+	 * @return the klaxon
+	 */
+	public boolean isKlaxon() {
+		return klaxon;
+	}
+
+
+	/**
+	 * @param klaxon the klaxon to set
+	 */
+	public void setKlaxon(boolean klaxon) {
+		this.klaxon = klaxon;
+	}
+
 	
 }

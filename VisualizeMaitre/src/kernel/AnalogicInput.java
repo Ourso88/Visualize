@@ -80,7 +80,7 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	public AnalogicInput(long idCapteur, String nom, String description, long idEquipement, long idPosteTechnique, long idTypeMateriel,	long idZoneSubstitution, 
 						 int typeCapteur, int alarme, long idService, int voieApi, int inhibition, long idUnite, String contact, String inventaire, long idEntreeAnalogique,
 						 int seuilHaut, int preSeuilHaut, int seuilBas,	int preSeuilBas, int calibration, long seuilTempo, long preSeuilTempo, String unite, int valeurConsigne,
-						 int activationPreSeuil) {
+						 int activationPreSeuil, long idAlarmeService, String nomService, int indexMotApi, boolean klaxon) {
 		this.setIdCapteur(idCapteur);
 		this.setNom(nom);
 		this.setDescription(description);
@@ -107,6 +107,10 @@ public class AnalogicInput extends Capteur implements EFS_General {
 		this.setUnite(unite);
 		this.setValeurConsigne(valeurConsigne);
 		this.setActivationPreSeuil(activationPreSeuil);
+		this.setIdAlarmeService(idAlarmeService);
+		this.setNomService(nomService);
+		this.setIndexMotApi(indexMotApi);
+		this.setKlaxon(klaxon);
 	}
 	
 
@@ -506,7 +510,10 @@ public class AnalogicInput extends Capteur implements EFS_General {
 			if(!this.isAlarmeTempoEcoulee() && alarmeTempoEcoulee) {
 				// Appel Alert
 				GestionAPI.gestionAlert(true); 
-				GestionAPI.gestionKlaxon(true);
+				GestionAPI.gestionAlertService(true, this.getIndexMotApi());
+				if(this.isKlaxon()) {
+					GestionAPI.gestionKlaxon(true);
+				}
 				GestionLogger.gestionLogger.info("<== APPEL ALERT ==> Capteur :" + this.getNom());
 				this.setAppelAlert(true);
 			}
@@ -590,6 +597,5 @@ public class AnalogicInput extends Capteur implements EFS_General {
 	public void setAlarmeDescription(String alarmeDescription) {
 		this.alarmeDescription = alarmeDescription;
 	}
-
 
 }

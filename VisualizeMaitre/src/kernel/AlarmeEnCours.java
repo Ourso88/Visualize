@@ -32,6 +32,9 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	private String descriptionAlarme;
 	private int mnRappelAlert;
 	private LocalDateTime dateRappelAlert;
+	private long idAlarmeService;
+	private String nomService;
+	private int indexMotApi;
 	
 	/**
 	 * Constructeur
@@ -53,6 +56,9 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 			this.setTypeAlarme(tbAnaAPI.get(indexCapteur).getAlarme());
 			this.setInventaire(tbAnaAPI.get(indexCapteur).getInventaire());
 			this.setDescriptionAlarme(tbAnaAPI.get(indexCapteur).getAlarmeDescription());
+			this.setIdAlarmeService(tbAnaAPI.get(indexCapteur).getIdAlarmeService());
+			this.setNomService(tbAnaAPI.get(indexCapteur).getNomService());
+			this.setIndexMotApi(tbAnaAPI.get(indexCapteur).getIndexMotApi());
 		} else if(typeCapteur == CAPTEUR_DIGITAL_ENTREE) {
 			this.setIdCapteur(tbDigiAPI.get(indexCapteur).getIdCapteur());
 			this.setNomCapteur(tbDigiAPI.get(indexCapteur).getNom());
@@ -65,6 +71,9 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 			this.setTypeAlarme(tbDigiAPI.get(indexCapteur).getAlarme());
 			this.setInventaire(tbDigiAPI.get(indexCapteur).getInventaire());
 			this.setDescriptionAlarme(tbDigiAPI.get(indexCapteur).getAlarmeDescription());
+			this.setIdAlarmeService(tbDigiAPI.get(indexCapteur).getIdAlarmeService());
+			this.setNomService(tbDigiAPI.get(indexCapteur).getNomService());
+			this.setIndexMotApi(tbDigiAPI.get(indexCapteur).getIndexMotApi());
 		}
 		this.setPrisEnCompte(false);
 		this.setHistoriser(false);
@@ -376,6 +385,48 @@ public class AlarmeEnCours implements EFS_General, VoiesAPI {
 	 */
 	public void setDateRappelAlert(LocalDateTime dateRappelAlert) {
 		this.dateRappelAlert = dateRappelAlert;
+	}
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
+	}
+
+	/**
+	 * @return the nomService
+	 */
+	public String getNomService() {
+		return nomService;
+	}
+
+	/**
+	 * @param nomService the nomService to set
+	 */
+	public void setNomService(String nomService) {
+		this.nomService = nomService;
+	}
+
+	/**
+	 * @return the indexMotApi
+	 */
+	public int getIndexMotApi() {
+		return indexMotApi;
+	}
+
+	/**
+	 * @param indexMotApi the indexMotApi to set
+	 */
+	public void setIndexMotApi(int indexMotApi) {
+		this.indexMotApi = indexMotApi;
 	}
 	
 }

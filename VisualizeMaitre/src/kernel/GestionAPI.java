@@ -670,6 +670,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 					if(tbAlarme.get(i).getDateRappelAlert().plusMinutes(tbAlarme.get(i).getMnRappelAlert()).isBefore(LocalDateTime.now())) {
 						GestionLogger.gestionLogger.info("[DIVERS] Rappel Alert après " + tbAlarme.get(i).getMnRappelAlert() + " mn");
 						gestionAlert(true);
+						GestionAPI.gestionAlertService(true, tbAlarme.get(i).getIndexMotApi()); 
 						tbAlarme.get(i).setMnRappelAlert(0);
 					}
 				}
@@ -714,7 +715,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	} // Fin gestionTestAlert()			
 	
 	/**
-	 * Test le systeme Alert
+	 * Appelle le systeme Alert
 	 */
 	public static void gestionAlert(boolean alerte) {
 		try {
@@ -750,6 +751,47 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 		} // Fin catch
 
 	} // Fin gestionTestAlert()	
+
+	/**
+	 * Appelle le systeme Alert
+	 */
+	public static void gestionAlertService(boolean alerte, int indexMotApi) {
+		try {
+			// ===== Ouverture de la connection =====
+			//  Variables TCP
+			InetAddress addr = null; // Adresse IP du serveur	
+			AE_TCP_Connection con = null; //the connection
+			@SuppressWarnings("unused")
+			double [] reqReponse = null;
+			
+			addr = InetAddress.getByName(EFS_Maitre_Variable.ADR_IP_API);
+			con = new AE_TCP_Connection(addr, MODBUS_PORT);
+			con.connect();
+			if (con.isConnected()) {
+				EFS_Maitre_Variable.nombreLectureAPI++;
+			}
+			else {
+				GestionLogger.gestionLogger.warning("Erreur connexion MODBUS ... ");
+			}
+			if (alerte) {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_ALARME_SERVICE 
+						   + indexMotApi, 1));			
+				GestionLogger.gestionLogger.info("[API] - Passage AlarmeAlerte.Alarme à 1");
+			} 
+			else {
+				reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.WRITE_SINGLE_REGISTER, EFS_General.ADR_API_ALARME_SERVICE 
+						   + indexMotApi, 0));			
+				GestionLogger.gestionLogger.info("[API] - Passage AlarmeAlerte.Alarme à 0");
+			} // Fin if sonnerie
+			con.close();
+		} // Fin Try
+		catch (Exception e){
+			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Alarme : " + e.getMessage());
+			EFS_Maitre_Variable.compteurErreurAPI++;
+		} // Fin catch
+
+	} // Fin gestionTestAlert()	
+	
 	
 	/**
 	 * Ecriture dans API de activite
