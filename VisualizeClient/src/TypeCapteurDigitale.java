@@ -16,10 +16,11 @@ public class TypeCapteurDigitale  implements AE_Constantes {
 	
 	private String valeur;
 	
+	private long idAlarmeService;
 	
 	public TypeCapteurDigitale(int idEntreeDigitale, int idCapteur, int idEquipement, String nomCapteur, String nomEquipement,
 			String descriptionCapteur, String posteTechnique, String etatAlarme, int voieApi,
-			String tempo, int noNf) {
+			String tempo, int noNf, long idAlarmeService) {
 		super();
 		
 		this.setIdEntreeAnalogique(idEntreeAnalogique);
@@ -33,6 +34,7 @@ public class TypeCapteurDigitale  implements AE_Constantes {
 		this.setVoieApi(voieApi);
 		this.setTempo(tempo);
 		this.setNoNf(noNf);
+		this.setIdAlarmeService(idAlarmeService);
 	}
 
 	public String getStringNoNf() {
@@ -236,6 +238,20 @@ public class TypeCapteurDigitale  implements AE_Constantes {
 	 */
 	public void setNoNf(int noNf) {
 		this.noNf = noNf;
+	}
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
 	}
 
 

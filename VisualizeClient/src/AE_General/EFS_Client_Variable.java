@@ -139,7 +139,7 @@ public class EFS_Client_Variable implements AE_TCP_Constantes {
 		try {
 			while(result.next()) {
 				idAI = result.getInt("VoieApi") - 1;
-System.out.println("idAI : " + idAI);				
+//System.out.println("idAI : " + idAI);				
 				tbIdAI[idAI] = result.getInt("idCapteur");
 				tbSeuilHaut[idAI] = result.getInt("SeuilHaut");
 				tbSeuilBas[idAI] = result.getInt("SeuilBas");

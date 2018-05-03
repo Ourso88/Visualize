@@ -37,6 +37,7 @@ import EFS_Structure.StructPosteTechnique;
 import EFS_Structure.StructService;
 import EFS_Structure.StructTypeMateriel;
 import EFS_Structure.StructZoneSubstitution;
+import kernel.ArrayAlarmeService;
 
 
 public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionListener, ListSelectionListener {
@@ -90,6 +91,12 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 	private JRadioButton optAlarmeDefaut = new JRadioButton("Défaut");
 	private JRadioButton optAlarmeEtat = new JRadioButton("Etat");
 	private JRadioButton optAlarmeRien = new JRadioButton("Rien");
+	
+	// ===== Modifications 03/05/2018 =====
+	private JComboBox<String> cmbAlarmeService = new JComboBox<String>();
+	private ArrayAlarmeService tbAlarmeService = new ArrayAlarmeService();	
+	private JPanel pnlGestionAlarme = new JPanel();
+	// ===== Fin modifications 03/05/2018 =====
 	
 	private JLabel lblOnOff = new JLabel("NO / NF : ");
 	private JPanel pnlOnOff = new JPanel();
@@ -161,6 +168,7 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 		lecturePosteTechnique();
 		lectureZoneSubstitution();
 		lectureService();
+		lectureAlarmeService();
 		tmrTpsReel.start();
 	}
 
@@ -244,6 +252,7 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 	    pnlAlarme.add(optAlarmeEtat);
 	    pnlAlarme.add(optAlarmeRien);
 	    pnlAlarme.setOpaque(false);
+	    pnlGestionAlarme.setOpaque(false);
 	    optAlarmeAlert.setOpaque(false);
 	    optAlarmeDefaut.setOpaque(false);
 	    optAlarmeEtat.setOpaque(false);
@@ -347,14 +356,22 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.LINE_START; 
 	    pnlCorps.add(btnModifierTypeMateriel, gbc);
 
+	    // ------- pnlAlarme ------------------------------------
+	    gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = modificationWeightX;
+	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.LINE_START; 
+	    pnlGestionAlarme.add(pnlAlarme, gbc);
+	    // ------- cmbAlarmeService ------------------------------------
+	    gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = modificationWeightX;
+	    gbc.fill = GridBagConstraints.HORIZONTAL; gbc.anchor = GridBagConstraints.CENTER; 
+	    pnlGestionAlarme.add(cmbAlarmeService, gbc);
 	    // ------- Titre Alarme ------------------------------------
 	    gbc.gridx = 0; gbc.gridy = 5; gbc.weightx = titreWeightX;
 	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.LINE_END; 
 	    pnlCorps.add(lblAlarme, gbc);
 	    // ------- Saisie Alarme -----------------------------------
 	    gbc.gridx = 1; gbc.gridy = 5; gbc.weightx = saisieWeightX;
-	    gbc.fill = GridBagConstraints.NONE; gbc.anchor= GridBagConstraints.LINE_START;
-	    pnlCorps.add(pnlAlarme, gbc);
+	    gbc.fill = GridBagConstraints.HORIZONTAL; gbc.anchor= GridBagConstraints.CENTER;
+	    pnlCorps.add(pnlGestionAlarme, gbc);
 	    // ------- Modification Alarme -----------------------------
 	    gbc.gridx = 2; gbc.gridy = 5; gbc.weightx = modificationWeightX;
 	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.LINE_START; 
@@ -576,7 +593,7 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 				tbCapteur.add(new StructEntreeDigitale(result.getLong("idEntreeDigitale"), result.getString("Nom"), result.getString("Description")
 						, result.getLong("Tempo"), result.getInt("NoNf"), result.getInt("Alarme"), result.getLong("idService"), result.getLong("idZoneSubstitution")
 						, result.getLong("idCapteur"), result.getLong("idEquipement"), result.getLong("idPosteTechnique"), result.getLong("idTypeMateriel")
-						, result.getInt("voieApi"), result.getString("Contact")));
+						, result.getInt("voieApi"), result.getString("Contact"), result.getLong("idAlarmeService")));
 				modelCapteur.addElement(result.getString("Nom") + " - " + result.getString("Description"));
 			}
 		} catch (SQLException e) {
@@ -718,6 +735,17 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 		}
 	}		
 
+	/**
+	 * Remplit la comboBox cmbAlarmeService
+	 * @since 03/05/2018
+	 */
+	private void lectureAlarmeService() {
+		for(int i = 0; i < tbAlarmeService.size(); i++) {
+			cmbAlarmeService.addItem(tbAlarmeService.get(i).getNomService());
+		}
+		cmbAlarmeService.setSelectedIndex(-1);
+	}	
+	
 	private void selectionZoneSubstitution(long index) {
 		for(int i = 0; i < tbZoneSubstitution.size() ; i++) {
 			if (tbZoneSubstitution.get(i).getId() == index) {
@@ -1099,6 +1127,8 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 		int newAlarme = AE_Constantes.ALARME_ALERT;
 		int oldAlarme = AE_Constantes.ALARME_RIEN;
 		
+		long idAlarmeService = tbAlarmeService.get(cmbAlarmeService.getSelectedIndex()).getIdAlarmeService();
+		
 		int index = lstCapteur.getSelectedIndex();
 		idCapteur = tbCapteur.get(index).getIdCapteur();
 		nomCapteur = tbCapteur.get(index).getNom();
@@ -1109,29 +1139,31 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 		
 		
 		if(optAlarmeAlert.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Alarme ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Alarme";
 			newAlarme = ALARME_ALERT;
 		}
 		if(optAlarmeDefaut.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Défaut ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Défaut";
 			newAlarme = ALARME_DEFAUT;
 		}
 		if(optAlarmeEtat.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Etat ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Etat";
 			newAlarme = ALARME_ETAT;
 		}
 		if(optAlarmeRien.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Rien ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Rien";
 			newAlarme = ALARME_RIEN;
 		}
 		
+		msgConfirmation += " et en alarme pour le service : " + tbAlarmeService.get(cmbAlarmeService.getSelectedIndex()).getNomService() + " ?";
 		blRetour = AE_Fonctions.messageConfirmation(this, msgConfirmation);		
 		
 		if(blRetour) {
-			strSql = "UPDATE Capteur SET Alarme = " + newAlarme + " WHERE idCapteur = " + idCapteur;
+			strSql = "UPDATE Capteur SET Alarme = " + newAlarme + ", idAlarmeService = " + idAlarmeService + " WHERE idCapteur = " + idCapteur;
 			ctn.fonctionSql(strSql);
 			// Chgt dans tableau
 			tbCapteur.get(index).setAlarme(newAlarme);
+			tbCapteur.get(index).setIdAlarmeService(idAlarmeService);
 			// Ajout dans journal
         	msgJournal = "Passage Alarme de " + oldAlarme + " à " + newAlarme + " pour le capteur : " + nomCapteur
         			+ "  " + descriptionCapteur;
@@ -1362,6 +1394,8 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 			selectionTypeMateriel(tbCapteur.get(index).getIdTypeMateriel());
 			selectionService(tbCapteur.get(index).getIdService());
 			
+			cmbAlarmeService.setSelectedIndex(tbAlarmeService.trouverIndex(tbCapteur.get(index).getIdAlarmeService()));
+
 			// Alarme
 			switch(tbCapteur.get(index).getAlarme()) {
 			case AE_Constantes.ALARME_ALERT:

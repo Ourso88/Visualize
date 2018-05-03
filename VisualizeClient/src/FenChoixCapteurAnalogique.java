@@ -284,7 +284,7 @@ public class FenChoixCapteurAnalogique extends JFrame implements AE_General.AE_C
 
 				if(testService(idService)) {
 					mdlCapteurAnalogique.addCapteurAnalogique(new TypeCapteurAnalogique(idEntreeAnalogique, idCapteur, idEquipement, nomCapteur, nomEquipement,
-							descriptionCapteur, posteTechnique, etatAlarme, voieApi, seuilBas, seuilHaut, tempo, calibration));
+							descriptionCapteur, posteTechnique, etatAlarme, voieApi, seuilBas, seuilHaut, tempo, calibration, result.getLong("idAlarmeService")));
 				}
 				
 			} // fin while
@@ -340,7 +340,7 @@ public class FenChoixCapteurAnalogique extends JFrame implements AE_General.AE_C
 
 				if(testService(idService)) {
 					mdlCapteurDigitale.addCapteurDigitale(new TypeCapteurDigitale(idEntreeDigitale, idCapteur, idEquipement, nomCapteur, nomEquipement,
-							descriptionCapteur, posteTechnique, etatAlarme, voieApi, tempo, noNf));
+							descriptionCapteur, posteTechnique, etatAlarme, voieApi, tempo, noNf, result.getLong("idAlarmeService")));
 				}
 				
 			} // fin while

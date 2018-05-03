@@ -40,6 +40,7 @@ import EFS_Structure.StructService;
 import EFS_Structure.StructTypeMateriel;
 import EFS_Structure.StructUnite;
 import EFS_Structure.StructZoneSubstitution;
+import kernel.ArrayAlarmeService;
 
 public class FenEntreeAnalogique extends JFrame implements AE_Constantes, ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -124,6 +125,13 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 	private List<StructPosteTechnique> tbPosteTechnique = new ArrayList<StructPosteTechnique>();	
 	private List<StructTypeMateriel> tbTypeMateriel = new ArrayList<StructTypeMateriel>();	
 	private List<StructService> tbService = new ArrayList<StructService>();	
+
+	// ===== Modifications 03/05/2018 =====
+	private JComboBox<String> cmbAlarmeService = new JComboBox<String>();
+	private ArrayAlarmeService tbAlarmeService = new ArrayAlarmeService();	
+	private JPanel pnlGestionAlarme = new JPanel();
+	// ===== Fin modifications 03/05/2018 =====
+	
 	
 	private JButton btnModifierDescription = new JButton("Modifier désignation");
 	private JButton btnModifierEquipement = new JButton("Modifier équipement");
@@ -178,6 +186,7 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 		lectureZoneSubstitution();
 		lectureUnite();
 		lectureService();
+		lectureAlarmeService();
 		remplirListeCapteur();
 		tmrTpsReel.start();
 	} // Fin FenEntreeAnalogique
@@ -408,12 +417,13 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 	    pnlAlarme.add(optAlarmeDefaut);
 	    pnlAlarme.add(optAlarmeEtat);
 	    pnlAlarme.add(optAlarmeRien);
+	    pnlGestionAlarme.setOpaque(false);
 	    pnlAlarme.setOpaque(false);
 	    optAlarmeAlert.setOpaque(false);
 	    optAlarmeDefaut.setOpaque(false);
 	    optAlarmeEtat.setOpaque(false);
 	    optAlarmeRien.setOpaque(false);
-
+	    
 	    bgZoneMaintenance.add(optZoneMaintenanceOui);
 	    bgZoneMaintenance.add(optZoneMaintenanceNon);
 	    pnlZoneMaintenance.add(optZoneMaintenanceOui);
@@ -496,6 +506,16 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.LINE_START; 
 	    pnlCorps.add(btnModifierTypeMateriel, gbc);
 
+	    
+	    // ------- pnlAlarme ------------------------------------
+	    gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = modificationWeightX;
+	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER; 
+	    pnlGestionAlarme.add(pnlAlarme, gbc);
+	    // ------- cmbAlarmeService ------------------------------------
+	    gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = modificationWeightX;
+	    gbc.fill = GridBagConstraints.HORIZONTAL; gbc.anchor = GridBagConstraints.CENTER; 
+	    pnlGestionAlarme.add(cmbAlarmeService, gbc);
+	    
 	    // ------- Titre Alarme ------------------------------------
 	    gbc.gridx = 0; gbc.gridy = 5; gbc.weightx = titreWeightX;
 	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.LINE_END; 
@@ -503,7 +523,7 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 	    // ------- Saisie Alarme -----------------------------------
 	    gbc.gridx = 1; gbc.gridy = 5; gbc.weightx = saisieWeightX;
 	    gbc.fill = GridBagConstraints.NONE; gbc.anchor= GridBagConstraints.LINE_START;
-	    pnlCorps.add(pnlAlarme, gbc);
+	    pnlCorps.add(pnlGestionAlarme, gbc);
 	    // ------- Modification Alarme -----------------------------
 	    gbc.gridx = 2; gbc.gridy = 5; gbc.weightx = modificationWeightX;
 	    gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.LINE_START; 
@@ -842,7 +862,7 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 							, result.getDouble("Calibration"), result.getLong("idCapteur"), result.getLong("idEquipement")
 							, result.getLong("idPosteTechnique"), result.getLong("idTypeMateriel")
 							, result.getLong("idUnite"), result.getInt("voieApi"), result.getLong("ValeurConsigne")
-							, result.getString("Contact")));
+							, result.getString("Contact"), result.getLong("idAlarmeService")));
 					modelCapteur.addElement(result.getString("Nom") + " - " + result.getString("nomEquipement") + " - " + result.getString("Description"));
 				}
 			}
@@ -1016,6 +1036,17 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 		
 	} // fin lectureUnite()
 	
+	/**
+	 * Remplit la comboBox cmbAlarmeService
+	 * @since 03/05/2018
+	 */
+	private void lectureAlarmeService() {
+		for(int i = 0; i < tbAlarmeService.size(); i++) {
+			cmbAlarmeService.addItem(tbAlarmeService.get(i).getNomService());
+		}
+		cmbAlarmeService.setSelectedIndex(-1);
+	}
+	
 	private void selectionZoneSubstitution(long index) {
 		for(int i = 0; i < tbZoneSubstitution.size() ; i++) {
 			if (tbZoneSubstitution.get(i).getId() == index) {
@@ -1138,6 +1169,8 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 			selectionTypeMateriel(tbCapteur.get(index).getIdTypeMateriel());
 			selectionUnite(tbCapteur.get(index).getIdUnite());
 			selectionService(tbCapteur.get(index).getIdService());
+			
+			cmbAlarmeService.setSelectedIndex(tbAlarmeService.trouverIndex(tbCapteur.get(index).getIdAlarmeService()));
 			
 			// Alarme
 			switch(tbCapteur.get(index).getAlarme()) {
@@ -1615,6 +1648,8 @@ System.out.println(strSql);
 		int newAlarme = AE_Constantes.ALARME_ALERT;
 		int oldAlarme = AE_Constantes.ALARME_RIEN;
 		
+		long idAlarmeService = tbAlarmeService.get(cmbAlarmeService.getSelectedIndex()).getIdAlarmeService();
+		
 		int index = lstCapteur.getSelectedIndex();
 		idCapteur = tbCapteur.get(index).getIdCapteur();
 		nomCapteur = tbCapteur.get(index).getNom();
@@ -1625,29 +1660,31 @@ System.out.println(strSql);
 		
 		
 		if(optAlarmeAlert.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Alarme ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Alarme";
 			newAlarme = ALARME_ALERT;
 		}
 		if(optAlarmeDefaut.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Défaut ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Défaut";
 			newAlarme = ALARME_DEFAUT;
 		}
 		if(optAlarmeEtat.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Etat ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Etat";
 			newAlarme = ALARME_ETAT;
 		}
 		if(optAlarmeRien.isSelected()) {
-			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Rien ?";
+			msgConfirmation = "Voulez vous mettre " + nomCapteur + " en Rien";
 			newAlarme = ALARME_RIEN;
 		}
 		
+		msgConfirmation += " et en alarme pour le service : " + tbAlarmeService.get(cmbAlarmeService.getSelectedIndex()).getNomService() + " ?";
 		blRetour = AE_Fonctions.messageConfirmation(this, msgConfirmation);		
 		
 		if(blRetour) {
-			strSql = "UPDATE Capteur SET Alarme = " + newAlarme + " WHERE idCapteur = " + idCapteur;
+			strSql = "UPDATE Capteur SET Alarme = " + newAlarme + ", idAlarmeService = " + idAlarmeService + " WHERE idCapteur = " + idCapteur;
 			ctn.fonctionSql(strSql);
 			// Chgt dans tableau
 			tbCapteur.get(index).setAlarme(newAlarme);
+			tbCapteur.get(index).setIdAlarmeService(idAlarmeService);
 			// Ajout dans journal
         	msgJournal = "Passage Alarme de " + oldAlarme + " à " + newAlarme + " pour le capteur : " + nomCapteur
         			+ "  " + descriptionCapteur;

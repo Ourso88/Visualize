@@ -22,12 +22,13 @@ public class StructEntreeAnalogique {
 	private int voieApi;
 	private long valeurConsigne;
 	private String contact;
+	private long idAlarmeService;
 	
 	public StructEntreeAnalogique(long id, String nom, String description, long seuilBas, 
 			long seuilHaut, long seuilTempo, long preSeuilBas, long preSeuilHaut, long preSeuilTempo, 
 			long idService, long idZoneSubstitution, int alarme, double calibration, long idCapteur,
 			long idEquipement, long idPosteTechnique, long idTypeMateriel, long idUnite, int voieApi,
-			long valeurConsigne, String contact) {
+			long valeurConsigne, String contact, long idAlarmeService) {
 		super();
 		this.setId(id);
 		this.setNom(nom);
@@ -50,6 +51,7 @@ public class StructEntreeAnalogique {
 		this.setVoieApi(voieApi);
 		this.setValeurConsigne(valeurConsigne);
 		this.setContact(contact);
+		this.setIdAlarmeService(idAlarmeService);
 	}
 	
 	
@@ -376,5 +378,21 @@ public class StructEntreeAnalogique {
 	 */
 	public void setContact(String contact) {
 		this.contact = contact;
+	}
+
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
 	}
 } // fin class

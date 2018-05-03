@@ -8,7 +8,7 @@ public interface AE_Constantes {
 	public static final int TIMER_RAFFRAICHISSEMENT_MINUTE = 60000;
 	
 	// Constantes version
-	public static final int VERSION = 10703;
+	public static final int VERSION = 10801;
 	
 	// Contantes Font
 	public static final Font FONT_ARIAL_12 = new Font("Arial", Font.PLAIN,  12 );
@@ -26,6 +26,9 @@ public interface AE_Constantes {
 	public static final int AE_SGBD_MYSQL = 2;
 	public static final int AE_SGBD_SQLITE = 3;
 	public static final int AE_SGBD_ORACLE = 4;
+	
+	// Logger
+	public static final String LOGGER_FICHIER_TEXTE = "GTC_CLIENT_Logging.log";
 	
 	// Constantes couleur
 	Color EFS_BLEU = new Color(167, 198, 237); 

@@ -15,10 +15,11 @@ public class StructEntreeDigitale {
 	private long idTypeMateriel;
 	private int voieApi;
 	private String contact;
+	private long idAlarmeService;
 
 	public StructEntreeDigitale(long id, String nom, String description, long tempo, int noNf, int alarme, long idService,
 			long idZoneSubstitution, long idCapteur, long idEquipement, long idPosteTechnique, long idTypeMateriel,
-			int voieApi, String contact) {
+			int voieApi, String contact, long idAlarmeService) {
 		super();
 		this.setId(id);
 		this.setNom(nom);
@@ -34,6 +35,7 @@ public class StructEntreeDigitale {
 		this.setIdTypeMateriel(idTypeMateriel);
 		this.setVoieApi(voieApi);
 		this.setContact(contact);
+		this.setIdAlarmeService(idAlarmeService);
 	}
 	
 	
@@ -248,5 +250,21 @@ public class StructEntreeDigitale {
 	 */
 	public void setContact(String contact) {
 		this.contact = contact;
+	}
+
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
 	}
 } // Fin class

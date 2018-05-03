@@ -13,6 +13,7 @@ public class TypeCapteurAnalogique {
 	private String seuilHaut;
 	private String tempo;
 	private String calibration;
+	private long idAlarmeService;
 	
 	
 	private String valeur;
@@ -20,7 +21,7 @@ public class TypeCapteurAnalogique {
 	
 	public TypeCapteurAnalogique(int idEntreeAnalogique, int idCapteur, int idEquipement, String nomCapteur, String nomEquipement,
 			String descriptionCapteur, String posteTechnique, String etatAlarme, int voieApi,
-			String seuilBas, String seuilHaut, String tempo, String calibration) {
+			String seuilBas, String seuilHaut, String tempo, String calibration, long idAlarmeService) {
 		super();
 		
 		this.setIdEntreeAnalogique(idEntreeAnalogique);
@@ -36,6 +37,7 @@ public class TypeCapteurAnalogique {
 		this.setSeuilHaut(seuilHaut);
 		this.setTempo(tempo);
 		this.setCalibration(calibration);
+		this.setIdAlarmeService(idAlarmeService);
 	}
 
 
@@ -260,6 +262,22 @@ public class TypeCapteurAnalogique {
 	 */
 	public void setCalibration(String calibration) {
 		this.calibration = calibration;
+	}
+
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
 	}
 
 
