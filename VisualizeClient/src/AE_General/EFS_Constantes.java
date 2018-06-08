@@ -1,6 +1,10 @@
 package AE_General;
 
+import kernel.GestionUtilisateur;
+
 public interface EFS_Constantes {
+	public static GestionUtilisateur gestionUtilisateur = new GestionUtilisateur();
+	
 	public static final int EFS_COMPARATEUR_COLONNE_ANA_VOIE = 0;
 	public static final int EFS_COMPARATEUR_COLONNE_ANA_DESCRIPTION = 1;
 	public static final int EFS_COMPARATEUR_COLONNE_ANA_TYPE_MATERIEL = 2;

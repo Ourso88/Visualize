@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,82 +21,99 @@ import javax.swing.JTextField;
 
 import AE_General.AE_ConnectionBase;
 import AE_General.AE_Constantes;
+import AE_General.AE_Fonctions;
 import AE_General.EFS_Client_Variable;
+import AE_General.EFS_Constantes;
 
-public class Login extends JFrame implements ActionListener {
+public class Login extends JFrame implements AE_General.AE_Constantes, ActionListener, EFS_Constantes  {
 	private static final long serialVersionUID = 1L;
+	private JPanel pnlCorps = new JPanel();
+	private JPanel pnlCommande = new JPanel();
 	private JLabel lblLogin = new JLabel("Login : ");
 	private JLabel lblMdp = new JLabel("Mot de passe : ");
-	private JLabel lblSite = new JLabel("Site");
 	private JTextField txtLogin = new JTextField("", 20);
 	private JPasswordField txtMdp = new JPasswordField("", 20);
 	private JButton btnValider = new JButton("Valider");
 	private JButton btnAnnuler = new JButton("Annuler");
+	private JButton btnModifierMotDePasse = new JButton("Modifier Mot de passe");
 	
 	private AE_ConnectionBase ctn = new AE_ConnectionBase(AE_Constantes.EFS_SGBD_TYPE, EFS_Client_Variable.EFS_SGBD_SERVEUR, EFS_Client_Variable.EFS_SGBD_BASE, EFS_Client_Variable.EFS_SGBD_USER, EFS_Client_Variable.EFS_SGBD_MDP);	
 	
 	public Login() {
 		super();
 	    this.setTitle("Login");
-	    this.setSize(500, 200);
+	    this.setSize(600, 170);
 	    this.setLocationRelativeTo(null);	
 	    
-	    this.lblSite.setText(EFS_Client_Variable.siteEFS); 
-	    lblSite.setForeground(Color.RED);
-	    Font font_16 = new Font("Arial",Font.BOLD, 16);
-	    lblSite.setFont(font_16);
+	    JLabel lblTitreAlarme = new JLabel("CONNEXION");
+	    lblTitreAlarme.setHorizontalAlignment(JLabel.CENTER);
+	    lblTitreAlarme.setFont(FONT_ARIAL_16_BOLD);
+	    lblTitreAlarme.setBackground(EFS_MARRON);
+	    lblTitreAlarme.setOpaque(true);
+	    
+	    this.add("North", lblTitreAlarme);
+	    this.add("Center", pnlCorps);
 	    
 	    //Le conteneur principal
-	    JPanel content = new JPanel();
-	    content.setPreferredSize(new Dimension(500, 200));
-	    content.setBackground(Color.WHITE);
-	    //On définit le layout manager
-	    content.setLayout(new GridBagLayout());
-			
+	    pnlCorps.setBackground(Color.WHITE);
+	    pnlCommande.setBackground(Color.WHITE);
+
+	    btnValider.setPreferredSize(btnModifierMotDePasse.getPreferredSize());
+	    btnValider.setMinimumSize(btnModifierMotDePasse.getMinimumSize());
+	    btnAnnuler.setPreferredSize(btnModifierMotDePasse.getPreferredSize());
+	    btnAnnuler.setMinimumSize(btnModifierMotDePasse.getMinimumSize());
+	    
+	    pnlCommande.add(btnValider);
+	    pnlCommande.add(btnModifierMotDePasse);
+	    pnlCommande.add(btnAnnuler);
+	    
 	    //L'objet servant à positionner les composants
 	    GridBagConstraints gbc = new GridBagConstraints();
 	    
-	    // --------------------------------------------------
-	    // Position de la case de départ
-	    gbc.gridx = 0;
-	    gbc.gridy = 0;
-	    // taille et hauteur
-	    gbc.gridheight = 1;
-	    gbc.gridwidth = 2;
-	    // Ancrage
-	    gbc.anchor= GridBagConstraints.CENTER;
-	    content.add(lblSite, gbc);
+	    gbc.insets = new Insets(10, 0, 0, 0); // (top, left, bottom, right)
+	    pnlCorps.setLayout(new GridBagLayout());
+	    // --- lblLogin ---------------------------------------------
+	    gbc.gridx = 0; gbc.gridy = 0;
+	    gbc.gridheight = 1; gbc.gridwidth = 1;
+	    gbc.weightx = 20; gbc.weighty = 30;
 	    gbc.anchor= GridBagConstraints.LINE_END;
-	    gbc.gridwidth = 1;
-	    // --------------------------------------------------
+	    gbc.fill = GridBagConstraints.NONE;
+	    pnlCorps.add(lblLogin, gbc);
+	    // --- txtLogin ---------------------------------------------
+	    gbc.gridx = 1; gbc.gridy = 0;
+	    gbc.gridheight = 1; gbc.gridwidth = 1;
+	    gbc.weightx = 80; gbc.weighty = 30;
+	    gbc.anchor= GridBagConstraints.CENTER;
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
+	    pnlCorps.add(txtLogin, gbc);
+	    gbc.insets = new Insets(0, 0, 0, 0); // (top, left, bottom, right)
+	    // --- lblMdp ---------------------------------------------
 	    gbc.gridx = 0; gbc.gridy = 1;
-	    content.add(lblLogin, gbc);
-	    // --------------------------------------------------
+	    gbc.gridheight = 1; gbc.gridwidth = 1;
+	    gbc.weightx = 20; gbc.weighty = 30;
+	    gbc.anchor= GridBagConstraints.LINE_END;
+	    gbc.fill = GridBagConstraints.NONE;
+	    pnlCorps.add(lblMdp, gbc);
+	    // --- txtMdp ---------------------------------------------
 	    gbc.gridx = 1; gbc.gridy = 1;
-	    content.add(txtLogin, gbc);
-	    // --------------------------------------------------
+	    gbc.gridheight = 1; gbc.gridwidth = 1;
+	    gbc.weightx = 80; gbc.weighty = 30;
+	    gbc.anchor= GridBagConstraints.CENTER;
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
+	    pnlCorps.add(txtMdp, gbc);
+	    // --- txtMdp ---------------------------------------------
 	    gbc.gridx = 0; gbc.gridy = 2;
-	    content.add(lblMdp, gbc);
-	    // --------------------------------------------------
-	    gbc.gridx = 1; gbc.gridy = 2;
-	    content.add(txtMdp, gbc);
-	    // --------------------------------------------------
-//	    gbc.fill = GridBagConstraints.HORIZONTAL;
-	    gbc.insets = new Insets(20, 0, 0, 0);
-	    gbc.gridx = 1; gbc.gridy = 3;
-	    content.add(btnValider, gbc);
-	    // --------------------------------------------------
-	    gbc.gridx = 2; gbc.gridy = 3;
-	    content.add(btnAnnuler, gbc);
-	    // --------------------------------------------------
+	    gbc.gridheight = 1; gbc.gridwidth = 2;
+	    gbc.weightx = 80; gbc.weighty = 30;
+	    gbc.anchor= GridBagConstraints.CENTER;
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
+	    pnlCorps.add(pnlCommande, gbc);
 	    
 	    // Prise en compte des boutons
 	    btnValider.addActionListener(this);
 	    btnAnnuler.addActionListener(this);
+	    btnModifierMotDePasse.addActionListener(this);
 	    //On ajoute le conteneur
-	    this.setContentPane(content);	    
-	    
-	    
 	    
 	    this.setVisible(true);
 	    // Focus
@@ -110,8 +128,9 @@ public class Login extends JFrame implements ActionListener {
 		
 		ctn.open();
 		// Verifier login et Mdp
-		strSql = "SELECT Utilisateur.*, NiveauUtilisateur.Niveau FROM"
+		strSql = "SELECT Utilisateur.*, NiveauUtilisateur.Niveau, AlarmeService.idAlarmeService FROM"
 				+ " (Utilisateur LEFT JOIN NiveauUtilisateur ON Utilisateur.idNiveauUtilisateur = NiveauUtilisateur.idNiveauUtilisateur)"
+				+ " LEFT JOIN AlarmeService ON Utilisateur.idAlarmeService = AlarmeService.idAlarmeService"
 				+ " WHERE Login = '" + txtLogin.getText() + "'";
 		System.out.println("strSql : " + strSql);
 		result = ctn.lectureData(strSql);
@@ -127,7 +146,15 @@ public class Login extends JFrame implements ActionListener {
 					EFS_Client_Variable.niveauUtilisateur = result.getInt("Niveau");
 					EFS_Client_Variable.nomUtilisateur = result.getString("Nom");
 					EFS_Client_Variable.prenomUtilisateur = result.getString("Prenom");
-
+					
+					// Classe GestionUtilisateur
+					gestionUtilisateur.setIdUtilisateur(result.getInt("idUtilisateur"));
+					gestionUtilisateur.setNiveauUtilisateur(result.getInt("Niveau"));
+					gestionUtilisateur.setNomUtilisateur(result.getString("Nom"));
+					gestionUtilisateur.setPrenomUtilisateur(result.getString("Prenom"));
+					gestionUtilisateur.setIdAlarmeService(result.getInt("idAlarmeService"));
+					
+					
 					msgJournal = "Connection sur poste client de " + EFS_Client_Variable.nomUtilisateur + " " + EFS_Client_Variable.prenomUtilisateur;
 		    		strSql = "INSERT INTO Journal (DateJournal, Description, TypeJournal, idCapteur, idUtilisateur)" 
 		    				+ " VALUES(sysdate, '" + msgJournal + "', " + AE_Constantes.TYPE_JOURNAL_LOGGING_POSTE_CLIENT 
@@ -198,6 +225,42 @@ System.out.println("Niveau : " + EFS_Client_Variable.niveauUtilisateur);
 		ctn.close();
 	}
 
+	private void correctionBase() {
+		// Lecture de la table AI_HISTORIQUE
+		ctn.open();
+//		ResultSet result = ctn.lectureData("SELECT * FROM DI_HISTORIQUE2 WHERE DATELECTURE > '07/06/2018 03:12:00' ORDER BY DATELECTURE ASC");
+		ResultSet result = ctn.lectureData("SELECT * FROM AI_HISTORIQUE2"); // WHERE DATELECTURE > '07/06/2018 03:12:00' ORDER BY DATELECTURE ASC");
+
+		try {
+			String strSql = "";
+			
+			String strDateLecture = "";
+			while(result.next()) {
+//				String strDateApparition = result.getDate("DateLecture").format(formatter);
+				
+				System.out.println("Date Lecture : " + result.getString("DateLecture"));
+				strDateLecture = AE_Fonctions.formatDate(result.getString("DateLecture"), "yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss");
+				System.out.println("strDateLecture : " + strDateLecture);
+				
+				strSql = "INSERT INTO AI_Historique (idCapteur, VoieApi, DateLecture, Valeur)" 
+	    				+ " VALUES("
+	    				+ result.getInt("idCapteur")  
+	    				+ ", " + result.getInt("VoieApi")
+	    				+ ",'" + strDateLecture + "'" 
+	    				+ ", " + result.getDouble("Valeur") 
+	    				+ ")";
+	    		ctn.fonctionSql(strSql);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("Problème lecture dans AI_Historique2");
+		}
+		ctn.close();
+		
+	}
+	
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnValider) {
@@ -206,6 +269,11 @@ System.out.println("Niveau : " + EFS_Client_Variable.niveauUtilisateur);
 		if (e.getSource() == btnAnnuler) {
 			this.setVisible(false);
 			this.dispose();
+		} // Fin If
+			
+		
+		if (e.getSource() == btnModifierMotDePasse) {
+//			correctionBase();
 		} // Fin If
 		
 	}

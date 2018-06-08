@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -330,5 +332,40 @@ public class AE_Fonctions {
         SimpleDateFormat sdf = new SimpleDateFormat(sFormat);
         return sdf.parse(sDate);
 	}
+	
+	/**
+	 * 
+	 * @param format
+	 * 		Format voulu pour la date 
+	 * @return
+	 * 		Chaine contenant la date
+	 */
+	public static String formatDate(String format) {
+		DateFormat dfm = new SimpleDateFormat(format);
+		Calendar dateDepart = Calendar.getInstance();
+		return (dfm.format(dateDepart.getTime()));
+	}
+	
+	/**
+	 * @param date
+	 * 		Date sous format String 
+	 * @param format
+	 * 		Format voulu pour la date 
+	 * @return
+	 * 		Chaine contenant la date
+	 */
+	public static String formatDate(String date, String formatEntree, String formatSortie) {
+		DateFormat dfmEntree = new SimpleDateFormat(formatEntree);
+		DateFormat dfmSortie = new SimpleDateFormat(formatSortie);
+		Date maDate;
+		try {
+			maDate = dfmEntree.parse(date);
+			return dfmSortie.format(maDate);
+		} catch (ParseException e) {
+			return "--- pb ---";
+		}
+	}
+	
+	
 	
 } // fin class

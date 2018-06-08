@@ -53,6 +53,7 @@ public class FenChoixCapteurAnalogique extends JFrame implements AE_General.AE_C
 	private JButton btnCourbe = new JButton("Courbe");
 	private JButton btnHistoriqueAlarme = new JButton("Historique Alarme");
 	private JButton btnParametre = new JButton("Paramétres voie");
+	private JButton btnAlarme = new JButton("Alarme");
     
     private ModeleCapteurAnalogique mdlCapteurAnalogique = new ModeleCapteurAnalogique();	
     private JTable tbCapteurAna;
@@ -119,15 +120,19 @@ public class FenChoixCapteurAnalogique extends JFrame implements AE_General.AE_C
 	    btnCourbe.addActionListener(this);
 		btnHistoriqueAlarme.addActionListener(this);
 		btnParametre.addActionListener(this);
+		btnAlarme.addActionListener(this);
 		
 	    btnCourbe.setPreferredSize(btnHistoriqueAlarme.getPreferredSize());
 	    btnCourbe.setMinimumSize(btnHistoriqueAlarme.getMinimumSize());
 	    btnParametre.setPreferredSize(btnHistoriqueAlarme.getPreferredSize());
 	    btnParametre.setMinimumSize(btnHistoriqueAlarme.getMinimumSize());
+	    btnAlarme.setPreferredSize(btnHistoriqueAlarme.getPreferredSize());
+	    btnAlarme.setMinimumSize(btnHistoriqueAlarme.getMinimumSize());
 		
 		pnlCommande.add(btnCourbe);
 		pnlCommande.add(btnHistoriqueAlarme);
 		pnlCommande.add(btnParametre);
+		pnlCommande.add(btnAlarme);
 		
         tbCapteurAna = new JTable(mdlCapteurAnalogique);
         tbCapteurAna.setSize(800, 400);
@@ -414,6 +419,15 @@ public class FenChoixCapteurAnalogique extends JFrame implements AE_General.AE_C
 		}
 	} // fin appelFenetreHistoriqueAlarme
 
+	private void appelFenetreAlarme() {
+		// Appel fenetre Alarme
+		GestionAlarmeTpsReel fenetre;
+		fenetre = new GestionAlarmeTpsReel();
+		fenetre.setVisible(true);
+		fenetre.requestFocusInWindow();		
+	} // fin appelFenetreHistoriqueAlarme
+	
+	
 	private void appelFenetreCapteurAnalogique() {
         if (tbCapteurAna.getRowCount() > 0) {
         	if (tbCapteurAna.getSelectedRowCount() > 0) {
@@ -589,6 +603,10 @@ public class FenChoixCapteurAnalogique extends JFrame implements AE_General.AE_C
 
 		if(ae.getSource() == btnParametre) {
 			appelFenetreCapteurAnalogique();
+		}
+
+		if(ae.getSource() == btnAlarme) {
+			appelFenetreAlarme();
 		}
 		
 		if(ae.getSource() == tmrTpsReel) {
