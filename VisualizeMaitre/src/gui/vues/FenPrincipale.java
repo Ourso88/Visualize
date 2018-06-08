@@ -51,7 +51,7 @@ import kernel.VoiesAPI;
  * @author Eric Mariani
  * @since 20/02/2017
  */
-public class FenPrincipale extends JFrame  implements AE_Constantes, VoiesAPI, EFS_General, JTableConstantes,  ActionListener {
+public class FenPrincipale extends JFrame implements AE_Constantes, VoiesAPI, EFS_General, JTableConstantes,  ActionListener {
 	private static final long serialVersionUID = 1L;
 	// GUI
 	private AE_BarreHaut pnlEntete = new AE_BarreHaut();	

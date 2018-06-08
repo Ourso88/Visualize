@@ -524,7 +524,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 						GestionAPI.gestionKlaxon(false);
 						// Couper Appel Alert
 						GestionAPI.gestionAlert(false);
-						GestionAPI.gestionAlertService(false, tbAlarme.get(i).getIndexCapteur());
+						GestionAPI.gestionAlertService(false, tbAlarme.get(i).getIndexMotApi());
 						prisEnCompte = true;
 						break;
 					}
