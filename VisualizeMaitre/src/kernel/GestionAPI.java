@@ -718,6 +718,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	 * Appelle le systeme Alert
 	 */
 	public static void gestionAlert(boolean alerte) {
+/*		
 		try {
 			// ===== Ouverture de la connection =====
 			//  Variables TCP
@@ -749,7 +750,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			GestionLogger.gestionLogger.warning("Erreur ecriture MODBUS Alarme : " + e.getMessage());
 			EFS_Maitre_Variable.compteurErreurAPI++;
 		} // Fin catch
-
+*/
 	} // Fin gestionTestAlert()	
 
 	/**
