@@ -388,6 +388,14 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 
 			if(tbEchange[0] > 0) {
 				switch((int) tbEchange[0]) {
+				case VIA_API_RAPPEL_ALERT:
+					if (!GestionSGBD.prendreEnCompteRappelAlert((long)tbEchange[1])) {
+						GestionLogger.gestionLogger.info("Erreur prise en compte via API ... ");
+					} else {
+						GestionLogger.gestionLogger.info("Prise en compte via API idCapteur = " + tbEchange[1]);
+					}
+					resetEchangeViaAPI();
+					break;
 				case VIA_API_PRISE_EN_COMPTE:
 					if (!GestionSGBD.prendreEnCompteViaAPI((long)tbEchange[1])) {
 						GestionLogger.gestionLogger.info("Erreur prise en compte via API ... ");

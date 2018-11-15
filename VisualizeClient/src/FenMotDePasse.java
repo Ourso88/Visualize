@@ -19,12 +19,12 @@ import javax.swing.border.EtchedBorder;
 
 import AE_General.AE_ConnectionBase;
 import AE_General.AE_Constantes;
+import AE_General.AE_Fonctions;
 import AE_General.EFS_Client_Variable;
 
 
 public class FenMotDePasse extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 1L;
-	private AE_ConnectionBase ctn = new AE_ConnectionBase(AE_Constantes.EFS_SGBD_TYPE, EFS_Client_Variable.EFS_SGBD_SERVEUR, EFS_Client_Variable.EFS_SGBD_BASE, EFS_Client_Variable.EFS_SGBD_USER, EFS_Client_Variable.EFS_SGBD_MDP);	
 	
 	// Données
 	
@@ -35,20 +35,19 @@ public class FenMotDePasse extends JFrame implements ActionListener{
 	private JPanel pnlMotDePasse = new JPanel();
 	private JPanel pnlBoutons = new JPanel();
 		// =====> pnlMotDePasse <=====
-	private JLabel lblTitreNouveau = new JLabel("lblTitreNouveau");
-	private JLabel lblTitreConfirmation = new JLabel("lblTitreConfirmation");
+	private JLabel lblTitreNouveau = new JLabel("Nouveau");
+	private JLabel lblTitreConfirmation = new JLabel("Confirmation");
 	private JPasswordField txtNouveau = new JPasswordField("");
 	private JPasswordField txtConfirmation = new JPasswordField("");
 		// =====> pnlBoutons <=====
-	private JButton btnValider = new JButton("btnValider");
-	private JButton btnRetour = new JButton("btnRetour");	
+	private JButton btnValider = new JButton("Valider");
+	private JButton btnRetour = new JButton("Retour");	
 
 	/**
 	 * Constructeur
 	 */
 	public FenMotDePasse() {
 		super();
-		ctn.open();
 		build();
 	}
 
@@ -59,7 +58,6 @@ public class FenMotDePasse extends JFrame implements ActionListener{
 		// Général
 		this.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
-            	ctn.close();
             }
         });
 
@@ -67,10 +65,8 @@ public class FenMotDePasse extends JFrame implements ActionListener{
 		this.setTitle("Viper J - Administrateurs - Mot de passe");
 	    this.setSize(640, 500);
 		this.setResizable(true);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    this.setLocationRelativeTo(null);
-	    java.net.URL icone = getClass().getResource("/Turbine.gif");
-	    this.setIconImage(new ImageIcon(icone).getImage());	
 
 	    // Definition des parties de la fenetre
 	    this.add("Center",pnlCorps);
@@ -147,14 +143,20 @@ public class FenMotDePasse extends JFrame implements ActionListener{
 	 * Modidifie le mot de passe
 	 */
 	private void modifierMotDePasse() {
+		AE_ConnectionBase ctn = new AE_ConnectionBase(AE_Constantes.EFS_SGBD_TYPE, EFS_Client_Variable.EFS_SGBD_SERVEUR, EFS_Client_Variable.EFS_SGBD_BASE, EFS_Client_Variable.EFS_SGBD_USER, EFS_Client_Variable.EFS_SGBD_MDP);	
+		ctn.open();
 		String nouveau = String.valueOf(txtNouveau.getPassword());
 		String confirmation = String.valueOf(txtConfirmation.getPassword());
 		if(nouveau.equals(confirmation)) {
-//			String reqSql = "UPDATE Utilisateur SET Password = '" + nouveau + "' WHERE id_V3_Personnel = " + ViperConstantes.utilisateur.getIdUtilisateur(); 
-//			AE_Variables.ctnOracle.fonctionSql(reqSql);
+			String reqSql = "UPDATE Utilisateur SET MotDePasse = '" + nouveau + "' WHERE idUtilisateur = " + EFS_Client_Variable.idUtilisateur; 
+			ctn.fonctionSql(reqSql);
+			this.dispose();
+			Login fenetre = new Login();
+			fenetre.setVisible(true);
 		} else {
-//			AE_Fonctions.afficheMessage(this, "Viper Administration", "Erreur entre les deux mots de passe !");
+			AE_Fonctions.afficheMessage(this, "Erreur entre les deux mots de passe !");
 		}
+		ctn.close();
 	}
 	
 	
@@ -165,6 +167,8 @@ public class FenMotDePasse extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == btnRetour) {
 			this.dispose();
+			Login fenetre = new Login();
+			fenetre.setVisible(true);
 		}
 		if(ae.getSource() == btnValider) {
 			modifierMotDePasse();

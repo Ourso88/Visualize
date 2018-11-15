@@ -36,6 +36,7 @@ public interface EFS_General {
 	public static final int VIA_API_ALARME = 9;
 	public static final int VIA_API_MAINTENANCE = 10;
 	public static final int VIA_API_NO_NF = 11;
+	public static final int VIA_API_RAPPEL_ALERT = 12;
 	public static final int MAX_ECHANGE_MAITRE_CLIENT = 50;
 	
 	

@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.InetAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -37,9 +36,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.MaskFormatter;
 
-import AE_Communication.AE_TCP_Connection;
 import AE_Communication.AE_TCP_Constantes;
-import AE_Communication.AE_TCP_Modbus;
 import AE_General.*;
 import EFS_Structure.StructPriseEnCompte;
 
@@ -965,6 +962,7 @@ public class FenPrincipale  extends JFrame implements ActionListener, AE_General
         }
 	} // Fin gestionPriseEnCompte
 		
+/* Retiré le 30/10/2018	
 	private void gestionKlaxon(boolean sonnerie) {
 		pnlInfo.setLblInformation(0, "Lancement klaxon ...");
 		try{
@@ -1003,7 +1001,9 @@ public class FenPrincipale  extends JFrame implements ActionListener, AE_General
 			System.err.println(e.getMessage());
 		} // Fin catch		
 	} // Fin gestionKlaxon()	
+*/
 
+/* Retiré le 30/10/2018	
 	private void gestionAlert(boolean alerte) {
 		String strSql = "";
 		if (alerte) {
@@ -1019,7 +1019,8 @@ public class FenPrincipale  extends JFrame implements ActionListener, AE_General
 			ctn.fonctionSql(strSql);		
 		} // Fin if alerte
 	} // Fin gestionAlert()		
-
+*/
+	
 	private void gestionInhibitionSupression() {
 		String msgJournal = "";
 		String msgAvertissement = "";

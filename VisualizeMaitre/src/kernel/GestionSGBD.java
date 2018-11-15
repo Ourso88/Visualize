@@ -502,6 +502,40 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 	}
 	
 	/**
+	 * Prise en compte d'un Rappel
+	 */
+	public static boolean prendreEnCompteRappelAlert(long idCapteur) {
+		testConnexionBase();
+		// Recherche dans la table V2_AlarmeEnCours
+		try {
+			boolean prisEnCompte = false;
+			String strSql = "SELECT * FROM V2_AlarmeEnCours WHERE idCapteur = " + idCapteur;
+			ResultSet result = AE_Variables.ctnOracle.lectureData(strSql);
+			if(result.next()) {
+				// Rechercher dans la tbAlarme
+				for(int i = 0; i < tbAlarme.size(); i++) {
+					if(tbAlarme.get(i).getIdCapteur() == idCapteur) {
+						tbAlarme.get(i).setMnRappelAlert(result.getInt("RappelAlert"));
+						tbAlarme.get(i).setDateRappelAlert(LocalDateTime.now());
+						GestionAPI.gestionAlertService(false, tbAlarme.get(i).getIndexMotApi()); 
+						prisEnCompte = true;
+						break;
+					}
+				}
+			}
+			result.close();
+			AE_Variables.ctnOracle.closeLectureData();
+			return prisEnCompte;
+		} catch (SQLException e) {
+			GestionLogger.gestionLogger.severe("SGBD : Erreur de prise en compte via un client : " + e.getMessage());
+			EFS_Maitre_Variable.nombreLectureSGBD++;
+			EFS_Maitre_Variable.compteurErreurSGBD++;
+			return false;
+		}
+	}
+	
+	
+	/**
 	 * Prise en compte d'une alarme par un client
 	 */
 	public static boolean prendreEnCompteViaAPI(long idCapteur) {
@@ -520,6 +554,7 @@ public class GestionSGBD implements VoiesAPI, EFS_General {
 						tbAlarme.get(i).setIdPriseEnCompte(result.getInt("idPriseEnCompte"));
 						tbAlarme.get(i).setCommentairePriseEnCompte(result.getString("CommentairePriseEnCompte"));
 						tbAlarme.get(i).setIdUtilisateur(result.getLong("idUtilisateur"));
+						tbAlarme.get(i).setMnRappelAlert(result.getInt("RappelAlert"));
 						// Couper Klaxon
 						GestionAPI.gestionKlaxon(false);
 						// Couper Appel Alert

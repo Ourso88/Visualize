@@ -320,6 +320,7 @@ public class FenCourbe extends JFrame implements ActionListener {
 		boolean blCapteurAnalogique = true;
 		double calcul = 0D;
 		
+System.out.println("Passage dans TraceCourbe");		
 		
 		SimpleDateFormat formaterDebut = null;
 		formaterDebut = new SimpleDateFormat("dd/MM/yyyy " + txtHeureDebut.getText());

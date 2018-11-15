@@ -121,7 +121,7 @@ public class Login extends JFrame implements AE_General.AE_Constantes, ActionLis
 
 	}
 
-	private void gestionLogin() {
+	private void gestionLogin(boolean modificationMDP) {
 		ResultSet result = null;
 		String strSql = "";
 		String msgJournal = "";
@@ -180,27 +180,33 @@ public class Login extends JFrame implements AE_General.AE_Constantes, ActionLis
 		    			
 		    		}
 					this.setVisible(false);
-System.out.println("Niveau : " + EFS_Client_Variable.niveauUtilisateur);					
-					if(EFS_Client_Variable.niveauUtilisateur >= 40) {
-						FenPrincipale fenetre;
-						try {
-							fenetre = new FenPrincipale();
-							fenetre.setVisible(true);
-							fenetre.requestFocusInWindow();		
-						} catch (ParseException e) {
-							e.printStackTrace();
+System.out.println("Niveau : " + EFS_Client_Variable.niveauUtilisateur);
+					if(!modificationMDP) {
+						if(EFS_Client_Variable.niveauUtilisateur >= 40) {
+							FenPrincipale fenetre;
+							try {
+								fenetre = new FenPrincipale();
+								fenetre.setVisible(true);
+								fenetre.requestFocusInWindow();		
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+						} else {
+							FenChoixCapteurAnalogique fenetre;
+							try {
+								fenetre = new FenChoixCapteurAnalogique();
+								fenetre.setVisible(true);
+								fenetre.requestFocusInWindow();		
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
 						}
+						this.dispose();
 					} else {
-						FenChoixCapteurAnalogique fenetre;
-						try {
-							fenetre = new FenChoixCapteurAnalogique();
-							fenetre.setVisible(true);
-							fenetre.requestFocusInWindow();		
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
+						FenMotDePasse fenetre = new FenMotDePasse();
+						fenetre.setVisible(true);
+						fenetre.requestFocusInWindow();		
 					}
-					this.dispose();
 				}
 				else {
 					// Erreur mot de passe
@@ -264,7 +270,7 @@ System.out.println("Niveau : " + EFS_Client_Variable.niveauUtilisateur);
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnValider) {
-			gestionLogin();
+			gestionLogin(false);
 		} // Fin If
 		if (e.getSource() == btnAnnuler) {
 			this.setVisible(false);
@@ -273,7 +279,7 @@ System.out.println("Niveau : " + EFS_Client_Variable.niveauUtilisateur);
 			
 		
 		if (e.getSource() == btnModifierMotDePasse) {
-//			correctionBase();
+			gestionLogin(true);
 		} // Fin If
 		
 	}

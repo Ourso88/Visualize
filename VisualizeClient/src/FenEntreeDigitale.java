@@ -64,7 +64,7 @@ public class FenEntreeDigitale extends JFrame implements AE_Constantes, ActionLi
 	private JLabel lblPosteTechnique = new JLabel("Poste technique : ");
 	private JLabel lblTypeMateriel = new JLabel("Type matériel : ");
 	private JLabel lblZoneSubstitution = new JLabel("Zone substitution : ");
-	private JLabel lblTempo = new JLabel("Temporisation seuil : ");
+	private JLabel lblTempo = new JLabel("Tempo(sec) seuil : ");
 	private JLabel lblService = new JLabel("Service : ");
 	private JLabel lblContact = new JLabel("Contact : ");
 	

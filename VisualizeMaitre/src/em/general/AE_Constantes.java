@@ -10,7 +10,8 @@ public interface AE_Constantes {
 	
 	// Constantes version
 //	public static final int VERSION = 20501;
-	public static final int VERSION = 20502; // Suppression de l'appel Alarme GTC => MES Service uniquement == 30/10/2018 ==
+//	public static final int VERSION = 20502; // Suppression de l'appel Alarme GTC => MES Service uniquement == 30/10/2018 ==
+	public static final int VERSION = 20503; // Prise en compte des rappel Alert par le client == 15/11/2018 ==
 
 	// Langue
 	public static final int LANGUE_FR = 0;

@@ -8,7 +8,7 @@ public interface AE_Constantes {
 	public static final int TIMER_RAFFRAICHISSEMENT_MINUTE = 60000;
 	
 	// Constantes version
-	public static final int VERSION = 10801;
+	public static final int VERSION = 10802;
 	
 	// Contantes Font
 	public static final Font FONT_ARIAL_12 = new Font("Arial", Font.PLAIN,  12 );
@@ -227,6 +227,7 @@ public interface AE_Constantes {
 	public static final int VIA_API_ALARME = 9;
 	public static final int VIA_API_MAINTENANCE = 10;
 	public static final int VIA_API_NO_NF = 11;
+	public static final int VIA_API_RAPPEL_ALERT = 12;
 	public static final int MAX_ECHANGE_MAITRE_CLIENT = 50;
 	
 	

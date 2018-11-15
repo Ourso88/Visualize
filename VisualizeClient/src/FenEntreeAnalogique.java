@@ -92,10 +92,10 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 	// Analogique
 	private JLabel lblSeuilBas = new JLabel("Seuil bas : ");
 	private JLabel lblSeuilHaut = new JLabel("Seuil haut : ");
-	private JLabel lblTempo = new JLabel("Temporisation seuil : ");
+	private JLabel lblTempo = new JLabel("Tempo(mn) seuil : ");
 	private JLabel lblPreSeuilBas = new JLabel("Pré-seuil bas : ");
 	private JLabel lblPreSeuilHaut = new JLabel("Pré-seuil haut : ");
-	private JLabel lblPreTempo = new JLabel("Temporisation pré-seuil : ");
+	private JLabel lblPreTempo = new JLabel("Tempo(mn) pré-seuil : ");
 	private JLabel lblCalibration = new JLabel("Calibration : ");
 	private JLabel lblUnite = new JLabel("Unité : ");
 	private JLabel lblValeurEnCours = new JLabel("Valeur en cours : ");

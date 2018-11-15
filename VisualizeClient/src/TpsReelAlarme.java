@@ -1,6 +1,7 @@
 import java.util.Date;
 
 import AE_General.AE_Constantes;
+import kernel.GestionAPI;
 
 
 public class TpsReelAlarme implements AE_Constantes {
@@ -267,6 +268,9 @@ public class TpsReelAlarme implements AE_Constantes {
 	 */
 	public void setRappelAlert(int rappelAlert) {
 		this.rappelAlert = rappelAlert;
+		// Ecrire la valeur dans V2_AlarmeEnCours
+		// Prevenir Maitre Via API
+		GestionAPI.ecrireRappelAlert(idCapteur, rappelAlert);
 	}
 
 	/**

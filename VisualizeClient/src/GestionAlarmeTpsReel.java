@@ -153,7 +153,7 @@ public class GestionAlarmeTpsReel extends JFrame implements ActionListener, AE_G
         mask.setValidCharacters("0123456789");
         mask.setPlaceholderCharacter('0');
         JFormattedTextField field = new JFormattedTextField( mask ) ;
-        tbAlarme.getColumnModel().getColumn(JTABLE_ALARME_RAPPEL_ALERT).setCellEditor( new DefaultCellEditor( field ) );
+//        tbAlarme.getColumnModel().getColumn(JTABLE_ALARME_RAPPEL_ALERT).setCellEditor( new DefaultCellEditor( field ) );
         
         sorter =  new TableRowSorter<TableModel>(tbAlarme.getModel());
         tbAlarme.setRowSorter(sorter);     
@@ -360,6 +360,40 @@ public class GestionAlarmeTpsReel extends JFrame implements ActionListener, AE_G
 	} // Fin LectureDonnees	
 	
 	/**
+	 * Appel l'écran courbe
+	 */
+	private void gererCourbe() {
+        if (tbAlarme.getRowCount() > 0) {
+        	if (tbAlarme.getSelectedRowCount() > 0) {
+        		int[] selection = tbAlarme.getSelectedRows();
+		        int indexSelection = selection[0];
+				if(indexSelection >  0) {
+			        int idCapteur = mdlTpsReelAlarme.getIdCapteur(indexSelection); 
+			        
+					FenCourbe fenCourbe = new FenCourbe();
+					fenCourbe.setIdCapteur(idCapteur);
+					fenCourbe.traceCourbe();
+					fenCourbe.setVisible(true);
+					fenCourbe.requestFocusInWindow();
+				} else {
+					FenCourbe fenCourbe = new FenCourbe();
+					fenCourbe.setVisible(true);
+					fenCourbe.requestFocusInWindow();
+				}
+        	}  else {
+				FenCourbe fenCourbe = new FenCourbe();
+				fenCourbe.setVisible(true);
+				fenCourbe.requestFocusInWindow();
+        	}
+        }  else {
+			FenCourbe fenCourbe = new FenCourbe();
+			fenCourbe.setVisible(true);
+			fenCourbe.requestFocusInWindow();
+        }
+		
+	}
+	
+	/**
 	 * Gestion ndes actions
 	 */
 	@Override
@@ -371,6 +405,10 @@ public class GestionAlarmeTpsReel extends JFrame implements ActionListener, AE_G
 		
 		if (e.getSource() == btnPriseEnCompte) {
 			gestionPriseEnCompte();
+		} // Fin If
+
+		if (e.getSource() == btnCourbe) {
+			gererCourbe();
 		} // Fin If
 		
 	}
