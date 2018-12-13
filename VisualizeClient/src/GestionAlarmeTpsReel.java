@@ -86,7 +86,7 @@ public class GestionAlarmeTpsReel extends JFrame implements ActionListener, AE_G
 	    this.setTitle("GTC Visualize - Gestion Alarme Temps Réel");
 	    this.setSize(1200, 800);
 		this.setResizable(true);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    this.setLocationRelativeTo(null);
 		pnlHaut.setTitreEcran("GTC Visualize - Gestion Alarme Temps Réel");
 	    

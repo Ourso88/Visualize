@@ -309,6 +309,7 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 		    cmbZoneSubstitution.setEnabled(false);
 		    cmbService.setEnabled(false);
 		    cmbUnite.setEnabled(false);
+		    cmbAlarmeService.setEnabled(false);
 		    
 		    optAlarmeAlert.setEnabled(false);
 		    optAlarmeDefaut.setEnabled(false);
@@ -359,6 +360,7 @@ public class FenEntreeAnalogique extends JFrame implements AE_Constantes, Action
 		    cmbZoneSubstitution.setEnabled(false);
 		    cmbService.setEnabled(false);
 		    cmbUnite.setEnabled(false);
+		    cmbAlarmeService.setEnabled(false);
 		    
 		    optAlarmeAlert.setEnabled(false);
 		    optAlarmeDefaut.setEnabled(false);
