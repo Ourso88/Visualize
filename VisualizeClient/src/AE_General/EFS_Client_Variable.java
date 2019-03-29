@@ -22,7 +22,8 @@ public class EFS_Client_Variable implements AE_TCP_Constantes {
 	public static double tbValeurAI[] = new double[MAX_AI];
 	public static int tbValeurDI[] = new int[MAX_DI];
 	
-	public static short tbTypeCapteur[] = new short[MAX_AI + MAX_DI];
+//	public static short tbTypeCapteur[] = new short[MAX_AI + MAX_DI];
+	public static short tbTypeCapteur[] = new short[5000]; // Probleme index dans la base de données, idCapteur --> obligé d'augmenter la taille 
 
 	public static int tbIdAI[] = new int [MAX_AI];
 	public static double tbAncAI[] = new double [MAX_AI];

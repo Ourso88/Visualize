@@ -16,7 +16,8 @@ public class AE_TCP_Connection implements AE_TCP_Modbus {
 
 	// Variable d'instance
 	private Socket m_Socket;
-	private int m_Timeout = 1500;
+//	private int m_Timeout = 1500;
+	private int m_Timeout = 2000; // ===== EM : Modification 29/03/2019 =====
 	private boolean m_Connected;
 
 	private InetAddress m_Address;
@@ -52,7 +53,7 @@ public class AE_TCP_Connection implements AE_TCP_Modbus {
 				m_Connected = true;
 			} catch (IOException e) {
 				GestionLogger.gestionLogger.warning("Erreur de connexion API : " + e.getMessage());
-				EFS_Maitre_Variable.nombreLectureAPI++;
+				EFS_Maitre_Variable.compteurErreurAPI++;
 			}
 		}
 	} //Fin connect
@@ -209,10 +210,27 @@ public class AE_TCP_Connection implements AE_TCP_Modbus {
             buffIn.read(reqIn);
             if (MODBUS_DEBUG) System.out.println("Lecture effectuée ...");
 
-		} // Fin Try
-		catch (IOException ex) {
-			GestionLogger.gestionLogger.warning("Erreur lors de l'envoi d'une requête à l'API : " + ex.getMessage());
-			EFS_Maitre_Variable.nombreLectureAPI++;
+		} catch (IOException ex) {
+			EFS_Maitre_Variable.compteurErreurAPI++;
+			GestionLogger.gestionLogger.warning("[setRequest] Erreur lors de l'envoi requête 1 : " 
+			                                    + ex.getMessage() + "\nNombre Erreur API : " + EFS_Maitre_Variable.compteurErreurAPI);
+			
+			try {
+				// Envoi de la requete
+	            buffOut.write(reqOut, 0, Taille_Request);
+	            if (MODBUS_DEBUG) System.out.println("write effectué !");
+	            // Flush de la requête
+	            buffOut.flush();
+	            if (MODBUS_DEBUG) System.out.println("flush effectué !");    		
+	            // Lecture de la réponse
+	            buffIn.read(reqIn);
+	            if (MODBUS_DEBUG) System.out.println("Lecture effectuée ...");
+
+			} catch (IOException ex2) {
+				EFS_Maitre_Variable.compteurErreurAPI++;
+				GestionLogger.gestionLogger.warning("[setRequest] Erreur lors de l'envoi requête 2 : " 
+				                                    + ex.getMessage() + "\nNombre Erreur API : " + EFS_Maitre_Variable.compteurErreurAPI);
+			} // Fin Catch
 		} // Fin Catch
 		
 		return getReponse(reqIn);

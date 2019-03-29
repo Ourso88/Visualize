@@ -42,11 +42,12 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 	/**
 	 * Lecture des valeurs dans l'API (automate)
 	 */
-	public static void lectureTpsReel() {
+	private void lectureTpsReel() {
 		int adresseLecture = 0;
 		int cptLecture = 0;
 		double tbAI[] = new double [MAX_AI];
 		int tbDI[] = new int [MAX_DI];
+		long compteurErreurAPI = 0;
 		
 		try {
 			// ===== Ouverture de la connection =====================
@@ -68,7 +69,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			// ======================================================
 
 			// ===== Envoi des requetes de lecture pour les AI ======
-			cptLecture = 0;
+			cptLecture = 0; compteurErreurAPI = EFS_Maitre_Variable.compteurErreurAPI;
 			do {
 				adresseLecture = ADR_API_AI_TPS_REEL + (cptLecture * NB_MOT_LECTURE_AI);
 				if (adresseLecture < (ADR_API_AI_TPS_REEL + MAX_AI)) {
@@ -80,8 +81,12 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 				cptLecture++;
 			} while(adresseLecture < (ADR_API_AI_TPS_REEL + MAX_AI)); // Fin while
 
-			for(int i = 0; i < tbAnaAPI.size(); i++) {
-				tbAnaAPI.get(i).setValeurAPI(tbAI[tbAnaAPI.get(i).getVoieApi() - 1]);
+			if(compteurErreurAPI <= EFS_Maitre_Variable.compteurErreurAPI) {
+				for(int i = 0; i < tbAnaAPI.size(); i++) {
+					tbAnaAPI.get(i).setValeurAPI(tbAI[tbAnaAPI.get(i).getVoieApi() - 1]);
+				}
+			} else {
+				GestionLogger.gestionLogger.warning("[API] Erreur Lecture AI ... ");
 			}
 			// ======================================================
 			
@@ -89,6 +94,7 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 			int adresseDI = 0;
 			int bitTest = 0;
 			int valeurTest = 0;
+			compteurErreurAPI = EFS_Maitre_Variable.compteurErreurAPI;
 			
 			reqReponse = con.setRequest(con.createRequest(AE_TCP_Modbus.READ_MULTIPLE_REGISTERS, ADR_API_DI_TPS_REEL, NB_MOT_LECTURE_DI));
 			for (int i = 0; i < NB_MOT_LECTURE_DI; i++) {
@@ -105,8 +111,12 @@ public class GestionAPI implements VoiesAPI, ActionListener, EFS_General {
 				} // Fin for j
 			} // Fin for i
 			
-			for(int i = 0; i < tbDigiAPI.size(); i++) {
-				tbDigiAPI.get(i).setValeurAPI(tbDI[tbDigiAPI.get(i).getVoieApi() - 1]);
+			if(compteurErreurAPI <= EFS_Maitre_Variable.compteurErreurAPI) {
+				for(int i = 0; i < tbDigiAPI.size(); i++) {
+					tbDigiAPI.get(i).setValeurAPI(tbDI[tbDigiAPI.get(i).getVoieApi() - 1]);
+				}
+			} else {
+				GestionLogger.gestionLogger.warning("[API] Erreur Lecture DI ... ");
 			}
 			// ======================================================
 			

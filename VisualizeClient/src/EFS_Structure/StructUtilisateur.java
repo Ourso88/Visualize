@@ -7,9 +7,10 @@ public class StructUtilisateur {
 	private String login;
 	private String motDePasse;
 	private long idNiveauUtilisateur;
+	private long idAlarmeService;
 	
 
-	public StructUtilisateur(long id, String nom, String prenom, String login, String motDePasse, long idNiveauUtilisateur ) {
+	public StructUtilisateur(long id, String nom, String prenom, String login, String motDePasse, long idNiveauUtilisateur, long idAlarmeService) {
 		super();
 		this.setId(id);
 		this.setNom(nom);
@@ -17,6 +18,7 @@ public class StructUtilisateur {
 		this.setLogin(login);
 		this.setMotDePasse(motDePasse);
 		this.setIdNiveauUtilisateur(idNiveauUtilisateur);
+		this.setIdAlarmeService(idAlarmeService);
 	}
 	
 	
@@ -110,5 +112,21 @@ public class StructUtilisateur {
 	 */
 	public void setIdNiveauUtilisateur(long idNiveauUtilisateur) {
 		this.idNiveauUtilisateur = idNiveauUtilisateur;
+	}
+
+
+	/**
+	 * @return the idAlarmeService
+	 */
+	public long getIdAlarmeService() {
+		return idAlarmeService;
+	}
+
+
+	/**
+	 * @param idAlarmeService the idAlarmeService to set
+	 */
+	public void setIdAlarmeService(long idAlarmeService) {
+		this.idAlarmeService = idAlarmeService;
 	}
 }

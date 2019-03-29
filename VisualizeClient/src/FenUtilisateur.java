@@ -27,6 +27,7 @@ import AE_General.*;
 import EFS_Structure.StructNiveauUtilisateur;
 import EFS_Structure.StructService;
 import EFS_Structure.StructUtilisateur;
+import kernel.ArrayAlarmeService;
 
 
 public class FenUtilisateur extends JFrame implements ActionListener {
@@ -63,11 +64,20 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 	private JList<String> lstService = new JList<String>(modeleLstService);
 	private JScrollPane spLstService = new JScrollPane(lstService);
 	
+	// ===== Modifications 14/02/2019 =====
+	private JLabel lblAlarmeService = new JLabel("Service Alarme : ");
+	private JComboBox<String> cmbAlarmeService = new JComboBox<String>();
+	private ArrayAlarmeService tbAlarmeService = new ArrayAlarmeService();	
+	private JPanel pnlGestionAlarme = new JPanel();
+	// ===== Fin modifications 14/02/2019 =====
+
+	
 //	private AE_ListeBase lstService = new AE_ListeBase(ctn);
 	
 	public FenUtilisateur() {
 		super();
 		build();
+		remplirAlarmeService();
 		LectureNiveauUtilisateur();
 		LectureDonnees();
 	}
@@ -169,22 +179,35 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 	    gbc.gridx = 1; gbc.gridy = 5;
 	    pnlCorps.add(cmbNiveau, gbc);
 	    gbc.fill = GridBagConstraints.NONE;
+
 	    // --------------------------------------------------
 	    gbc.weightx = 25;
 	    gbc.gridx = 0; gbc.gridy = 6;
+	    pnlCorps.add(lblAlarmeService, gbc);
+	    // --------------------------------------------------
+	    gbc.weightx = 75;
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
+	    gbc.gridx = 1; gbc.gridy = 6;
+	    pnlCorps.add(cmbAlarmeService, gbc);
+	    gbc.fill = GridBagConstraints.NONE;
+	    
+	    
+	    // --------------------------------------------------
+	    gbc.weightx = 25;
+	    gbc.gridx = 0; gbc.gridy = 7;
 	    pnlCorps.add(lblService, gbc);
 	    // --------------------------------------------------
 	    gbc.weightx = 75;
 	    gbc.gridheight = 6;
 	    gbc.fill = GridBagConstraints.BOTH;
-	    gbc.gridx = 1; gbc.gridy = 6;
+	    gbc.gridx = 1; gbc.gridy = 7;
 	    pnlCorps.add(spLstService, gbc);
 	    gbc.fill = GridBagConstraints.NONE;
 	    gbc.gridheight = 1;
 	    // --------------------------------------------------
 	    gbc.insets = new Insets(0, 0, 0, 5);
 	    gbc.weightx = 25;
-	    gbc.gridx = 0; gbc.gridy = 7;
+	    gbc.gridx = 0; gbc.gridy = 8;
 	    pnlCorps.add(btnListe, gbc);
 	    gbc.ipadx = 0;
 	    // --------------------------------------------------
@@ -240,7 +263,9 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 		// Remplissage tableau et combo Utilisateur
 		try {
 			while(result.next()) {
-				tbUtilisateur.add(new StructUtilisateur(result.getLong("idUtilisateur"), result.getString("Nom"), result.getString("Prenom"), result.getString("Login"), result.getString("MotDePasse"), result.getLong("idNiveauUtilisateur")));
+				tbUtilisateur.add(new StructUtilisateur(result.getLong("idUtilisateur"), result.getString("Nom"), result.getString("Prenom")
+						          , result.getString("Login"), result.getString("MotDePasse"), result.getLong("idNiveauUtilisateur")
+						          , result.getLong("idAlarmeService")));
 				cmbUtilisateur.addItem(tbUtilisateur.get(index).getNom() + " " + tbUtilisateur.get(index).getPrenom());
 				index++;
 			}
@@ -262,13 +287,18 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 		String strSql = new String();
 		String psw = new String(txtMdp.getPassword());
 		long idNiveauUtilisateur = tbNiveauUtilisateur.get(cmbNiveau.getSelectedIndex()).getId();
+		long idAlarmeService = tbAlarmeService.get(cmbAlarmeService.getSelectedIndex()).getIdAlarmeService();
 		long idService = -1;
 		
 
 		
 		if(AE_Fonctions.messageConfirmation(this, "Voulez vous modifier cet utilisateur  : " + txtNom.getText())) {
 			ctn.open();
-			strSql = "UPDATE Utilisateur SET Nom = '" + txtNom.getText() + "', Prenom = '" +  txtPrenom.getText() + "', Login = '" + txtLogin.getText() + "', MotDePasse = '" + psw + "', idNiveauUtilisateur = " +  idNiveauUtilisateur +  " WHERE idUtilisateur = " + index; 
+			strSql = "UPDATE Utilisateur SET Nom = '" + txtNom.getText() + "', Prenom = '" +  txtPrenom.getText() 
+			       + "', Login = '" + txtLogin.getText() + "', MotDePasse = '" + psw 
+			       + "', idNiveauUtilisateur = " +  idNiveauUtilisateur
+			       + ", idAlarmeService = " + idAlarmeService
+			       +  " WHERE idUtilisateur = " + index; 
 			ctn.fonctionSql(strSql);
 	
 			strSql = "DELETE FROM LienUtilisateurService WHERE idUtilisateur = " + index;
@@ -295,11 +325,16 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 		String strSql = new String();
 		String psw = new String(txtMdp.getPassword());
 		long idNiveau = tbNiveauUtilisateur.get(cmbNiveau.getSelectedIndex()).getId();
+		long idAlarmeService = tbAlarmeService.get(cmbAlarmeService.getSelectedIndex()).getIdAlarmeService();
 		
 		if(!AE_Fonctions.enregistrementExiste("Utilisateur", "Nom", txtNom.getText())) {
 			if(AE_Fonctions.messageConfirmation(this, "Voulez vous créer cet utilisateur  : " + txtNom.getText())) {
 				ctn.open();
-				strSql = "INSERT INTO Utilisateur (Nom, Prenom, Login, MotDePasse, idNiveauUtilisateur)  VALUES ('" + txtNom.getText() + "', '" +  txtPrenom.getText()  + "', '" +  txtLogin.getText() + "', '" + psw + "', " + idNiveau + ")";
+				strSql = "INSERT INTO Utilisateur (Nom, Prenom, Login, MotDePasse, idNiveauUtilisateur, idAlarmeService)  VALUES ('" 
+				       + txtNom.getText() + "', '" +  txtPrenom.getText()  + "', '" +  txtLogin.getText() + "', '" + psw 
+				       + "', " + idNiveau 
+				       + ", " + idAlarmeService 
+				       + ")";
 				System.out.println(strSql);
 				ctn.fonctionSql(strSql);
 		
@@ -319,6 +354,12 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 			}
 		}
 	}
+
+	private void SelectionAlarmeService(long index) {
+		System.out.println("tbAlarmeService.trouverIndex(index) : " + tbAlarmeService.trouverIndex(index));
+		cmbAlarmeService.setSelectedIndex(tbAlarmeService.trouverIndex(index));
+	}
+	
 	
 	private void remplirService(String strSql) {
 		// Connection base
@@ -390,6 +431,18 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 	
 	} // Fin selectionService
 	
+	/**
+	 * Remplit la comboBox cmbAlarmeService
+	 * @since 14/02/2019
+	 */
+	private void remplirAlarmeService() {
+		for(int i = 0; i < tbAlarmeService.size(); i++) {
+			cmbAlarmeService.addItem(tbAlarmeService.get(i).getNomService());
+		}
+		cmbAlarmeService.setSelectedIndex(-1);
+	}
+	
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -401,6 +454,7 @@ public class FenUtilisateur extends JFrame implements ActionListener {
 				txtLogin.setText(tbUtilisateur.get(index).getLogin());
 				txtMdp.setText(tbUtilisateur.get(index).getMotDePasse());
 				SelectionNiveauUtilisateur(tbUtilisateur.get(index).getIdNiveauUtilisateur());
+				SelectionAlarmeService(tbUtilisateur.get(index).getIdAlarmeService());
 				// Remplir la liste des services
 				String strSql = new String("SELECT Service.* FROM (LienUtilisateurService LEFT JOIN Service ON LienUtilisateurService.idService = Service.idService) WHERE idUtilisateur = " + tbUtilisateur.get(index).getId());
 				remplirService(strSql);

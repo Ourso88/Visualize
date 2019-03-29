@@ -8,7 +8,8 @@ public interface AE_Constantes {
 	public static final int TIMER_RAFFRAICHISSEMENT_MINUTE = 60000;
 	
 	// Constantes version
-	public static final int VERSION = 10802;
+//	public static final int VERSION = 10803;
+	public static final int VERSION = 10804; // Correction de Probleme index dans la base de données, idCapteur --> obligé d'augmenter la taille
 	
 	// Contantes Font
 	public static final Font FONT_ARIAL_12 = new Font("Arial", Font.PLAIN,  12 );

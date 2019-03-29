@@ -85,7 +85,8 @@ public interface EFS_General {
 	public static final int TIMER_LOGIN = 300000;
 	
 	// Timer API
-	public static int TIMER_LECTURE_TPS_REEL = 1000; //20000;
+//	public static int TIMER_LECTURE_TPS_REEL = 1000; //20000;
+	public static int TIMER_LECTURE_TPS_REEL = 5000; // Modification pour voir si pb API apparait moins === 22/03/2019 ===
 	public static int TIMER_LECTURE_TPS_REEL_ACCELERE = 3000;
 	
 }

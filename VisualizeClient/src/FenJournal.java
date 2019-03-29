@@ -329,7 +329,9 @@ public class FenJournal extends JFrame implements AE_General.AE_Constantes, Acti
 		// Remplissage tableau et combo Utilisateur
 		try {
 			while(result.next()) {
-				tbUtilisateur.add(new StructUtilisateur(result.getLong("idUtilisateur"), result.getString("Nom"), result.getString("Prenom"), result.getString("Login"), result.getString("MotDePasse"), result.getLong("idNiveauUtilisateur")));
+				tbUtilisateur.add(new StructUtilisateur(result.getLong("idUtilisateur"), result.getString("Nom"), result.getString("Prenom")
+						          , result.getString("Login"), result.getString("MotDePasse"), result.getLong("idNiveauUtilisateur")
+						          , result.getLong("idAlarmeService")));
 				cmbUtilisateur.addItem(tbUtilisateur.get(index).getNom() + " " + tbUtilisateur.get(index).getPrenom());
 				index++;
 			}

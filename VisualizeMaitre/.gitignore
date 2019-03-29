@@ -12,3 +12,8 @@ local.properties
 Logger/
 *.log
 .log
+/GTC_MAITRE_Logging.log.1
+/GTC_MAITRE_Logging.log.2
+/GTC_MAITRE_Logging.xml
+/GTC_MAITRE_Logging.xml.1
+/GTC_MAITRE_Logging.xml.2

@@ -11,8 +11,12 @@ public interface AE_Constantes {
 	// Constantes version
 //	public static final int VERSION = 20501;
 //	public static final int VERSION = 20502; // Suppression de l'appel Alarme GTC => MES Service uniquement == 30/10/2018 ==
-	public static final int VERSION = 20503; // Prise en compte des rappel Alert par le client == 15/11/2018 ==
-
+//	public static final int VERSION = 20503; // Prise en compte des rappel Alert par le client == 15/11/2018 ==
+//	public static final int VERSION = 20504; // Amélioration compteur erreurs lecture API  == 14/03/2019 ==
+//	public static final int VERSION = 20505; // Pas de lecture en cas d'erreur API == 14/03/2019 ==
+//	public static final int VERSION = 20506; // Modification temps de lecture TIMER_LECTURE_TPS_REEL passage de 1000 à 5000 == 22/03/2019 ==
+	public static final int VERSION = 20507; // Renvoi de la requete (setRequest) une seconde fois en cas erreur et passage timeout de 1500 à 2000  == 29/03/2019 ==
+	
 	// Langue
 	public static final int LANGUE_FR = 0;
 	public static final int LANGUE_US = 1;
