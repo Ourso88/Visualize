@@ -674,7 +674,9 @@ public class FenPrincipale extends JFrame implements AE_Constantes, VoiesAPI, EF
 		}
 		if (ae.getSource() == btnRetirerMaintenance) {
 			tmrLogin.restart();
-			gererRetirerMaintenance();
+			if(AE_Fonctions.testNiveau(40)) {
+				gererRetirerMaintenance();
+			}
 		}
 		
 		if (ae.getSource() == btnCourbe) {

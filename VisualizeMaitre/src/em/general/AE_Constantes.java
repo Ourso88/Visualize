@@ -15,7 +15,8 @@ public interface AE_Constantes {
 //	public static final int VERSION = 20504; // Amélioration compteur erreurs lecture API  == 14/03/2019 ==
 //	public static final int VERSION = 20505; // Pas de lecture en cas d'erreur API == 14/03/2019 ==
 //	public static final int VERSION = 20506; // Modification temps de lecture TIMER_LECTURE_TPS_REEL passage de 1000 à 5000 == 22/03/2019 ==
-	public static final int VERSION = 20507; // Renvoi de la requete (setRequest) une seconde fois en cas erreur et passage timeout de 1500 à 2000  == 29/03/2019 ==
+//	public static final int VERSION = 20507; // Renvoi de la requete (setRequest) une seconde fois en cas erreur et passage timeout de 1500 à 2000  == 29/03/2019 ==
+	public static final int VERSION = 20508; // Test du niveau opérateur pour retirer de maintenance  == 09/05/2019 ==
 	
 	// Langue
 	public static final int LANGUE_FR = 0;
